@@ -35,7 +35,7 @@ CREATE TABLE Auditing
 
 CREATE TABLE ValidityPeriod
 (
-    months INT, -- NOT NULL
+    months INT,
     PRIMARY KEY (months),
     CONSTRAINT allowedValues CHECK (months = 12 OR months = 24 OR months = 36)
 );
@@ -43,10 +43,9 @@ CREATE TABLE ValidityPeriod
 CREATE TABLE OptionalProduct
 (
     name VARCHAR(45),
-    fee  DECIMAL(8, 3) NOT NULL,
+    fee  DECIMAL(8, 2) NOT NULL,
     PRIMARY KEY (name),
     CONSTRAINT noNegFee CHECK (fee >= 0)
-
 );
 
 CREATE TABLE Service
@@ -60,7 +59,7 @@ CREATE TABLE MobileInternetService
     id        INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id),
     gigabytes INT NOT NULL,
-    fee       DECIMAL(8, 3),
+    fee       DECIMAL(8, 2) NOT NULL,
     CONSTRAINT signConstraints CHECK (gigabytes >= 0 AND fee >= 0.00),
     CONSTRAINT FOREIGN KEY (id) REFERENCES Service (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -69,9 +68,9 @@ CREATE TABLE MobilePhoneService
 (
     id              INT NOT NULL AUTO_INCREMENT,
     minutes         INT NOT NULL,
-    extraMinutesFee DECIMAL(8, 3),
+    extraMinutesFee DECIMAL(8, 2),
     SMSs            INT NOT NULL,
-    extraSMSsFee    DECIMAL(8, 3),
+    extraSMSsFee    DECIMAL(8, 2),
     CONSTRAINT signConstraints CHECK (minutes >= 0 AND extraMinutesFee >= 0.00 AND
                                       SMSs >= 0 AND extraSMSsFee >= 0.00),
     PRIMARY KEY (id),
@@ -160,6 +159,7 @@ CREATE TABLE ServiceActivationSchedule
 (
     endDate DATE NOT NULL,
     orderID INT  NOT NULL,
+    CONSTRAINT PRIMARY KEY (orderID),
     CONSTRAINT FOREIGN KEY (orderID) REFERENCES `Order` (ID) ON DELETE CASCADE ON UPDATE CASCADE -- CAN AN ORDER BE DELETED ?
 );
 
