@@ -116,6 +116,7 @@ CREATE TABLE `Order`
     CONSTRAINT FOREIGN KEY (packageID) REFERENCES ServicePackage (id),
     CONSTRAINT FOREIGN KEY (vpMonths) REFERENCES ValidityPeriod (months),
     CONSTRAINT posValues CHECK (totalValue >= 0 ) -- OPTIONAL ?
+    /*NO PROPAGATION of modifications --> an order isn't deleted even after the user who placed it is deleted @TODO check*/
 );
 
 -- SERVICE PACKAGE -<> - VALIDITYPERIOD
@@ -145,7 +146,7 @@ CREATE TABLE Offers
     CONSTRAINT FOREIGN KEY (packageID) REFERENCES `ServicePackage` (id) ON DELETE CASCADE ON UPDATE CASCADE, -- PROPAGATION ???
     CONSTRAINT FOREIGN KEY (productName) REFERENCES OptionalProduct (name) ON DELETE CASCADE ON UPDATE CASCADE
 );
--- @TODO NOME
+-- ServicePackage -<>- Service
 CREATE TABLE SPS
 (
     packageID INT NOT NULL,

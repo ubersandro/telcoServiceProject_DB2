@@ -1,7 +1,11 @@
 package entities;
 import javax.persistence.*;
-
-@Entity
+/**
+ *	Employee class models an employee of the telco company.   
+ * @author ubersandro
+ *
+ */
+@Entity (name="Employee")
 public class Employee {
 	@Id 
 	private String username; 
