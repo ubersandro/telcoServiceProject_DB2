@@ -101,6 +101,11 @@ CREATE TABLE ServicePackage
     PRIMARY KEY (id)
 );
 
+-- NOTA : order status shouldn't be null. It should belong to {0,1,2].
+/** MEANING 0 : NEWLY_CREATED
+            1 : REJECTED
+            2 : ACCEPTED
+*/
 CREATE TABLE `Order`
 (
     id           integer       NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -134,6 +139,7 @@ CREATE TABLE Includes
 (
     orderId     INT         NOT NULL,
     productName VARCHAR(45) NOT NULL,
+    CONSTRAINT PRIMARY KEY (orderId, productName),
     CONSTRAINT FOREIGN KEY (orderId) REFERENCES `Order` (id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT FOREIGN KEY (productName) REFERENCES OptionalProduct (name) ON DELETE CASCADE ON UPDATE CASCADE -- CAN AN OPTIONAL PRODUCT BE DELETED ?
 );
@@ -143,6 +149,7 @@ CREATE TABLE Offers
 (
     productName VARCHAR(45) NOT NULL,
     packageID   INT         NOT NULL,
+    CONSTRAINT PRIMARY KEY (productName, packageID),
     CONSTRAINT FOREIGN KEY (packageID) REFERENCES `ServicePackage` (id) ON DELETE CASCADE ON UPDATE CASCADE, -- PROPAGATION ???
     CONSTRAINT FOREIGN KEY (productName) REFERENCES OptionalProduct (name) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -151,6 +158,7 @@ CREATE TABLE SPS
 (
     packageID INT NOT NULL,
     serviceID INT NOT NULL,
+    CONSTRAINT PRIMARY KEY (packageID, serviceID),
     CONSTRAINT FOREIGN KEY (packageID) REFERENCES `ServicePackage` (id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT FOREIGN KEY (serviceID) REFERENCES Service (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
