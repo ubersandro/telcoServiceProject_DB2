@@ -15,7 +15,7 @@ CREATE TABLE Consumer
     username  VARCHAR(45) NOT NULL,
     email     VARCHAR(45) NOT NULL,
     password  VARCHAR(45) NOT NULL,
-    insolvent TINYINT     NOT NULL DEFAULT '0',
+    status TINYINT     NOT NULL DEFAULT '0',
     counter   INT         NOT NULL DEFAULT '0',
     PRIMARY KEY (`username`),
     CONSTRAINT nonNegCounter CHECK (counter >= 0)

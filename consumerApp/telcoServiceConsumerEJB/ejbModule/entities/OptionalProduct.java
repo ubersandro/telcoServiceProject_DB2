@@ -1,6 +1,7 @@
 package entities;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
  * The class models the entity OptionalProduct. 
@@ -9,7 +10,29 @@ import javax.persistence.Entity;
  * @author ubersandro
  *
  */
-@Entity 
+@Entity (name = "OptionalProduct")
 public class OptionalProduct {
+	@Id 
+	private String name; 
+	private double fee;
+	public OptionalProduct() {}
+	public OptionalProduct(String name, double fee) {
+		this.name = name;
+		this.fee = fee;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public double getFee() {
+		return fee;
+	}
+	public void setFee(double fee) {
+		this.fee = fee;
+	} 
+	
+	
 	
 }

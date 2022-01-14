@@ -1,0 +1,1 @@
+1) setters and getters ? Do I have to provide ALL the setters/getters ???? 

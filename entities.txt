@@ -1,0 +1,15 @@
+Consumer
+Employee
+ServicePackage 
+Service 
+MobilePhoneService
+FixedPhoneService
+MobileInternetService
+FixedInternetService
+Auditing 
+ServiceActivationSchedule
+Order
+ValidityPeriod 
+OptionalProduct 
+
+
