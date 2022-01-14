@@ -1,0 +1,11 @@
+SERVLETS 
+
+- doLogin 
+- goToBuyPage 
+- goToConfirmation
+- buy (purchase after confirmation)   
+- doRegistration 
+- goToHomePage (both for login and not logged user session)   
+- FILTER loginChecker 
+EJB 
+
