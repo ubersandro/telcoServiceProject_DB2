@@ -7,5 +7,35 @@ SERVLETS
 - doRegistration 
 - goToHomePage (both for login and not logged user session)   
 - FILTER loginChecker 
-EJB 
 
+EJB
+
+ConsumerService
+	- Consumer checkCredentials 
+	- void addNewConsumer //REGISTRATION 
+	- ListVPs findVPsFeeSP (ServicePackage sp) 
+	- findRejectedOrders ??????  
+
+		
+OrderService
+	- void addOrder(Consumer c, ServicePackage sp, List<OptionalProducts> ops, Calendar startingDate, ValidityPeriod vp, double totalValue)
+
+OptionalProductService  
+	- addOptionalProducts 
+	- findAllOptionalProducts 
+	- createOptionalProduct 
+ServiceService
+	-  addService () 
+
+
+SASService (?) 
+	- findAllServiceActivationSchedule ()  
+AuditingService
+	- getAutingTable .......... 
+
+
+
+ServicePackageService
+	- findAllServicePackages()  
+	- createServicePackage
+	

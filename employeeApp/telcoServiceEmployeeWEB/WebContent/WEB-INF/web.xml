@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://Java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+  <display-name>Db2_MissionExpensesWeb</display-name>
+<filter> 
+ <filter-name>LoginChecker</filter-name>
+ <filter-class>it.polimi.db2.missionexpenses.filters.LoggedIn</filter-class> 
+</filter> 
+ <filter-mapping> 
+    <filter-name>LoginChecker</filter-name> 
+    <url-pattern>/CloseMission</url-pattern> 
+    <url-pattern>/CreateExpenseReport</url-pattern> 
+    <url-pattern>/CreateExpenseReportWrong</url-pattern> 
+    <url-pattern>/CreateMission</url-pattern> 
+    <url-pattern>/DeleteMission</url-pattern> 
+    <url-pattern>/GetMissionDetails</url-pattern> 
+    <url-pattern>/Home</url-pattern> 
+    <url-pattern>/PropagationTester1Tx</url-pattern> 
+    <url-pattern>/PropagationTester2Tx</url-pattern>       
+    <url-pattern>/UpdateProfile</url-pattern> 
+    <url-pattern>/Logout</url-pattern>     
+ </filter-mapping> 
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+</web-app>
