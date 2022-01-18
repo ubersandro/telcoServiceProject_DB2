@@ -25,7 +25,7 @@ public class ConsumerService {
 	 * The method check whether or not a Consumer with the given username exists. 
 	 * If it exists, the password provided is checked to reassure it is the right password for the given user. 
 	 * If the password is right, it just returns the Consumer identified by the username. 
-	 * @param username
+	 * @param username	
 	 * @param password
 	 * @return
 	 * @throws Exception
@@ -40,17 +40,18 @@ public class ConsumerService {
 	/**
 	 * The method allows a user to register to the site.
 	 * If the username provived links to an already existing user, an exception is thrown. 
-	 * Otherwise, true is returned. @TODO tipo di ritorno ?  
+	 * Otherwise, true is returned. 
 	 * @param username
 	 * @param password
 	 * @param email
 	 * @return
 	 */
-	public boolean doRegistration(String username, String password, String email ) throws UserAlreadyExistentException {
-		if(em.find(Consumer.class,username)!=null) throw new UserAlreadyExistentException(); 
+	public void doRegistration(String username, String password, String email ) throws UserAlreadyExistentException {
+		if(em.find(Consumer.class,username)!=null)
+			throw new UserAlreadyExistentException(); 
 		Consumer consumer = new Consumer(username, email, password);
 		em.persist(consumer); 
-		return false; 
+		return ; 
 	}
 	
 	//check pending orders -> rejected orders 
