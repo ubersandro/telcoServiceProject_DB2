@@ -18,6 +18,9 @@ public class Consumer {
 	private String email;
 	private String password;
 
+	
+	
+	
 	public Consumer() {
 	}
 

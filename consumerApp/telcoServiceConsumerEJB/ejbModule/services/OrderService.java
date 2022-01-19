@@ -8,9 +8,11 @@ import javax.persistence.*;
 import entities.OptionalProduct ;
 import entities.Order;
 import entities.OrderStatus;
+import entities.ServiceActivationSchedule;
 import entities.Consumer; 
 import entities.ServicePackage;
 import entities.ValidityPeriod;
+import io.opentracing.tag.IntTag;
 
 @Stateless 
 public class OrderService {
@@ -30,18 +32,47 @@ public class OrderService {
 			double totalValue, ValidityPeriod vp) {
 		Date now = new Date();
 		Calendar today = Calendar.getInstance(); 
-		Order o = new Order (now, today, totalValue, startingDate, c, sp, vp, ops);
+		Order o = new Order ();
+		o.setTime(now);
+		o.setDate(today);
+		o.setStartingDate(startingDate);
+		o.setConsumer(c);
+		o.setIncludedOptionalProducts(ops);
+		o.setStatus(OrderStatus.NEWLY_CREATED); //payment not yet attempted 
+		o.setTotalValue(totalValue);
+		o.setServicePackage(sp);
 		em.persist(o); 
 	}
 	
-	public void markAsPaid(Order o) {
-		o.setStatus(OrderStatus.ACCEPTED);
-		em.merge(o); 
+	/**
+	 * Given the ID of an order, it marks it as paid (update) . 
+	 * TRIGGERS !!! 
+	 * @param orderID
+	 */
+	public void markAsPaid(int orderID) {
+		Order o = em.find(Order.class, orderID); //now managed 
+		o.setStatus(OrderStatus.ACCEPTED); 
+		//em.flush(); 
 	}
 	
-	public void markAsRejected(Order o) { //MIND THE TRIGGERS 
+	public void markAsRejected(int orderID) {
+		Order o = em.find(Order.class, orderID); 
 		o.setStatus(OrderStatus.REJECTED);
-		em.merge(o) ;
+		//em.flush();
+	}
+	
+	
+	
+	public Order findOrderByID (int id) {
+		return em.find(Order.class, id); //the returned object is managed ????
+	}
+	
+	//DEBUG - DEMO purposes only methods 
+	
+	public List<ServiceActivationSchedule> findAllSASchedules (){
+		return (List<ServiceActivationSchedule> ) 
+				em.createNamedQuery("ServiceActivationSchedule.findAll", 
+						ServiceActivationSchedule.class).getResultList(); 
 	}
 	
 		

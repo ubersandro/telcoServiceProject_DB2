@@ -11,8 +11,14 @@ import javax.persistence.*;
  *
  */
 
-@NamedQueries ({@NamedQuery (name = "Order.findRejectedOrdersByUserID",
-		query = "SELECT o FROM Order o WHERE o.consumer = :consumerID")}) //@TODO the status has to be REJECTED
+@NamedQueries (
+		/**
+		 * The following namedQuery takes two parameters (a consumer c and a status s). 
+		 * @author ubersandro
+		 *
+		 */
+		{@NamedQuery (name = "Order.findOrdersByUserAndStatus",
+		query = "SELECT o FROM Order o WHERE o.consumer = :consumer and o.status = :status")})  
 @Entity (name="Order")
 public class Order {
 	@Id 
@@ -53,9 +59,7 @@ public class Order {
 			inverseJoinColumns = @JoinColumn(name = "productName"))
 	private Collection<OptionalProduct> includedOptionalProducts;
 	
-	public Order() {
-		//STATUS -> NEWLY_CREATED 
-	}
+	public Order(){}
 
 	public int getId() {
 		return id;
@@ -148,7 +152,6 @@ public class Order {
 	public Order(Date time, Calendar date, double totalValue, Calendar startingDate,
 			Consumer consumer, ServicePackage servicePackage, ValidityPeriod validityPeriod,
 			Collection<OptionalProduct> includedOptionalProducts) {
-		super();
 		this.time = time;
 		this.date = date;
 		this.totalValue = totalValue;

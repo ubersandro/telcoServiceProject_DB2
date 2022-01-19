@@ -7,7 +7,10 @@ import javax.persistence.*;
  *	demo and debugging purposes. 
  * @author ubersandro
  */
-
+@NamedQueries( 
+		{@NamedQuery(name = "ServiceActivationSchedule.findAll", 
+					query = "Select s from ServiceActivationSchedule s")}
+		) 
 @Entity (name="ServiceActivationSchedule")
 public class ServiceActivationSchedule {
 	@Id 

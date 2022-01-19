@@ -5,7 +5,10 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.constraints.NotNull;
 
+import exceptions.NoSuchUserException;
+import exceptions.UserAlreadyExistentException;
 import exceptions.UserNotFoundException;
 import exceptions.WrongCredentialsException;	
 import entities.*; 
@@ -25,11 +28,12 @@ public class ConsumerService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Consumer checkCredentials(String username, String password ) throws WrongCredentialsException, UserNotFoundException{
-		Consumer consumer = em.find(Consumer.class, username);
-		if(consumer == null) throw new UserNotFoundException();
-		if(!consumer.getPassword().equalsIgnoreCase(password)) throw new WrongCredentialsException(); 
-		return consumer; 
+	public Consumer checkCredentials(String username, String password )
+			throws WrongCredentialsException, UserNotFoundException{	
+		Consumer c = em.find(Consumer.class, username);
+		if(c == null) throw new UserNotFoundException();
+		if(!c.getPassword().equalsIgnoreCase(password)) throw new WrongCredentialsException(); 
+		return c; //detached 
 	}
 	
 	/**
@@ -45,18 +49,27 @@ public class ConsumerService {
 		if(em.find(Consumer.class,username)!=null)
 			throw new UserAlreadyExistentException(); 
 		Consumer consumer = new Consumer(username, email, password);
-		em.persist(consumer); 
+		em.persist(consumer); //bound to be written to DB 
+		em.flush(); //so that changes are written ASAP 
 		return ; 
 	}
 	
+	
 	/**
-	 * Given an INSOLVENT client it returns the list of REJECTED Orders. 
-	 * If the client is solvent it just returns null.  
+	 * This method retrieves all the rejected orders for a given customer. 
+	 * If the user is INSOLVENT, then the result is a NON EMPTY list of REJECTED orders.
+	 * Otherwise it returns NULL. 
+	 * @precondition : such a Consumer has to exist -> checked into the method 
 	 * @param c
 	 * @return
 	 */
-	public List<Order> findRejectedOrders(Consumer c){
-		//if(c.getStatus().equals(UserStatus.INSOLVENT))
-		return null; 
+	public List<Order> findRejectedOrders(String consumer) throws NoSuchUserException{
+		Consumer c = em.find(Consumer.class, consumer); 
+		if(c==null) throw new NoSuchUserException("Rejected orders retrieval failed because there is no such user."); 
+		//using JPQL -> DATA COMING DIRECTLY from DB 
+		//This grants fresh data at each fetching. 
+		List<Order> l = (List<Order>) em.createNamedQuery("Oder.findOrdersByUserAndStatus", Order.class)
+				.setParameter("c", c).setParameter("s", OrderStatus.REJECTED).getResultList(); 
+		return l; 
 	}
 }
