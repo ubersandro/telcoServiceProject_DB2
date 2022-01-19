@@ -93,6 +93,17 @@ public class ServicePackage {
 		services.remove(s);
 	}
 	
+	public void setServices(List<Service> services) {
+		this.services = services;
+	}
+	
+	public void setOptionalProducts(List<OptionalProduct> optionalProducts) {
+		this.optionalProducts = optionalProducts;
+	}
+	
+	public void setCosts(Map<ValidityPeriod, Double> costs) {
+		this.costs = costs;
+	}
 	
 	public List<OptionalProduct> getOptionalProducts() {
 		return optionalProducts;
