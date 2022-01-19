@@ -32,7 +32,7 @@ public class ConsumerService {
 			throws WrongCredentialsException, UserNotFoundException{	
 		Consumer c = em.find(Consumer.class, username);
 		if(c == null) throw new UserNotFoundException();
-		if(!c.getPassword().equalsIgnoreCase(password)) throw new WrongCredentialsException(); 
+		if(!c.getPassword().equals(password)) throw new WrongCredentialsException(); 
 		return c; //detached 
 	}
 	

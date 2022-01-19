@@ -10,7 +10,10 @@ import javax.persistence.*;
 @Entity (name = "Service")
 @Inheritance (strategy = InheritanceType.JOINED)
 @DiscriminatorColumn (name = "serviceType", discriminatorType = DiscriminatorType.INTEGER)
-//NAMEDQUERY -> to retrieve all the services (@ServicePackage creation) 
+@NamedQueries(
+		{
+			@NamedQuery (name = "Service.findAll", query = "SELECT s FROM Service s")
+		})
 public class Service {
 	@Id @GeneratedValue (strategy = GenerationType.IDENTITY)
 	 private int id; 

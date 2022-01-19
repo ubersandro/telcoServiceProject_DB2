@@ -12,47 +12,72 @@ import entities.ServicePackage;
 import entities.ValidityPeriod;
 
 public class ServicePackageService {
-	@PersistenceContext(name = "telcoServiceEJB" )
+	@PersistenceContext(name = "telcoServiceEJB")
 	private EntityManager em;
-	
-	public ServicePackageService() {}
-	
+
+	public ServicePackageService() {
+	}
+
 	/**
 	 * The method allows to list all the service packages in the DBMS
+	 * 
 	 * @return
 	 */
-	public List<ServicePackage> findAllServicePackages(){	
-		
+	public List<ServicePackage> findAllServicePackages() {
+
 		@SuppressWarnings("unchecked")
-		List<ServicePackage> l =(List<ServicePackage>) em.createNamedQuery( "ServicePackage.findAll", ServicePackage.class );
+		List<ServicePackage> l = (List<ServicePackage>) em.createNamedQuery("ServicePackage.findAll",
+				ServicePackage.class);
 		return l;
-		
+
 	}
-	
+
 	/**
 	 * The method allows the employee to create a new service package
+	 * 
 	 * @param name
 	 * @param services
 	 * @param optionalProducts
 	 * @param costs
 	 * @return
 	 */
-	public ServicePackage createServicePackage (String name, List<Service> services, List<OptionalProduct> optionalProducts, Map<ValidityPeriod, Double> costs ) {
-		
+	public ServicePackage createServicePackage(String name, List<Service> services,
+			List<OptionalProduct> optionalProducts, Map<ValidityPeriod, Double> costs) {
+
 		ServicePackage sp = new ServicePackage();
-		
+
 		sp.setName(name);
 		sp.setServices(services);
 		sp.setOptionalProducts(optionalProducts);
 		sp.setCosts(costs);
-		
+
 		em.persist(sp);
-		
+
 		return sp;
+	}
+
+	public Map<ValidityPeriod, Double> findValidityPeriodsAndFees(int id) {
+		ServicePackage sp = em.find(ServicePackage.class, id); 
+		return sp.getCosts();  //@todo change to getFee 
+	}
+
 	
+	public ServicePackage findServicePackage(int id) {
+		ServicePackage sp = em.find(ServicePackage.class, id);
+		return sp;
+	}
+	
+	/**
+	 * Optional Products are lazily fetchced, once the given optional product is retrieved a transactional method 
+	 * is needed anyways to fetch optional products. 
+	 * @param servicePackageID
+	 * @return
+	 */
+	public List<OptionalProduct> findAssociableOptionalProducts(int servicePackageID){
+		ServicePackage sp = em.find(ServicePackage.class, servicePackageID); 
+		return sp.getOptionalProducts(); //associable optional products -> here DETACHED 
 	}
 	
 	
-
 
 }

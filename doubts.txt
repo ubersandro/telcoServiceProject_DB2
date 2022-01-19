@@ -1,1 +1,1 @@
-1) setters and getters ? Do I have to provide ALL the setters/getters ???? 
+1) @ServicePackage creation --> how are the Services visualized ?
