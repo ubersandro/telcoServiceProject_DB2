@@ -2,6 +2,8 @@ package entities;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 
 /**
  * The class models the entity OptionalProduct. 
@@ -11,6 +13,8 @@ import javax.persistence.Id;
  *
  */
 @Entity (name = "OptionalProduct")
+@NamedQueries({ @NamedQuery (name = "OptionalProduct.findAll", query = "SELECT ops FROM OptionalProduct ops")}) 
+
 public class OptionalProduct {
 	@Id 
 	private String name; 
