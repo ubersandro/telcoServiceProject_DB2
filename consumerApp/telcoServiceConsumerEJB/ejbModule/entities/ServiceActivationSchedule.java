@@ -12,12 +12,23 @@ import javax.persistence.*;
 public class ServiceActivationSchedule {
 	@Id 
 	private int orderID; 
-	
 	@Temporal(value = TemporalType.DATE)
 	private Calendar endDate; 
-	
-	@OneToOne @PrimaryKeyJoinColumn(name="orderID") //owner of the relationship 
+	@OneToOne @PrimaryKeyJoinColumn(name="orderID") 
 	private Order order ; 
+	
+	public Calendar getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Calendar endDate) {
+		this.endDate = endDate;
+	}
+
+	public void setOrderID(int orderID) {
+		this.orderID = orderID;
+	}
+
 	
 	public Order getOrder() {
 		return order;
@@ -28,7 +39,6 @@ public class ServiceActivationSchedule {
 		this.orderID = order.getId(); 
 		endDate = (Calendar) order.getStartingDate().clone();
 		endDate.add(Calendar.MONTH, order.getValidityPeriod().getMonths());	
-		
 	} 
 
 	public ServiceActivationSchedule() {
@@ -45,9 +55,6 @@ public class ServiceActivationSchedule {
 		return orderID;
 	}
 
-//	public void setOrderID(int id) {
-//		this.orderID = id;
-//	}
-//	
+
 	
 }

@@ -4,19 +4,11 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 
-/**
- * Class modeling the Consumer of the telco service. If the user is Insolvent ,
- * then a namedQuery has to be executed to fetch all the REJECTED orders
- * submitted by the specific insolvent user.
- * 
- * @author ubersandro
- *
- */
-enum UserStatus {
-	SOLVENT /* 0 */, INSOLVENT /* 1 */ 
-}
+
 @Entity (name ="Consumer")
+@NamedQuery(name = "Consumer.checkCredentials", query = "SELECT c FROM Consumer c  WHERE c.username = ?1 and c.password = ?2")  
 public class Consumer {
 	@Id
 	private String username;

@@ -1,25 +1,20 @@
 package services;
 
-import javax.ejb.EJB;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import com.mysql.cj.x.protobuf.MysqlxCrud.Find;
-
-import entities.Consumer;
 import exceptions.UserNotFoundException;
 import exceptions.WrongCredentialsException;	
-
+import entities.*; 
 @Stateless 
 public class ConsumerService { 
 	@PersistenceContext(name = "telcoServiceEJB")
 	private EntityManager em ; 
-	@EJB 
-	private OrderService orderService; 
 	
 	public ConsumerService () {}; 
-	
 	
 	/**
 	 * The method check whether or not a Consumer with the given username exists. 
@@ -54,5 +49,14 @@ public class ConsumerService {
 		return ; 
 	}
 	
-	//check pending orders -> rejected orders 
+	/**
+	 * Given an INSOLVENT client it returns the list of REJECTED Orders. 
+	 * If the client is solvent it just returns null.  
+	 * @param c
+	 * @return
+	 */
+	public List<Order> findRejectedOrders(Consumer c){
+		//if(c.getStatus().equals(UserStatus.INSOLVENT))
+		return null; 
+	}
 }
