@@ -29,6 +29,7 @@ public class ServicesUtils {
 				em.createNamedQuery("Service.findAll", //@todo check how to retrieve Service entities of the right type. 
 						Service.class).getResultList(); 
 	}
-	//4 different queries ? 
-		
+	//4 different queries ? 	
+	
+	
 }

@@ -7,8 +7,9 @@ import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 
 
-@Entity (name ="Consumer")
+
 @NamedQuery(name = "Consumer.checkCredentials", query = "SELECT c FROM Consumer c  WHERE c.username = ?1 and c.password = ?2")  
+@Entity (name ="Consumer")
 public class Consumer {
 	@Id
 	private String username;
