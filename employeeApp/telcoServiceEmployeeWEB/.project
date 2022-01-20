@@ -3,6 +3,7 @@
 	<name>telcoServiceEmployeeWEB</name>
 	<comment></comment>
 	<projects>
+		<project>telcoServiceEJB_v2</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

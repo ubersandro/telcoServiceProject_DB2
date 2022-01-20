@@ -51,7 +51,8 @@ CREATE TABLE OptionalProduct
 CREATE TABLE Service
 (
     id INT NOT NULL AUTO_INCREMENT,
-    PRIMARY KEY (id)
+    PRIMARY KEY (id),
+    DTYPE varchar(45)-- included to map inheritance
 );
 
 CREATE TABLE MobileInternetService

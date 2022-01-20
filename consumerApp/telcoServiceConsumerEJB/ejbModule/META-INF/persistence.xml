@@ -7,32 +7,24 @@
 		transaction-type="JTA">
 		<jta-data-source>telcoServiceDB</jta-data-source>
 		<class>entities.Auditing</class>
-		<class>entities.Order</class>
+		<class>entities.Consumer</class>
 		<class>entities.Employee</class>
 		<class>entities.FixedInternetService</class>
-		<class>entities.MobileInternetService</class>
 		<class>entities.FixedPhoneService</class>
+		<class>entities.MobileInternetService</class>
 		<class>entities.MobilePhoneService</class>
-		<class>entities.Consumer</class>
-		<class>entities.ServiceActivationSchedule</class>
-		<class>entities.ValidityPeriod</class>
-		<class>entities.Service</class>
 		<class>entities.OptionalProduct</class>
+		<class>entities.Order</class>
+		<class>entities.Service</class>
+		<class>entities.ServiceActivationSchedule</class>
 		<class>entities.ServicePackage</class>
+		<class>entities.ValidityPeriod</class>
 		
 		
-		
+		 <exclude-unlisted-classes>false</exclude-unlisted-classes>
 				
 		<properties>
 			<property name="eclipselink.logging.level" value="FINE" />
-			<property name="javax.persistence.jdbc.driver"
-				value="com.mysql.cj.jdbc.Driver" />
-			<property name="javax.persistence.jdbc.url"
-				value="jdbc:mysql://localhost:3306/telcoServiceDB" />
-			<property name="javax.persistence.jdbc.user"
-				value="uber2" />
-			<property name="javax.persistence.jdbc.password"
-				value="uber" />
 		</properties>
 
 	</persistence-unit>

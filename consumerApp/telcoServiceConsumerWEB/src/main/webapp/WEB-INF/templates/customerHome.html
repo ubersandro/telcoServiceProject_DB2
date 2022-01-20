@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Login page</title>
+</head>
+<body> 
+
+	<div align="right"> <!-- to be shown only if user is logged in -->
+		<a th:href="@{/Logout}">Logout</a>
+	</div>
+	<h1>Welcome to the Telco Service Home Page</h1>
+	<!-- IF the client is not logged this is not to be displayed -->
+	<p
+		th:text="${'Dear ' + session.user.name + ' ' + session.user.surname + 'these are all the Service Packages available' }" th:if=${session.user!=null}></p>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Package</th>
+				<th>ValidityPeriods</th>
+				<th>Details</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="m : ${missions}">
+				<td th:text="${m.destination}"></td>
+				<td th:text="${ m.date }"></td>
+				<td><a th:href="@{/GetMissionDetails(missionid=${m.id})}">Details</a></td>
+				<td><a th:href="@{/DeleteMission(missionid=${m.id})}">Delete</a></td>
+			</tr>
+		</tbody>
+	</table>
+
+</body>
+</html>
