@@ -15,10 +15,12 @@ import entities.*;
 import services.*;
 
 /**
- * This servlet manages the choice of optional products and validity period 
- * to associate with a given service package along with the starting date of the subscription. 
- * After choosing all the parameters, the user is redirected to a 
- * CONFIRMATION page which DISPLAYS ALL THE INFO about the purchase.
+ * This servlet presents the user with all the information circa the ServicePackage chosen. 
+ * ServicePackage infos are
+ * 							a) validity periods and respective fees 
+ * 							b) associable optional products 
+ * 							c) package name 
+ * 							d) services  					
  * @author ubersandro
  *
  */
@@ -32,9 +34,15 @@ public class GoToBuyPage extends HttpServlet{
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		//retrieve the package from the request
-		int packageID = 0 ; // TODO find a way to extract it from a request 
-		List<OptionalProduct> associableProducts = sps.findAssociableOptionalProducts(packageID);
-		
+				int packageID = 0 ; // TODO find a way to extract it from a request 
+				ServicePackage sp = sps.findServicePackage(packageID); 
+				String packageName = sp.getName(); 
+				
+				List<OptionalProduct> associableProducts = sps.findAssociableOptionalProducts(packageID);
+				
+				Map<ValidityPeriod, Double > costs = sp.getCosts(); //eagerly fetched 
+				
+				List<Service> services = sp.getServices(); // TODO diversification of Services 
 	}
 
 	@Override

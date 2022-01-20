@@ -3,6 +3,7 @@ package services;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -11,6 +12,7 @@ import entities.Service;
 import entities.ServicePackage;
 import entities.ValidityPeriod;
 
+@Stateless
 public class ServicePackageService {
 	@PersistenceContext(name = "telcoServiceEJB")
 	private EntityManager em;
@@ -24,10 +26,10 @@ public class ServicePackageService {
 	 * @return
 	 */
 	public List<ServicePackage> findAllServicePackages() {
-
-		@SuppressWarnings("unchecked")
-		List<ServicePackage> l = (List<ServicePackage>) em.createNamedQuery("ServicePackage.findAll",
-				ServicePackage.class);
+//		List<ServicePackage> l = (List<ServicePackage>) em.createNamedQuery("ServicePackage.findAll",
+//				ServicePackage.class).getResultList();
+		List<ServicePackage> l = (List<ServicePackage>) em.createQuery("SELECT s FROM ServicePackage s",
+				ServicePackage.class).getResultList();
 		return l;
 
 	}

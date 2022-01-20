@@ -19,10 +19,10 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import entities.*;
 import services.*;
 
-@WebServlet("/HomePage")
+@WebServlet("/GoToHomePage")
 public class GoToHomePage extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-	@EJB
+	@EJB(name = "services/ServicePackageService")
 	private ServicePackageService sps; 
 	
 	private TemplateEngine templateEngine; 
@@ -30,23 +30,23 @@ public class GoToHomePage extends HttpServlet{
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		//retrieve all the service packages 
-		List<ServicePackage> l = sps.findAllServicePackages();
-		//insert packages in the template (packages, services and validityPeriod
+		List<ServicePackage> l  = sps.findAllServicePackages(); //TODO fix named query not working
+		//insert packages in the template (packages, services and validityPeriod) 
+		String template = "HomePage";
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
+		ctx.setVariable("servicePackages", l);
+		templateEngine.process(template, ctx, resp.getWriter());
 		
-		//
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		super.doPost(req, resp);
+		doGet(req, resp); 
 	}
 
 	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-		super.destroy();
-	}
+	public void destroy() {}
 
 	@Override
 	public void init() throws ServletException {
@@ -56,6 +56,7 @@ public class GoToHomePage extends HttpServlet{
 		this.templateEngine = new TemplateEngine();
 		this.templateEngine.setTemplateResolver(templateResolver);
 		templateResolver.setSuffix(".html");
+		templateResolver.setPrefix("/WEB-INF/templates/"); // TODO check template resolution
 	}
 	
 }

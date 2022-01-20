@@ -53,7 +53,7 @@ public class DoLogin extends HttpServlet{
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale()); //setting the error message in the template 
 			ctx.setVariable("loginFailedMSG", "Login FAILED! Incorrect username or password");
-			path = "/index.html";
+			path = "/index.html"; //user still in the LandingPage
 			templateEngine.process(path, ctx, resp.getWriter());
 			e.printStackTrace();
 		}

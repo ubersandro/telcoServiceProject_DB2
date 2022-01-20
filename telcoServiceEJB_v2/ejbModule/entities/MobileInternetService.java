@@ -7,7 +7,7 @@ import javax.persistence.*;
  *
  */
 @Entity (name = "MobileInternetService")
-@DiscriminatorValue ("4")
+@DiscriminatorValue ("MIS")
 public class MobileInternetService extends Service {
 	private int gigabytes; 
 	private double fee; 

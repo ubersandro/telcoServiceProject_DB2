@@ -8,7 +8,7 @@ import javax.persistence.Entity;
  *
  */
 @Entity (name = "FixedPhoneService")
-@DiscriminatorValue ("1")
+@DiscriminatorValue ("FPS")
 public class FixedPhoneService extends Service{
 	
 }

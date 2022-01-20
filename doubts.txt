@@ -1,1 +1,42 @@
 1) @ServicePackage creation --> how are the Services visualized ?
+2) unificare Consumer e Employee -> al login, se le credenziali appartengono all'employee redirezionare ad employee home altrimenti 
+consumer home. 
+	per unificare -> unica tabella nel DB ? un employee non ha counter e flag di insolvenza -> soluzione, tabella a parte per user insolventi con numero di ordini falliti e poi il trigger per creare una voce di auditing table viene fatto partire da qui. 
+			
+			Nella servlet di login vengono controllate le credenziali per capire di che tipo di user si tratta 
+	con questa soluzione : 
+		non più due tabelle (Consumer, Employee) ma una	
+		una tabella in più (es. Accounting che include SOLO i clienti insolvent e tiene conto di ordini falliti per cliente)
+		se un cliente che si logga è dentro Accounting allora vengono mostrati gli ordini falliti. 
+ 		
+
+
+3) problema dei Services 
+	ogni service package deve contenere zero o un servizio per tipo 
+	SOLUZIONI 
+		a) tabella SPS tra entità Service e ServicePackage con BEFORE trigger all'inserimento nella tabella SPS 
+			PRO 
+			   - se c'è già un tipo di servizio in un ServicePackage lo becco e non faccio inserire l'altro     
+			   - ID distinti per i Servizi autogenerabili 
+					
+			CONTRO 
+			   - la tabella potrebbe contenere un sacco di entries ed il controllo del trigger potrebbe 
+				essere poco efficiente
+			   - è necessario interrogare il DB ogni volta che viene acquistato o visualizzato 
+				un ServicePackage perchè i suoi servizi sono di tipi diversi e bisogna conoscere il tipo concreto
+				(namedQuery possono aiutare ma non risolvono il problema di query su un gran numero di elementi) 				- tante namedQueries per ciascun sottoservizio al fine di arrivare, a partire dall'id del servizio primario al figlio ma in realtà sono solo 4 per ogni servicePackage
+		RIFLESSIONI 
+		- PER SEMPLIFICARE LA COSTRUZIONE DELLA VIEW introdurre un campo nome per ciascun sottoServizio 
+		b) 4 relazioni diverse 	   
+			PRO	
+				- ottenere tutti i servizi per un dato ServicePackage diventa TRIVIALE (relazioni oneToOne con getter e 				setter) 
+				- tuple nelle tre tabelle identificate dal servicePackage così posso associare al più un servizio di un					dato tipo con il ServicePackage in questione (BUONO perchè mi risparmio tutte le query del trigger e
+				le join che fa per capire di quale tipo è il servizio da inserire MA ci sono gli indici sulle chiavi pr					imarie, il guadagno non è poi così grande ).
+				- potrei rimuovere la tabella FixedPhone e trasformarla in un attributo del ServicePackage (???) 
+			CONTRO
+				- niente autogenerazione ID con mysql (SOLUZIONE bisogna assumere che gli id che saranno generati per 
+					ciascun tipo di servizio saranno distinti es. mettendo autogenerate tra 1000 e 2000 per uno, 
+					tra 2000 e 3000 per un altro ecc. ) 
+				- POCO ELEGANTE (e sti cazzi?) 
+				- 
+		

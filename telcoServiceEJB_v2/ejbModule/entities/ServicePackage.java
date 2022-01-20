@@ -11,8 +11,9 @@ import java.util.*;
  */
 
 @Entity (name="ServicePackage")
-@NamedQueries({ @NamedQuery (name = "ServicePackage.findAll", query = "SELECT s FROM ServicePackage s")}) 
-
+@Table(name = "ServicePackage", schema = "telcoServiceDB")
+@NamedQueries({ @NamedQuery (name = "ServicePackage.findAll", 
+		query = "SELECT s FROM ServicePackage s")}) 
 public class ServicePackage {
 	@Id @GeneratedValue (strategy = GenerationType.IDENTITY)
 	private int id; 
@@ -48,7 +49,7 @@ public class ServicePackage {
 	Since the relationship has one attribute (monthlyFee), an ElementCollection tag has to be used.
 	DIRECTION ServicePackage -> ValidityPeriod   
 	*/
-	@ElementCollection (fetch = FetchType.LAZY) //entity key element collection (no cascading, inverse and orphan removal) 
+	@ElementCollection (fetch = FetchType.EAGER) //entity key element collection (no cascading, inverse and orphan removal) 
 	@CollectionTable (name = "HasValidity", 
 			joinColumns = @JoinColumn(name = "packageID")) //this column holds the PK to the ServicePackage. 
 	@MapKeyJoinColumn (name = "validityMonths") //Specification of the column holding the PK of the ValidityPeriod entity used as an index in the map. 

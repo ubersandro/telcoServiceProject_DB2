@@ -8,7 +8,7 @@ import javax.persistence.*;
  */
 
 @Entity (name = "FixedInternetService")
-@DiscriminatorValue("3")
+@DiscriminatorValue("FIS")
 public class FixedInternetService extends Service{
 	private int gigabytes; 
 	private double fee; 
