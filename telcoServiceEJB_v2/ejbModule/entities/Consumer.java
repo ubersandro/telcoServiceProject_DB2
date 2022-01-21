@@ -27,6 +27,11 @@ public class Consumer implements Serializable{
 	
 	
 	
+	@Override
+	public String toString() {
+		return  username ;
+	}
+
 	public Consumer() {}
 
 	public Consumer(String username, String email, String password) { // registration parameters

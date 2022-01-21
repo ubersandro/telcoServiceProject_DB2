@@ -52,7 +52,7 @@ public class Order {
 	@ManyToMany (fetch = FetchType.LAZY) //check
 	@JoinTable (name="Includes", joinColumns = 
 			@JoinColumn(name = "orderID"), 
-			inverseJoinColumns = @JoinColumn(name = "productName"))
+			inverseJoinColumns = @JoinColumn(name = "productName"), schema ="telcoServiceDB")
 	private Collection<OptionalProduct> includedOptionalProducts;
 	
 	public Order(){}

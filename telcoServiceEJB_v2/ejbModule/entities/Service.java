@@ -13,7 +13,7 @@ import javax.persistence.*;
 		{
 			@NamedQuery (name = "Service.findAll", query = "SELECT s FROM Service s")
 		})
-@Table(schema="telcoServiceDB")
+@Table(name = "Service", 	schema="telcoServiceDB")
 public class Service {
 	@Id @GeneratedValue (strategy = GenerationType.IDENTITY)
 	 private int id; 

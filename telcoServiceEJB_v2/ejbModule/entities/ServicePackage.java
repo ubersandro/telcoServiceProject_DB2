@@ -28,7 +28,7 @@ public class ServicePackage {
 	@ManyToMany (fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST}) // ASSUMING THAT in the Home page services have to be displayed immediately
 	@JoinTable (name="SPS", joinColumns = 
 			@JoinColumn(name = "packageID"), //owner (according to this particular choice).  
-			inverseJoinColumns = @JoinColumn(name = "serviceID")) //service FATHER entity
+			inverseJoinColumns = @JoinColumn(name = "serviceID"), schema ="telcoServiceDB") //service FATHER entity
 	private List<Service> services ;
 	
 	
@@ -39,7 +39,7 @@ public class ServicePackage {
 	@ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)  
 	@JoinTable (name="Offers", joinColumns = 
 			@JoinColumn(name = "packageID"), //packageID is the owner of the relation according to this choice (no natural owner). 
-			inverseJoinColumns = @JoinColumn(name = "productName"))
+			inverseJoinColumns = @JoinColumn(name = "productName"),schema ="telcoServiceDB")
 	private List<OptionalProduct> optionalProducts;
 	
 	
@@ -51,7 +51,7 @@ public class ServicePackage {
 	*/
 	@ElementCollection (fetch = FetchType.EAGER) //entity key element collection (no cascading, inverse and orphan removal) 
 	@CollectionTable (name = "HasValidity", 
-			joinColumns = @JoinColumn(name = "packageID")) //this column holds the PK to the ServicePackage. 
+			joinColumns = @JoinColumn(name = "packageID"), schema = "telcoServiceDB") //this column holds the PK to the ServicePackage. 
 	@MapKeyJoinColumn (name = "validityMonths") //Specification of the column holding the PK of the ValidityPeriod entity used as an index in the map. 
 	@Column (name = "monthlyFee")
 	private Map<ValidityPeriod, Double> costs;  //CASCADE ? How do I specify Cascade.PERSIST

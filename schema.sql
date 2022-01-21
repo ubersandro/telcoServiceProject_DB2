@@ -40,6 +40,12 @@ CREATE TABLE ValidityPeriod
     CONSTRAINT allowedValues CHECK (months = 12 OR months = 24 OR months = 36)
 );
 
+-- only three values 
+LOCK TABLES ValidityPeriod WRITE; 
+INSERT INTO ValidityPeriod(months) VALUES (12),(24),(36); 
+UNLOCK TABLES; 
+
+
 CREATE TABLE OptionalProduct
 (
     name VARCHAR(45),
@@ -55,13 +61,14 @@ CREATE TABLE Service
     DTYPE varchar(45)-- included to map inheritance
 );
 
+
 CREATE TABLE MobileInternetService
 (
     id        INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id),
     gigabytes INT NOT NULL,
     fee       DECIMAL(8, 2) NOT NULL,
-    CONSTRAINT signConstraints CHECK (gigabytes >= 0 AND fee >= 0.00),
+    CONSTRAINT signConstraintsMIS CHECK (gigabytes >= 0 AND fee >= 0.00),
     CONSTRAINT FOREIGN KEY (id) REFERENCES Service (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
@@ -72,7 +79,7 @@ CREATE TABLE MobilePhoneService
     extraMinutesFee DECIMAL(8, 2),
     SMSs            INT NOT NULL,
     extraSMSsFee    DECIMAL(8, 2),
-    CONSTRAINT signConstraints CHECK (minutes >= 0 AND extraMinutesFee >= 0.00 AND
+    CONSTRAINT signConstraintsMPS CHECK (minutes >= 0 AND extraMinutesFee >= 0.00 AND
                                       SMSs >= 0 AND extraSMSsFee >= 0.00),
     PRIMARY KEY (id),
     CONSTRAINT FOREIGN KEY (id) REFERENCES Service (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -83,7 +90,7 @@ CREATE TABLE FixedInternetService
     id        INT NOT NULL AUTO_INCREMENT,
     gigabytes INT NOT NULL,
     fee       DECIMAL(8, 3),
-    CONSTRAINT signConstraints CHECK (gigabytes >= 0 AND fee >= 0.00),
+    CONSTRAINT signConstraintsMPS CHECK (gigabytes >= 0 AND fee >= 0.00),
     PRIMARY KEY (id),
     CONSTRAINT FOREIGN KEY (id) REFERENCES Service (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -101,6 +108,11 @@ CREATE TABLE ServicePackage
     name VARCHAR(45) NOT NULL,
     PRIMARY KEY (id)
 );
+
+LOCK TABLES ServicePackage WRITE; 
+
+INSERT INTO ServicePackage (name) VALUES ("SP1"), ("SP2"), ("SP3"); 
+UNLOCK TABLES; 
 
 -- NOTA : order status shouldn't be null. It should belong to {0,1,2].
 /** MEANING 0 : NEWLY_CREATED
@@ -170,7 +182,31 @@ CREATE TABLE ServiceActivationSchedule
     endDate DATE NOT NULL,
     orderID INT  NOT NULL,
     CONSTRAINT PRIMARY KEY (orderID),
-    CONSTRAINT FOREIGN KEY (orderID) REFERENCES `Order` (ID) ON DELETE CASCADE ON UPDATE CASCADE -- CAN AN ORDER BE DELETED ?
+    CONSTRAINT FOREIGN KEY (orderID) REFERENCES `Order` (ID) ON DELETE CASCADE ON UPDATE CASCADE
 );
+-- SALES REPORT PART OF THE SCHEMA 
+-- 1) purchasesPerPackage TABLE 
+-- 2) purchasesPerPackageVP TABLE -> 1) diventa non necessaria 
+-- 3) purchasesPerPackageW_WO_OptionalProducts
+-- 4) packageAvgOptProdsSoldTogether
+-- 5) insolvent users, suspended orders and alerts -> EJB, no table 
+-- 6) optionalProducts sales to choose the best selling one  
+
+
+
+
+
+-- TUPLE INSERTION 
+LOCK TABLES Consumer WRITE , Service WRITE , MobilePhoneService WRITE , FixedInternetService WRITE , FixedPhoneService WRITE; 
+
+INSERT INTO Consumer (username, email, password) VALUES ("a", "aa", "pw") ;
+INSERT INTO Service(DTYPE) VALUES ("MPS"),("FIS"), ("MIS"), ("FPS"); 
+
+INSERT INTO FixedPhoneService(id) VALUES (4);
+INSERT INTO FixedInternetService(id, gigabytes, fee ) VALUES (2, 10, 1.0);
+
+INSERT INTO SPS (packageID, serviceID) VALUES (1,4), (1,2); 
+
+UNLOCK TABLES; 
 
 

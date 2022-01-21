@@ -46,7 +46,7 @@ public class DoLogin extends HttpServlet{
 		String path;
 		try {
 			c = cs.checkCredentials(username, password);
-			req.getSession().setAttribute("user", c); // parameter set -> logged user is redirected home 
+			req.getSession().setAttribute("user", c); // binds a customer object to the session
 			path = getServletContext().getContextPath() + "/HomePage";
 			resp.sendRedirect(path);
 		} catch (WrongCredentialsException | UserNotFoundException e) {  

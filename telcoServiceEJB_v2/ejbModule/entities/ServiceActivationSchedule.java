@@ -12,7 +12,7 @@ import javax.persistence.*;
 					query = "Select s from ServiceActivationSchedule s")}
 		) 
 @Entity 
-@Table(schema="telcoServiceDB")
+@Table(name = "ServiceActivationSchedule" ,schema="telcoServiceDB")
 public class ServiceActivationSchedule {
 	@Id 
 	private int orderID; 

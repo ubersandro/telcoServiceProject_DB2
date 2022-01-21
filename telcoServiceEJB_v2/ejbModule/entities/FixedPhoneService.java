@@ -10,7 +10,7 @@ import javax.persistence.Table;
  */
 @Entity 
 @DiscriminatorValue ("FPS")
-@Table (schema = "telcoServiceDB")
+@Table (name = "FixedPhoneService", schema = "telcoServiceDB")
 public class FixedPhoneService extends Service{
 
 	@Override

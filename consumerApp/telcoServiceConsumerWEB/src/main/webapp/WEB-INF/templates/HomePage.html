@@ -7,17 +7,7 @@
 
 </head>
 <body>
-	
-	<div>
-	
-	<p align="right"> 
-  		<span th:text="${session.user != null}? 'Salve, {session.user.username}' : '(No user authenticated)'">Salve, Tizio Caio</span>
-	</p>
-	
-	</div>
-	<div align="right">
-		<a th:href="${session.user != null}? _:@{/Logout}">Logout</a>	
-	</div>
+	<div align="right" th:if="${session.containsKey('user')}" th:text="${session.user}">Ciao</div>
 	<h1>Welcome to the Telco Service Application Home Page</h1>
 	
 	<h1>Service packages list</h1>
@@ -26,6 +16,7 @@
       <tr>
         <th>Name</th>
         <th>Services</th>
+        <th>BUY</th>
       </tr>
       <tr th:each="sp : ${servicePackages}">
         <td th:text="${sp.name}">Family</td>
@@ -36,6 +27,8 @@
         </tr>
         </table>
         </td>
+        <td> <a th:href="@{/BuyPage}">BUY</a> </td>
+        
       </tr>
     </table>
   

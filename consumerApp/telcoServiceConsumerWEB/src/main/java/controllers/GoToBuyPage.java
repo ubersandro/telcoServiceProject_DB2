@@ -39,7 +39,7 @@ public class GoToBuyPage extends HttpServlet {
 	 * RESPONSE : servicePackage, services, optionalProducts, ValidityPeriods 
 	 */
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// retrieve the package from the request
 		int packageID = 0; // TODO find a way to extract it from a request 
 		ServicePackage sp = sps.findServicePackage(packageID);
@@ -59,6 +59,7 @@ public class GoToBuyPage extends HttpServlet {
 		templateEngine.process(template, ctx, resp.getWriter());
 	}
 
+	
 	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub

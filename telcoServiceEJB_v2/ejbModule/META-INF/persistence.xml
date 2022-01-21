@@ -21,7 +21,10 @@
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<properties>
 			<property name="eclipselink.logging.level" value="FINE" />
-			
+			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/telcoServiceDB"/>
+        <property name="javax.persistence.jdbc.user" value="uber2"/>
+        <property name="javax.persistence.jdbc.password" value="uber"/>
+        <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
 		</properties>
 	</persistence-unit>
 

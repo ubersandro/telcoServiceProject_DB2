@@ -8,7 +8,7 @@ import javax.persistence.*;
  */
 @Entity
 @DiscriminatorValue ("MPS")
-@Table(schema="telcoServiceDB")
+@Table(name = "MobilePhoneService", schema="telcoServiceDB")
 public class MobilePhoneService extends Service{
 	private int minutes; 
 	private double extraMinutesFee;

@@ -20,7 +20,7 @@ import controllers.utils.ServletUtils;
 import entities.*;
 import services.*;
 
-@WebServlet("/GoToHomePage")
+@WebServlet("/HomePage")
 public class GoToHomePage extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	@EJB
