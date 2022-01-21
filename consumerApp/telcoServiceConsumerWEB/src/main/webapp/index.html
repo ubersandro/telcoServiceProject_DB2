@@ -2,39 +2,49 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="ISO-8859-1">
+<link rel="stylesheet" type="text/css" href="./css/mystyle.css"/>
 <title>Login page</title>
 </head>
 <body>
-	<h1>Welcome to the Telco Service Consumer Application</h1>
+	<h1>Welcome to the TELCO Service Consumer Application</h1>
 
 	<form action="DoLogin" method="POST">
-		Username: <input type="text" name="loginUsername" required> <br>
-		Password: <input type="password" name="loginPassword" required><br>
-		<input type="submit" value="Login">
-		<p th:text=" ${loginFailedMSG}"></p>
+		<div class="container">
+			<label for="uuname"><b>Username</b></label> <input type="text"
+				placeholder="Enter Username" name="loginUsername" required>
+
+			<label for="uupsw"><b>Password</b></label> <input type="password"
+				placeholder="Enter Password" name="loginPassword" required>
+
+			<button type="submit" value="login">Login</button>
+			<p th:text=" ${loginFailedMSG}"></p>
+		</div>
 	</form>
-
-	<br>
-	<br>
-
+	<h3>
+		Don't have an account? Register form below
+	</h3>
+	
 	<form action="DoRegistration" method="POST">
-		Email : <input type="email" name="regEmail" required> <br>
-		Username: <input type="text" name="regUsername" required> <br>
-		Password: <input type="password" name="regPassword" required><br>
-		<input type="submit" value="Sign up">
-		<p th:text=" ${regFailedMSG}"></p>
-	</form>
+		<div class="container">
+			<label for="uuname"><b>E-Mail</b></label> <input type="text"
+				placeholder="Enter email" name="regEmail" required>
+			
+			<label for="uuname"><b>Username</b></label> <input type="text"
+				placeholder="Enter Username" name="regUsername" required>
 
-	<br>
-	<br>
+			<label for="uupsw"><b>Password</b></label> <input type="password"
+				placeholder="Enter Password" name="regPassword" required>
 
-	<form action="GoToHomePage" method="GET">
-		<input type="submit" value="Take me to HOME PAGE">
+			<button type="submit" value="Sign up">Sign up</button>
+			<p th:text=" ${regFailedMSG}"></p>
+		</div>
 	</form>
 	
-	<form action="DoServiceTest" method="GET">
-		<input type="submit" value="TEST">
+	<form action="GoToHomePage" method="GET">
+		<button type="submit" value="Take me to HOME PAGE">HomePage</button>
 	</form>
+	
+	
 
 </body>
 </html>
