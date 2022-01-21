@@ -14,7 +14,7 @@ import entities.ValidityPeriod;
 
 @Stateless
 public class ServicePackageService {
-	@PersistenceContext(unitName = "telcoServiceEJB")
+	@PersistenceContext(unitName = "telcoServiceEJB_v2")
 	private EntityManager em;
 
 	public ServicePackageService() {

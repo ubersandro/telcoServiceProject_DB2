@@ -10,8 +10,7 @@ import java.util.*;
  *
  */
 
-@Entity (name="ServicePackage")
-@Table(name = "ServicePackage", schema = "telcoServiceDB")
+@Entity
 @NamedQueries({ @NamedQuery (name = "ServicePackage.findAll", 
 		query = "SELECT s FROM ServicePackage s")}) 
 public class ServicePackage {

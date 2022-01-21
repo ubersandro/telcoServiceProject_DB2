@@ -10,7 +10,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 
-@Entity (name = "Auditing")
+@Entity
 public class Auditing {
 	@Id 
 	private String username; 

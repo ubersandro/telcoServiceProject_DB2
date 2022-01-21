@@ -12,7 +12,7 @@ import javax.persistence.NamedQuery;
  * @author ubersandro
  *
  */
-@Entity (name = "OptionalProduct")
+@Entity
 @NamedQueries({ @NamedQuery (name = "OptionalProduct.findAll", query = "SELECT ops FROM OptionalProduct ops")}) 
 
 public class OptionalProduct {

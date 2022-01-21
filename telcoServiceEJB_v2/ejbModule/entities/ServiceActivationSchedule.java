@@ -11,14 +11,14 @@ import javax.persistence.*;
 		{@NamedQuery(name = "ServiceActivationSchedule.findAll", 
 					query = "Select s from ServiceActivationSchedule s")}
 		) 
-@Entity (name="ServiceActivationSchedule")
+@Entity 
 public class ServiceActivationSchedule {
 	@Id 
 	private int orderID; 
 	@Temporal(value = TemporalType.DATE)
 	private Calendar endDate; 
 	@OneToOne @PrimaryKeyJoinColumn(name="orderID") 
-	private Order order ; 
+	private OrderObject order ; 
 	
 	public Calendar getEndDate() {
 		return endDate;
@@ -33,11 +33,11 @@ public class ServiceActivationSchedule {
 	}
 
 	
-	public Order getOrder() {
+	public OrderObject getOrder() {
 		return order;
 	}
 
-	public void setOrder(Order order) {
+	public void setOrder(OrderObject order) {
 		this.order = order; 
 		this.orderID = order.getId(); 
 		endDate = (Calendar) order.getStartingDate().clone();
@@ -47,7 +47,7 @@ public class ServiceActivationSchedule {
 	public ServiceActivationSchedule() {
 	}
 	
-	public ServiceActivationSchedule (Order o) {
+	public ServiceActivationSchedule (OrderObject o) {
 		orderID = o.getId(); 
 		order = o; 
 		endDate = (Calendar) o.getStartingDate().clone();

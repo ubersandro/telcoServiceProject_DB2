@@ -6,7 +6,7 @@ import javax.ejb.Stateless;
 import javax.persistence.*;
 
 import entities.OptionalProduct ;
-import entities.Order;
+import entities.OrderObject;
 import entities.OrderStatus;
 import entities.Service;
 import entities.ServiceActivationSchedule;
@@ -21,7 +21,7 @@ import io.opentracing.tag.IntTag;
  */
 @Stateless 
 public class ServicesUtils {
-	@PersistenceContext(unitName = "telcoServiceEJB")
+	@PersistenceContext(unitName = "telcoServiceEJB_v2")
 	private EntityManager em ; 
 	
 	public List<Service> findAllServices(){

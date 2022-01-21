@@ -6,7 +6,7 @@ import javax.persistence.*;
  * @author ubersandro
  *
  */
-@Entity (name = "MobilePhoneService")
+@Entity
 @DiscriminatorValue ("MPS")
 public class MobilePhoneService extends Service{
 	private int minutes; 

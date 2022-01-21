@@ -18,9 +18,9 @@ import javax.persistence.*;
 		 *
 		 */
 		{@NamedQuery (name = "Order.findOrdersByUserAndStatus",
-		query = "SELECT o FROM Order o WHERE o.consumer = :consumer and o.status = :status")})  
-@Entity (name="Order")
-public class Order {
+		query = "SELECT o FROM OrderObject o WHERE o.consumer = :consumer and o.status = :status")})  
+@Entity 
+public class OrderObject {
 	@Id 
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private int id; 
@@ -59,7 +59,7 @@ public class Order {
 			inverseJoinColumns = @JoinColumn(name = "productName"))
 	private Collection<OptionalProduct> includedOptionalProducts;
 	
-	public Order(){}
+	public OrderObject(){}
 
 	public int getId() {
 		return id;
@@ -149,7 +149,7 @@ public class Order {
 		this.includedOptionalProducts = includedOptionalProducts;
 	}
 
-	public Order(Date time, Calendar date, double totalValue, Calendar startingDate,
+	public OrderObject(Date time, Calendar date, double totalValue, Calendar startingDate,
 			Consumer consumer, ServicePackage servicePackage, ValidityPeriod validityPeriod,
 			Collection<OptionalProduct> includedOptionalProducts) {
 		this.time = time;

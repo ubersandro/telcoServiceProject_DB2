@@ -6,7 +6,7 @@ import javax.ejb.Stateless;
 import javax.persistence.*;
 
 import entities.OptionalProduct ;
-import entities.Order;
+import entities.OrderObject;
 import entities.OrderStatus;
 import entities.ServiceActivationSchedule;
 import entities.Consumer; 
@@ -16,7 +16,7 @@ import io.opentracing.tag.IntTag;
 
 @Stateless 
 public class OrderService {
-	@PersistenceContext(unitName = "telcoServiceEJB")
+	@PersistenceContext(unitName = "telcoServiceEJB_v2")
 	private EntityManager em ; 
 	
 	/**
@@ -32,7 +32,7 @@ public class OrderService {
 			double totalValue, ValidityPeriod vp) {
 		Date now = new Date();
 		Calendar today = Calendar.getInstance(); 
-		Order o = new Order ();
+		OrderObject o = new OrderObject ();
 		o.setTime(now);
 		o.setDate(today);
 		o.setStartingDate(startingDate);
@@ -50,21 +50,21 @@ public class OrderService {
 	 * @param orderID
 	 */
 	public void markAsPaid(int orderID) {
-		Order o = em.find(Order.class, orderID); //now managed 
+		OrderObject o = em.find(OrderObject.class, orderID); //now managed 
 		o.setStatus(OrderStatus.ACCEPTED); 
 		//em.flush(); 
 	}
 	
 	public void markAsRejected(int orderID) {
-		Order o = em.find(Order.class, orderID); 
+		OrderObject o = em.find(OrderObject.class, orderID); 
 		o.setStatus(OrderStatus.REJECTED);
 		//em.flush();
 	}
 	
 	
 	
-	public Order findOrderByID (int id) {
-		return em.find(Order.class, id); //the returned object is managed ????
+	public OrderObject findOrderByID (int id) {
+		return em.find(OrderObject.class, id); //the returned object is managed ????
 	}
 	
 	//DEBUG - DEMO purposes only methods 

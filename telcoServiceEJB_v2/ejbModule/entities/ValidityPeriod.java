@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 
 
-@Entity (name = "ValidityPeriod")
+@Entity 
 public class ValidityPeriod {
 	/*
 	 *MANYTOONE side of relationship between ValidityPeriod and ServicePackage can be omitted because 

@@ -8,7 +8,6 @@ import javax.persistence.*;
  *
  */
 @Entity 
-@Table(name = "Service")
 @Inheritance (strategy = InheritanceType.JOINED)
 @NamedQueries(
 		{

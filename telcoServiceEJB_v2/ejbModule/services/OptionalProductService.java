@@ -8,7 +8,7 @@ import javax.persistence.PersistenceContext;
 import entities.OptionalProduct;
 
 public class OptionalProductService {
-	@PersistenceContext(unitName =  "telcoServiceEJB")
+	@PersistenceContext(unitName =  "telcoServiceEJB_v2")
 	private EntityManager em;
 
 	public OptionalProductService() {

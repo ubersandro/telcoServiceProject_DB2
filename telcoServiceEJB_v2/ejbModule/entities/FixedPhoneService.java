@@ -7,7 +7,7 @@ import javax.persistence.Entity;
  * @author ubersandro
  *
  */
-@Entity (name = "FixedPhoneService")
+@Entity 
 @DiscriminatorValue ("FPS")
 public class FixedPhoneService extends Service{
 	
