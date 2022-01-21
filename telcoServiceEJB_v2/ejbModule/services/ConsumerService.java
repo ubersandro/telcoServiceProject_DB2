@@ -11,7 +11,7 @@ import entities.*;
 
 @Stateless 
 public class ConsumerService { 
-	@PersistenceContext(name = "telcoServiceEJB")
+	@PersistenceContext(unitName = "telcoServiceEJB")
 	private EntityManager em ; 
 	
 	public ConsumerService () {}; 

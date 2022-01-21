@@ -16,7 +16,7 @@ import io.opentracing.tag.IntTag;
 
 @Stateless 
 public class OrderService {
-	@PersistenceContext(name = "telcoServiceEJB")
+	@PersistenceContext(unitName = "telcoServiceEJB")
 	private EntityManager em ; 
 	
 	/**

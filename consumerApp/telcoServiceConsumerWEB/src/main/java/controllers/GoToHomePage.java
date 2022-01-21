@@ -22,7 +22,8 @@ import services.*;
 @WebServlet("/GoToHomePage")
 public class GoToHomePage extends HttpServlet{
 	private static final long serialVersionUID = 1L;
-	@EJB(name = "services/ServicePackageService")
+//	@EJB(name = "services/ServicePackageService")
+	@EJB
 	private ServicePackageService sps; 
 	
 	private TemplateEngine templateEngine; 

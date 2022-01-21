@@ -22,8 +22,9 @@ import services.*;
 @WebServlet ("/DoServiceTest")
 public class DoServiceTest extends HttpServlet{
 	
-	@EJB  (name ="services.OrderService")
+	@EJB  
 	private OrderService os;  
+	
 	@EJB 
 	private ServicePackageService sps; 
 	@EJB

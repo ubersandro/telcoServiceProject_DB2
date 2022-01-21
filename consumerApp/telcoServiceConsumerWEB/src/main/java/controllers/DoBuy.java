@@ -22,7 +22,7 @@ import services.*;
 @WebServlet ("/BuyPage")
 public class DoBuy extends HttpServlet{
 	
-	@EJB  (name ="services.OrderService")
+	@EJB  
 	private OrderService os;  
 	@EJB 
 	private ServicePackageService sps; 

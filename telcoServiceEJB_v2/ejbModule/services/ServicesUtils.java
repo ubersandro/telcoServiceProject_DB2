@@ -21,7 +21,7 @@ import io.opentracing.tag.IntTag;
  */
 @Stateless 
 public class ServicesUtils {
-	@PersistenceContext(name = "telcoServiceEJB")
+	@PersistenceContext(unitName = "telcoServiceEJB")
 	private EntityManager em ; 
 	
 	public List<Service> findAllServices(){

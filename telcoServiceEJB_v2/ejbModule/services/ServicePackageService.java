@@ -1,6 +1,6 @@
 package services;
 
-import java.util.List;
+import java.util.*;
 import java.util.Map;
 
 import javax.ejb.Stateless;
@@ -14,21 +14,19 @@ import entities.ValidityPeriod;
 
 @Stateless
 public class ServicePackageService {
-	@PersistenceContext(name = "telcoServiceEJB")
+	@PersistenceContext(unitName = "telcoServiceEJB")
 	private EntityManager em;
 
 	public ServicePackageService() {
 	}
 
 	/**
-	 * The method allows to list all the service packages in the DBMS
+	 * The method allows to list all the service packages in the DB
 	 * 
 	 * @return
 	 */
 	public List<ServicePackage> findAllServicePackages() {
-//		List<ServicePackage> l = (List<ServicePackage>) em.createNamedQuery("ServicePackage.findAll",
-//				ServicePackage.class).getResultList();
-		List<ServicePackage> l = (List<ServicePackage>) em.createQuery("SELECT s FROM ServicePackage s",
+		List<ServicePackage> l = (List<ServicePackage>) em.createNamedQuery("ServicePackage.findAll",
 				ServicePackage.class).getResultList();
 		return l;
 
@@ -60,7 +58,7 @@ public class ServicePackageService {
 
 	public Map<ValidityPeriod, Double> findValidityPeriodsAndFees(int id) {
 		ServicePackage sp = em.find(ServicePackage.class, id); 
-		return sp.getCosts();  //@todo change to getFee 
+		return sp.getCosts();  //TODO change to getFee 
 	}
 
 	
