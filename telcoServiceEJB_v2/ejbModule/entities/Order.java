@@ -12,15 +12,11 @@ import javax.persistence.*;
  */
 
 @NamedQueries (
-		/**
-		 * The following namedQuery takes two parameters (a consumer c and a status s). 
-		 * @author ubersandro
-		 *
-		 */
 		{@NamedQuery (name = "Order.findOrdersByUserAndStatus",
-		query = "SELECT o FROM OrderObject o WHERE o.consumer = :consumer and o.status = :status")})  
+		query = "SELECT o FROM Order o WHERE o.consumer = :consumer and o.status = :status")})  
 @Entity 
-public class OrderObject {
+@Table (name = "Order", schema = "telcoServiceDB")
+public class Order {
 	@Id 
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private int id; 
@@ -59,7 +55,7 @@ public class OrderObject {
 			inverseJoinColumns = @JoinColumn(name = "productName"))
 	private Collection<OptionalProduct> includedOptionalProducts;
 	
-	public OrderObject(){}
+	public Order(){}
 
 	public int getId() {
 		return id;
@@ -149,7 +145,7 @@ public class OrderObject {
 		this.includedOptionalProducts = includedOptionalProducts;
 	}
 
-	public OrderObject(Date time, Calendar date, double totalValue, Calendar startingDate,
+	public Order(Date time, Calendar date, double totalValue, Calendar startingDate,
 			Consumer consumer, ServicePackage servicePackage, ValidityPeriod validityPeriod,
 			Collection<OptionalProduct> includedOptionalProducts) {
 		this.time = time;

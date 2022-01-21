@@ -13,7 +13,7 @@
 		<class>entities.MobileInternetService</class>
 		<class>entities.MobilePhoneService</class>
 		<class>entities.OptionalProduct</class>
-		<class>entities.OrderObject</class>
+		<class>entities.Order</class>
 		<class>entities.Service</class>
 		<class>entities.ServiceActivationSchedule</class>
 		<class>entities.ServicePackage</class>

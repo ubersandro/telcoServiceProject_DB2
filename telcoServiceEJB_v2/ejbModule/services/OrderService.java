@@ -6,7 +6,7 @@ import javax.ejb.Stateless;
 import javax.persistence.*;
 
 import entities.OptionalProduct ;
-import entities.OrderObject;
+import entities.Order;
 import entities.OrderStatus;
 import entities.ServiceActivationSchedule;
 import entities.Consumer; 
@@ -28,11 +28,11 @@ public class OrderService {
 	 * @param totalValue
 	 * @param vp
 	 */
-	public OrderObject addOrder(Consumer c, ServicePackage sp, List<OptionalProduct> ops, Calendar startingDate, 
+	public Order addOrder(Consumer c, ServicePackage sp, List<OptionalProduct> ops, Calendar startingDate, 
 			double totalValue, ValidityPeriod vp) {
 		Date now = new Date();
 		Calendar today = Calendar.getInstance(); 
-		OrderObject o = new OrderObject ();
+		Order o = new Order ();
 		o.setTime(now);
 		o.setDate(today);
 		o.setStartingDate(startingDate);
@@ -51,21 +51,21 @@ public class OrderService {
 	 * @param orderID
 	 */
 	public void markAsPaid(int orderID) {
-		OrderObject o = em.find(OrderObject.class, orderID); //now managed 
+		Order o = em.find(Order.class, orderID); //now managed 
 		o.setStatus(OrderStatus.ACCEPTED); 
 		//em.flush(); 
 	}
 	
 	public void markAsRejected(int orderID) {
-		OrderObject o = em.find(OrderObject.class, orderID); 
+		Order o = em.find(Order.class, orderID); 
 		o.setStatus(OrderStatus.REJECTED);
 		//em.flush();
 	}
 	
 	
 	
-	public OrderObject findOrderByID (int id) {
-		return em.find(OrderObject.class, id); //the returned object is managed ????
+	public Order findOrderByID (int id) {
+		return em.find(Order.class, id); //the returned object is managed ????
 	}
 	
 	//DEBUG - DEMO purposes only methods 

@@ -7,11 +7,13 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 
 
 @NamedQuery(name = "Consumer.checkCredentials", query = "SELECT c FROM Consumer c  WHERE c.username = ?1 and c.password = ?2")  
 @Entity 
+@Table (name = "Consumer", schema = "telcoServiceDB")
 public class Consumer implements Serializable{
 	private static final long serialVersionUID = -6191241543634746489L;
 	@Id

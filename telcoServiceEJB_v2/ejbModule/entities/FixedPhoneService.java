@@ -2,6 +2,7 @@ package entities;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
  * @author ubersandro
@@ -9,6 +10,7 @@ import javax.persistence.Entity;
  */
 @Entity 
 @DiscriminatorValue ("FPS")
+@Table (schema = "telcoServiceDB")
 public class FixedPhoneService extends Service{
 
 	@Override

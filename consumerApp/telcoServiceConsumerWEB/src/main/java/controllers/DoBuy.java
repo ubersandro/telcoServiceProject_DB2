@@ -64,7 +64,7 @@ public class DoBuy extends HttpServlet{
 		Consumer consumer = (Consumer) req.getSession().getAttribute("user");
 		
 		//order is created and written to DB 
-		OrderObject o = os.addOrder(consumer, servicePackage, products, startingDate, packageID, validityPeriod); 
+		Order o = os.addOrder(consumer, servicePackage, products, startingDate, packageID, validityPeriod); 
 		// payment attempt 
 		boolean orderAccepted = new Random().nextBoolean(); // PAYMENT SIMULATION 
 		if(orderAccepted) {

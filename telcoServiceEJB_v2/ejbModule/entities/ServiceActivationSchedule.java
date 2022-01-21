@@ -12,13 +12,14 @@ import javax.persistence.*;
 					query = "Select s from ServiceActivationSchedule s")}
 		) 
 @Entity 
+@Table(schema="telcoServiceDB")
 public class ServiceActivationSchedule {
 	@Id 
 	private int orderID; 
 	@Temporal(value = TemporalType.DATE)
 	private Calendar endDate; 
 	@OneToOne @PrimaryKeyJoinColumn(name="orderID") 
-	private OrderObject order ; 
+	private Order order ; 
 	
 	public Calendar getEndDate() {
 		return endDate;
@@ -33,11 +34,11 @@ public class ServiceActivationSchedule {
 	}
 
 	
-	public OrderObject getOrder() {
+	public Order getOrder() {
 		return order;
 	}
 
-	public void setOrder(OrderObject order) {
+	public void setOrder(Order order) {
 		this.order = order; 
 		this.orderID = order.getId(); 
 		endDate = (Calendar) order.getStartingDate().clone();
@@ -47,7 +48,7 @@ public class ServiceActivationSchedule {
 	public ServiceActivationSchedule() {
 	}
 	
-	public ServiceActivationSchedule (OrderObject o) {
+	public ServiceActivationSchedule (Order o) {
 		orderID = o.getId(); 
 		order = o; 
 		endDate = (Calendar) o.getStartingDate().clone();

@@ -9,6 +9,7 @@ import javax.persistence.*;
  *
  */
 @Entity
+@Table (name = "Employee", schema = "telcoServiceDB")
 public class Employee {
 	@Id
 	private String username;

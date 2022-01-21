@@ -2,9 +2,11 @@ package entities;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 
 @Entity 
+@Table(schema="telcoServiceDB")
 public class ValidityPeriod {
 	/*
 	 *MANYTOONE side of relationship between ValidityPeriod and ServicePackage can be omitted because 

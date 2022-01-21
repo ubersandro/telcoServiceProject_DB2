@@ -13,6 +13,7 @@ import java.util.*;
 @Entity
 @NamedQueries({ @NamedQuery (name = "ServicePackage.findAll", 
 		query = "SELECT s FROM ServicePackage s")}) 
+@Table (name = "ServicePackage", schema = "telcoServiceDB")
 public class ServicePackage {
 	@Id @GeneratedValue (strategy = GenerationType.IDENTITY)
 	private int id; 

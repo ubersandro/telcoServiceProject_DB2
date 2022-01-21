@@ -60,12 +60,12 @@ public class ConsumerService {
 	 * @param c
 	 * @return
 	 */
-	public List<OrderObject> findRejectedOrders(String consumer) throws NoSuchUserException{
+	public List<Order> findRejectedOrders(String consumer) throws NoSuchUserException{
 		Consumer c = em.find(Consumer.class, consumer); 
 		if(c==null) throw new NoSuchUserException("Rejected orders retrieval failed because there is no such user."); 
 		//using JPQL -> DATA COMING DIRECTLY from DB 
 		//This grants fresh data at each fetching. 
-		List<OrderObject> l = (List<OrderObject>) em.createNamedQuery("Oder.findOrdersByUserAndStatus", OrderObject.class)
+		List<Order> l = (List<Order>) em.createNamedQuery("Oder.findOrdersByUserAndStatus", Order.class)
 				.setParameter("c", c).setParameter("s", OrderStatus.REJECTED).getResultList(); 
 		return l; 
 	}

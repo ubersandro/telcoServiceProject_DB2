@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 /**
  * The class models the entity OptionalProduct. 
@@ -14,7 +15,7 @@ import javax.persistence.NamedQuery;
  */
 @Entity
 @NamedQueries({ @NamedQuery (name = "OptionalProduct.findAll", query = "SELECT ops FROM OptionalProduct ops")}) 
-
+@Table(schema="telcoServiceDB")
 public class OptionalProduct {
 	@Id 
 	private String name; 

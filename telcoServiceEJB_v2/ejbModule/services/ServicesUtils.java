@@ -6,7 +6,7 @@ import javax.ejb.Stateless;
 import javax.persistence.*;
 
 import entities.OptionalProduct ;
-import entities.OrderObject;
+import entities.Order;
 import entities.OrderStatus;
 import entities.Service;
 import entities.ServiceActivationSchedule;

@@ -8,6 +8,7 @@ import javax.persistence.*;
  */
 @Entity 
 @DiscriminatorValue ("MIS")
+@Table(schema="telcoServiceDB")
 public class MobileInternetService extends Service {
 	private int gigabytes; 
 	private double fee; 

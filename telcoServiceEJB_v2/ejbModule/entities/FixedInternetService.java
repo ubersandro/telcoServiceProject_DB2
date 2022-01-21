@@ -9,6 +9,7 @@ import javax.persistence.*;
 
 @Entity 
 @DiscriminatorValue("FIS")
+@Table (name = "FixedInternetService", schema = "telcoServiceDB")
 public class FixedInternetService extends Service{
 	private int gigabytes; 
 	private double fee; 
