@@ -28,7 +28,7 @@ public class OrderService {
 	 * @param totalValue
 	 * @param vp
 	 */
-	public void addOrder(Consumer c, ServicePackage sp, List<OptionalProduct> ops, Calendar startingDate, 
+	public OrderObject addOrder(Consumer c, ServicePackage sp, List<OptionalProduct> ops, Calendar startingDate, 
 			double totalValue, ValidityPeriod vp) {
 		Date now = new Date();
 		Calendar today = Calendar.getInstance(); 
@@ -42,6 +42,7 @@ public class OrderService {
 		o.setTotalValue(totalValue);
 		o.setServicePackage(sp);
 		em.persist(o); 
+		return o; //return the detached object 
 	}
 	
 	/**

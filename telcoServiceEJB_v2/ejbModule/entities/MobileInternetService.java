@@ -20,6 +20,11 @@ public class MobileInternetService extends Service {
 		this.fee = fee;
 	}
 	
+	@Override
+	public String toString() {
+		return "MobileInternetService [gigabytes=" + gigabytes + ", fee=" + fee + "]";
+	}
+
 	public int getGigabytes() {
 		return gigabytes;
 	}

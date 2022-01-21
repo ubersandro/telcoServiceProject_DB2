@@ -35,7 +35,7 @@ public class GoToHomePage extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		//retrieve all the service packages 
 		List<ServicePackage> l  = sps.findAllServicePackages(); //TODO fix named query not working
-		//insert packages in the template (packages, services and validityPeriod) 
+		//insert packages in the template (packages, services and validityPeriod) TODO check how to retrieve parameters
 		String template = "HomePage";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());

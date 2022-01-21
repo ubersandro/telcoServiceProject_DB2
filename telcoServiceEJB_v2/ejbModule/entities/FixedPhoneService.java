@@ -10,5 +10,11 @@ import javax.persistence.Entity;
 @Entity 
 @DiscriminatorValue ("FPS")
 public class FixedPhoneService extends Service{
+
+	@Override
+	public String toString() {
+		return "FixedPhoneService []";
+	}
 	
 }
+ 

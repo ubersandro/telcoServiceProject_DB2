@@ -33,5 +33,10 @@ public class FixedInternetService extends Service{
 	public void setFee(double fee) {
 		this.fee = fee;
 	}
+
+	@Override
+	public String toString() {
+		return "FixedInternetService [gigabytes=" + gigabytes + ", fee=" + fee + "]";
+	}
 	
 }

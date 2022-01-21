@@ -19,6 +19,11 @@ public class MobilePhoneService extends Service{
 		return minutes;
 	}
 
+	@Override
+	public String toString() {
+		return "MobilePhoneService [minutes=" + minutes + ", extraMinutesFee=" + extraMinutesFee + ", SMSs=" + SMSs
+				+ ", extraSMSsFee=" + extraSMSsFee + "]";
+	}
 	public void setMinutes(int minutes) {
 		this.minutes = minutes;
 	}
