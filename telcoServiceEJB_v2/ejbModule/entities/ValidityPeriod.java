@@ -1,5 +1,7 @@
 package entities;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -7,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity 
 @Table(name = "ValidityPeriod", schema="telcoServiceDB")
-public class ValidityPeriod {
+public class ValidityPeriod implements Serializable {
 	/*
 	 *MANYTOONE side of relationship between ValidityPeriod and ServicePackage can be omitted because 
 	 *no access from a given validityPeriod to its associated ServicePackages is done in the application. 

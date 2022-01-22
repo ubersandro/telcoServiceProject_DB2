@@ -35,21 +35,28 @@ public class GoToConfirmationPage extends HttpServlet{
 		//info retrieval 
 		HttpSession session = req.getSession(); 
 		ServicePackage sp = (ServicePackage) session.getAttribute("servicePackage");
-		java.util.List<OptionalProduct> chosenOpts = null; // TODO retrieve 
+		java.util.List<OptionalProduct> chosenOpts = null; // TODO retrieve chosenOptionalProducts
 		ValidityPeriod chosenVP = (ValidityPeriod) session.getAttribute("chosenValidityPeriod"); // TODO check how to include a VP into a request 
-		
+		//total value computation 
+		int monthsOfSubscription = chosenVP.getMonths(); 
+		double servicePackageMonthlyFee = sp.getCosts().get(chosenVP);  
+		double totalFeeOptionalProducts = 0D; 
+		for(OptionalProduct op : chosenOpts) 
+			totalFeeOptionalProducts+=op.getFee(); 
+		double totalValue = (servicePackageMonthlyFee + totalFeeOptionalProducts)*monthsOfSubscription; 
 		ServletContext servletContext = this.getServletContext(); 
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-		ctx.setVariable("servicePackage", sp);
-		ctx.setVariable("optionalProducts", chosenOpts);
-		ctx.setVariable("validityPeriod", chosenVP);
-		ctx.setVariable("startingDate", ctx);
+		ctx.setVariable("servicePackage", sp); 
+		ctx.setVariable("chosenOptionalProducts", chosenOpts);
+		ctx.setVariable("chosenValidityPeriod", chosenVP);
+		ctx.setVariable("chosenStartingDate", ctx);
+		ctx.setVariable("totalValue", totalValue);
 		String templatePath = "ConfirmationPage"; 
 		templateEngine.process(templatePath, ctx); 
 	}
-	 
+	
 	@Override
 	public void init() throws ServletException {
-		templateEngine = ServletUtils.initHelper(this); 
+		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); 
 	}
 }

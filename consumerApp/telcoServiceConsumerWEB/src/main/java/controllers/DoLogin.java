@@ -15,11 +15,12 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import controllers.utils.ServletUtils;
 import exceptions.*;
 import services.*;
 import entities.*;
 
-@WebServlet ("/DoLogin")
+@WebServlet ("/Login")
 public class DoLogin extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	@EJB
@@ -29,12 +30,7 @@ public class DoLogin extends HttpServlet{
 	public DoLogin() {}
 
 	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
+		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); 
 	}
 	
 	@Override

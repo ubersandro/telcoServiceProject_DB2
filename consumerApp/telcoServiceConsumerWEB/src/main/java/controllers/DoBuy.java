@@ -40,7 +40,7 @@ public class DoBuy extends HttpServlet{
 
 	@Override
 	public void init() throws ServletException {
-		templateEngine = ServletUtils.initHelper(this); 
+		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); 
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -63,9 +63,9 @@ public class DoBuy extends HttpServlet{
 		List<OptionalProduct> products = null; // TODO retrieve products (list ??? JSON???) 
 		ValidityPeriod validityPeriod= null; // TODO retrieve from request 
 		Consumer consumer = (Consumer) req.getSession().getAttribute("user");
-		
+		double totalValue = Double.parseDouble(req.getParameter("totalValue")); 
 		//order is created and written to DB 
-		Order o = os.addOrder(consumer, servicePackage, products, startingDate, packageID, validityPeriod); 
+		Order o = os.addOrder(consumer, servicePackage, products, startingDate, totalValue, validityPeriod); 
 		// payment attempt 
 		boolean orderAccepted = new Random().nextBoolean(); // PAYMENT SIMULATION -> call a service
 		if(orderAccepted) {

@@ -2,6 +2,7 @@ package entities;
 import javax.persistence.*;
 import javax.ws.rs.client.CompletionStageRxInvoker;
 
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -14,7 +15,11 @@ import java.util.*;
 @NamedQueries({ @NamedQuery (name = "ServicePackage.findAll", 
 		query = "SELECT s FROM ServicePackage s")}) 
 @Table (name = "ServicePackage", schema = "telcoServiceDB")
-public class ServicePackage {
+public class ServicePackage implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id @GeneratedValue (strategy = GenerationType.IDENTITY)
 	private int id; 
 	private String name; 

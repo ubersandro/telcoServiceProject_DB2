@@ -43,28 +43,25 @@ public class GoToBuyPage extends HttpServlet {
 		// retrieve the package from the request
 		Integer packageID = Integer.parseInt(req.getParameter("pid")); 
 		ServicePackage sp = sps.findServicePackage(packageID);
-		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID); 
+		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID); // TODO insert method on object 
 		
 		//template parameters insertion  
 		String template = "BuyPage"; 
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
 		ctx.setVariable("servicePackage", sp); //String representation with services included 
-		ctx.setVariable("optionalProducts", opts); 
+		ctx.setVariable("associableOptionalProducts", opts); 
 		// TODO what about validity periods ? 
 		templateEngine.process(template, ctx, resp.getWriter());
 	}
 
 	
 	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-		super.destroy();
-	}
+	public void destroy() {}
 
 	@Override
 	public void init() throws ServletException {
-		templateEngine = ServletUtils.initHelper(this); 
+		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); 
 	}
 
 }

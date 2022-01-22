@@ -1,4 +1,5 @@
 package entities;
+import java.io.Serializable;
 import java.util.Calendar;
 import javax.persistence.*;
 
@@ -13,7 +14,11 @@ import javax.persistence.*;
 		) 
 @Entity 
 @Table(name = "ServiceActivationSchedule" ,schema="telcoServiceDB")
-public class ServiceActivationSchedule {
+public class ServiceActivationSchedule implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id 
 	private int orderID; 
 	@Temporal(value = TemporalType.DATE)

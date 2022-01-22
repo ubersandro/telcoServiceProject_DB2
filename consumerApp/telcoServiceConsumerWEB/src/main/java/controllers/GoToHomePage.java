@@ -60,7 +60,7 @@ public class GoToHomePage extends HttpServlet{
 //		this.templateEngine.setTemplateResolver(templateResolver);
 //		templateResolver.setSuffix(".html");
 //		templateResolver.setPrefix("/WEB-INF/templates/"); 
-		templateEngine = ServletUtils.initHelper(this); // TODO check if it works 
+		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); 
 	}
 	
 }
