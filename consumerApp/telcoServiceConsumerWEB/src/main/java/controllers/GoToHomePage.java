@@ -28,9 +28,6 @@ public class GoToHomePage extends HttpServlet{
 	
 	private TemplateEngine templateEngine; 
 	
-	/**
-	 * THYMELEAF servicePackages (list of sp) 
-	 */
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		//retrieve all the service packages 
@@ -53,14 +50,7 @@ public class GoToHomePage extends HttpServlet{
 
 	@Override
 	public void init() throws ServletException {
-//		ServletContext servletContext = getServletContext();
-//		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-//		templateResolver.setTemplateMode(TemplateMode.HTML);
-//		this.templateEngine = new TemplateEngine();
-//		this.templateEngine.setTemplateResolver(templateResolver);
-//		templateResolver.setSuffix(".html");
-//		templateResolver.setPrefix("/WEB-INF/templates/"); 
-		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); 
+		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); //templates root 
 	}
 	
 }

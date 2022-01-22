@@ -26,6 +26,9 @@ public class GoToEmployeeHome extends HttpServlet {
 	@EJB
 	private ServicePackageService sps; 
 	
+	/**
+	 * After the login the object session.user contains an Employee object. 
+	 */
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// retrieve all the service packages

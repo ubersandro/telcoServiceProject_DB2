@@ -33,6 +33,10 @@ public class DoLogin extends HttpServlet{
 		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); 
 	}
 	
+	/**
+	 * TODO implements class UserService with method whatTypeIsIt(username) which tells whether a User is an Employee or a Consumer.
+	 * TODO include employee login 
+	 */
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) 
 			throws ServletException, IOException {
@@ -45,7 +49,7 @@ public class DoLogin extends HttpServlet{
 			req.getSession().setAttribute("user", c); // binds a customer object to the session
 			path = getServletContext().getContextPath() + "/HomePage";
 			resp.sendRedirect(path);
-		} catch (WrongCredentialsException | UserNotFoundException e) {  
+		} catch (WrongCredentialsException | UserNotFoundException e) {  	
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale()); //setting the error message in the template 
 			ctx.setVariable("loginFailedMSG", "Login FAILED! Incorrect username or password");
@@ -53,10 +57,8 @@ public class DoLogin extends HttpServlet{
 			templateEngine.process(path, ctx, resp.getWriter());
 			e.printStackTrace();
 		}
-			
 	}//doPost
 	
 	@Override
-	public void destroy() {}
-	
+	public void destroy() {}	
 }

@@ -10,9 +10,9 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 public final class ServletUtils {
 	private ServletUtils() {} 
 	/**
-	 * 
-	 * @param s
-	 * @param subFolder : something like "WEB-INF/templates/"
+	 * HTML mode template engine initializer. 
+	 * @param s HttpServlet whose templateEngine has to be initialized. 
+	 * @param subFolder : something like "WEB-INF/templates/" where templates can be found. 
 	 * @return
 	 */
 	public static TemplateEngine initHelper (HttpServlet s, String subFolder) {
