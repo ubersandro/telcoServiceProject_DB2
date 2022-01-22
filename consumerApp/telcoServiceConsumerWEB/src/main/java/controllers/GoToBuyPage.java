@@ -43,7 +43,7 @@ public class GoToBuyPage extends HttpServlet {
 		// retrieve the package from the request
 		Integer packageID = Integer.parseInt(req.getParameter("pid")); 
 		ServicePackage sp = sps.findServicePackage(packageID);
-		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID);
+		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID); 
 		
 		//template parameters insertion  
 		String template = "BuyPage"; 

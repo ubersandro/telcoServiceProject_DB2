@@ -1,32 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="ISO-8859-1">Family
-<title>Service Package buy page</title>
+<meta charset="ISO-8859-1">
+<title>Buy Page</title>
 </head>
-<body> 
-<h1 th:text =" Buy the service package ${servicePackage.name}">Buy the service package Family</h1>
-<div>
-	 <form name="optionalProducts" id="form1" action="/action_page.php">
- 
-  Optional products : <select name="subject" id="subject">
-    <option value="	" selected="selected">Select optional products</option>
-  </select>
-  <br><br>
- 
-  Validity Period : <select name="chapter" id="chapter">
-    <option value="" selected="selected"> Select one validity period</option>
-  </select>
- 
-  <br><br>
- 
-  <label for="startingDate">Starting date :</label>
-  <input type="date" id="startingDate" name="Starting date">
- 
-  <br> <br> 
-  <input type="submit" value="Confirmation" th:action ="@{/Confirmation}" th:method="POST" >
-  	 <!-- TODO check -->
-</form> 
-</div>
+<body>
+	<!-- optionalProducts, servicePackage -->
+	<h1>BUY SERVICE PACKAGE</h1>
+
+	<div>
+		<form name="optionalProducts" id="form1">
+
+			Optional products : <select name="subject" id="subject">
+				<option value="	" selected="selected">Select optional
+					products</option>
+			</select> <br>
+			
+			OPT TEST : <select th:field="*{type}">
+  				<option th:each="type : ${allTypes}"  th:value="${type}" 
+          	th:text="#{${'seedstarter.type.' + type}}">Wireframe</option>
+			</select>
+			
+			<br> Validity Period : <select name="validityPeriodSelection" id="vpSel">
+				<option value="" selected="selected">Select one validity
+					period</option>
+			</select> <br> 
+			
+			<label for="startingDate">Starting date :</label> <input
+				type="date" id="startingDate" name="Starting date"> <br>
+			<br> <input type="submit" value="Confirmation"
+				th:action="@{/Confirmation}" th:method="POST">
+		</form>
+	</div>
 </body>
 </html>
