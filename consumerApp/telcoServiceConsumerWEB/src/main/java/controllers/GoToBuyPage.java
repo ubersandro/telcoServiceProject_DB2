@@ -45,12 +45,30 @@ public class GoToBuyPage extends HttpServlet {
 		ServicePackage sp = sps.findServicePackage(packageID);
 		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID);
 		
+		
+		//
+		//
+		OptionalProduct a = new OptionalProduct("op1", 2.1);
+		OptionalProduct b = new OptionalProduct("op2", 2.2);
+		OptionalProduct c = new OptionalProduct("op3", 2.3);
+		OptionalProduct d = new OptionalProduct("op4", 2.4);
+		OptionalProduct e = new OptionalProduct("op5", 2.5);
+		
+		opts.add(a);
+		opts.add(b);
+		opts.add(c);
+		opts.add(d);
+		opts.add(e);
+		//
+		//
+		
+		
 		//template parameters insertion  
 		String template = "BuyPage"; 
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
 		ctx.setVariable("servicePackage", sp); //String representation with services included 
-		ctx.setVariable("optionalProducts", opts); 
+		ctx.setVariable("associableOptionalProducts", opts); 
 		// TODO what about validity periods ? 
 		templateEngine.process(template, ctx, resp.getWriter());
 	}
