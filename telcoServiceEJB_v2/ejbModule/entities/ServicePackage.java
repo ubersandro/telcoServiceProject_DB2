@@ -16,9 +16,6 @@ import java.util.*;
 		query = "SELECT s FROM ServicePackage s")}) 
 @Table (name = "ServicePackage", schema = "telcoServiceDB")
 public class ServicePackage implements Serializable {
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	@Id @GeneratedValue (strategy = GenerationType.IDENTITY)
 	private int id; 
@@ -134,6 +131,7 @@ public class ServicePackage implements Serializable {
 	public void removeCost(ValidityPeriod vp) {
 		costs.remove(vp);
 	}
+	
 
 	
 		

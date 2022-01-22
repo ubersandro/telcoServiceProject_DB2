@@ -1,8 +1,11 @@
 package controllers;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
+import javax.ejb.EJB;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,6 +30,10 @@ import entities.*;
 public class GoToConfirmationPage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
+	@EJB
+	private ServicePackageService sps;
+	@EJB
+	private OptionalProductService optServ;
 
 	/**
 	 * When provided package, optional products, starting date, and validity period
@@ -34,27 +41,47 @@ public class GoToConfirmationPage extends HttpServlet {
 	 */
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// info retrieval
-		HttpSession session = req.getSession();
-		ServicePackage sp = (ServicePackage) session.getAttribute("servicePackage");
-		java.util.List<OptionalProduct> chosenOpts = null; // TODO retrieve chosenOptionalProducts
-		ValidityPeriod chosenVP = (ValidityPeriod) session.getAttribute("chosenValidityPeriod"); 																		// a request
-		Calendar startingDate = (Calendar) session.getAttribute("chosenStartingDate");
+		// info retrieval from request 
+		int packageID = Integer.parseInt(req.getParameter("servicePackageID")); 
+		String[] chosenOptsKeys = req.getParameterValues("optionalProduct");
+		String startingDateString = req.getParameter("startingDate");
+		int validityPeriodKEY = Integer.parseInt(req.getParameter("validityPeriod")); //MONTHS OF SUBSCRIPTION
 
+		// object retrieval
+		ServicePackage servicePackage = sps.findServicePackage(packageID);
+
+		List<OptionalProduct> chosenOptionalProducts = new LinkedList<OptionalProduct>();
+		for (String prodName : chosenOptsKeys)
+			chosenOptionalProducts.add(optServ.findOptionalProductByName(prodName));
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date date;
+		Calendar startingDate = Calendar.getInstance(); // TODO refactor!
+		try {
+			date = sdf.parse(startingDateString);
+			startingDate = Calendar.getInstance();
+			startingDate.setTime(date);
+		} catch (ParseException e) {
+			// TODO manage wrong date format ... CHECK AFTER TODAY, FORMAT ECC. 
+		}
+
+		ValidityPeriod chosenVP = new ValidityPeriod(validityPeriodKEY); // TODO correct it
+		int monthsOfSubscription = validityPeriodKEY; // to be clear 
+		
 		// total value computation
-		int monthsOfSubscription = chosenVP.getMonths();
-		double servicePackageMonthlyFee = sp.getCosts().get(chosenVP);
+		double servicePackageMonthlyFee = servicePackage.getCosts().get(chosenVP);
 		double totalFeeOptionalProducts = 0D;
-		for (OptionalProduct op : chosenOpts)
+		for (OptionalProduct op : chosenOptionalProducts)
 			totalFeeOptionalProducts += op.getFee();
 		double totalValue = (servicePackageMonthlyFee + totalFeeOptionalProducts) * monthsOfSubscription;
+		//redirection to confirmation page
 		ServletContext servletContext = this.getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-		ctx.setVariable("servicePackage", sp);
-		ctx.setVariable("chosenOptionalProducts", chosenOpts);
-		ctx.setVariable("chosenValidityPeriod", chosenVP);
+		ctx.setVariable("servicePackage", servicePackage);
+		ctx.setVariable("chosenOptionalProducts", chosenOptionalProducts);
+		ctx.setVariable("chosenValidityPeriod", chosenVP); //TODO months could be put here instead...
 		ctx.setVariable("chosenStartingDate", startingDate);
-		ctx.setVariable("totalValue", totalValue); 
+		ctx.setVariable("totalValue", totalValue);
 		String templatePath = "Confirmation";
 		templateEngine.process(templatePath, ctx);
 	}
