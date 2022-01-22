@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
+<title>Order Rejected Page</title>
+</head>
+<body>
+	
+	<h1>Confirm your order</h1>
+	<h2>
+	<span th:text="|We are sorry, the order has been rejected.
+	Order ID: ${orderID}|">We are sorry, the order has been rejected.
+	Order ID: 312</span>
+    </h2>
+    
+    <form action="HomePage" method="GET">
+		<button type="submit" value="Take me to HOME PAGE">HomePage</button>
+	</form>
+	
+
+</body>
+</html>

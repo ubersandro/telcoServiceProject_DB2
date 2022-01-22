@@ -3,40 +3,34 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Home</title>
-<link rel="stylesheet" type="text/css" href="./css/mystyle.css"/>
+<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
 
 </head>
 <body>
-	<div align="right" th:if="${session.containsKey('user')}" th:text="${session.user}">Ciao</div>
+	<div align="right" th:if="${session.containsKey('user')}"
+		th:text="${session.user}">Tizio</div>
 	<h1>Welcome to the Telco Service Application Home Page</h1>
-	
+
 	<h1>Service packages list</h1>
-  
-    <table>
-      <tr>
-        <th>Name</th>
-        <th>Services</th>
-        <th>BUY</th>
-      </tr>
-      <tr th:each="sp : ${servicePackages}">
-        <td th:text="${sp.name}">Family</td>
-        <td>
-        <table>
-        <tr th:each="s : ${sp.getServices()}">
-        <td th:text="${s.toString()}">Fixed Phone Service</td>
-        </tr>
-        </table>
-        </td>
-        <td> <a th:href="@{/BuyPage(pid=${sp.id})}">BUY</a> </td>
-        
-      </tr>
-    </table>
-  
-    <p>
-	
-	
 
-
-	
+	<table>
+		<tr>
+			<th>Name</th>
+			<th>Services</th>
+			<th>BUY</th>
+		</tr>
+		<tr th:each="sp : ${servicePackages}">
+			<td th:text="${sp.name}">Family</td>
+			<td>
+				<table>
+					<tr th:each="s : ${sp.getServices()}">
+						<td th:text="${s.toString()}">Fixed Phone Service</td>
+					</tr>
+				</table>
+			</td>
+			<td><a th:href="@{/BuyPage(pid=${sp.id})}">BUY</a></td>
+		</tr>
+	</table>
+	<p th:text=" ${orderSuccededMSG}"></p>
 </body>
 </html>

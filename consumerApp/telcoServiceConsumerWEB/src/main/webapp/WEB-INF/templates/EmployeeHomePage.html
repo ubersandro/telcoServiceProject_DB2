@@ -1,1 +1,31 @@
 <!-- LIST OF SERVICEPACKAGES servicePackages AND BUTTONS (/OptionalProductCreationPage and /ServicePackageCreationPage) -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>HomeEmployee</title>
+<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
+
+</head>
+<body>
+	<div align="right" th:if="${session.containsKey('user')}"
+		th:text="${session.user}">Tizio</div>
+	<h1>Employee page</h1>
+
+	<h1>Service packages list</h1>
+
+	<table>
+		<tr>
+			<th>Name</th>
+			<th>Services</th>
+		</tr>
+		<tr th:each="sp : ${servicePackages}">
+			<td th:text="${sp.name}">Family</td>
+			<td>
+				<table>
+					<tr th:each="s : ${sp.getServices()}">
+						<td th:text="${s.toString()}">Fixed Phone Service</td>
+				</table>
+	</table>
+</body>
+</html>

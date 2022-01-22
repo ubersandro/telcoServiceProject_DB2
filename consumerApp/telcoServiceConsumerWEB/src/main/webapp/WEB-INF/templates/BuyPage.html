@@ -2,49 +2,47 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="ISO-8859-1">
-<link rel="stylesheet" type="text/css" href="./css/mystyle.css"/>
+<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
 
 <title>Buy page</title>
 </head>
-<body> 
+<body>
 
-<h1>Buy the service package</h1>
+	<h1>Buy the service package</h1>
 
-<div>
-	 <form name="optionalProducts" id="form1" action="@{/Confirmation}">
- 
-  Optional products : <select th:field="ops">
-	<option disabled>Select an optional product here</option>
-	<option value="" selected>Select an optional product here</option>
-    <option th:each="ops : ${associableOptionalProducts}" th:value="${ops.name}" th:text="${ops.name}"></option>
-  </select>
-  <br><br>
-  
-<!-- <div> -->
-<!--     <label for="uops" th:text="#{associableOptionalProducts}"></label> -->
-<!--     <div> -->
-<!--         <select th:field="${associableOptionalProducts}"> -->
-<!--             <option th:each="ops : ${associableOptionalProducts}" -->
-<!--                     th:text="${ops.name}" -->
-<!--                     th:value="${ops.name}"> -->
-<!--         </select> -->
-<!--     </div> -->
-<!-- </div> -->
- 
-  Validity Period : <select name="chapter" id="chapter">
-    <option value="" selected="selected"> Select one validity period</option>
-  </select>
- 
-  <br><br>
- 
-  <label for="startingDate">Starting date :</label>
-  <input type="date" id="startingDate" name="Starting date">
- 
-  <br> <br> 
-  <button type="submit" value="Confirmation" th:action ="@{/Confirmation}" th:method="POST" >Submit</button>
-  	 <!-- TODO check -->
-</form> 
-</div>
+
+	<form name="optionalProducts" id="form1" action="@{/Confirmation}">
+
+
+		<table>
+			<tr>
+				<th>Optional product</th>
+				<th>Select</th>
+
+			</tr>
+			<tr th:each="op : ${associableOptionalProducts}">
+				<td th:text="${op.name}">op1</td>
+				<td><input type="checkbox" th:field="${op}"
+					name="optionalProduct" th:value="${op.name}" /></td>
+			</tr>
+		</table>
+
+		<br>
+		<br> Validity Period : <select th:field="vp"
+			name="validityPeriod">
+			<option disabled>Select a validity period for the package</option>
+			<option th:each="vp : ${servicePackage.costs.keySet()}"
+				th:value="${vp.months}"
+				th:text="|${vp.months} months -> ${servicePackage.costs.get(vp)} $/month|">12
+				months -> 10.43 $/month</option>
+		</select> <br>
+		<br> <label for="startingDate">Starting date :</label> <input
+			type="date" id="startingDate" name="startingDate"> <br>
+		<br>
+		<button type="submit" value="Confirmation"
+			th:action="@{/Confirmation}" th:method="POST">Submit</button>
+		<!-- TODO check -->
+	</form>
 
 </body>
 </html>

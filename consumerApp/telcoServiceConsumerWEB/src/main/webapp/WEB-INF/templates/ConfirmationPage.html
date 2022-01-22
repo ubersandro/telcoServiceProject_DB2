@@ -3,3 +3,36 @@
 <!-- 		ctx.setVariable("chosenValidityPeriod", chosenVP); -->
 <!-- 		ctx.setVariable("chosenStartingDate", ctx); -->
 <!-- 		ctx.setVariable("totalValue", ctx); -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
+
+<title>Confirmation Page</title>
+</head>
+<body>
+
+	<h1>Confirm your order</h1>
+
+	<h2>Summary of the order</h2>
+
+	<div th:object="${servicePackage}">
+		<table>
+			<tr>
+				<th>Optional product(s)</th>
+			</tr>
+			<tr th:each="op : ${chosenOptionalProducts}">
+				<td th:text="${op.name}">op1</td>
+			</tr>
+		</table>
+		<p>
+			Validity period: <span th:text="${chosenValidityPeriod}">12</span>
+		</p>
+		<p>
+			Starting date: <span th:text="${chosenStartingDate}">2020-11-25</span>
+		</p>
+	</div>	
+</body>
+</html>
