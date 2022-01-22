@@ -37,7 +37,7 @@ public class DoRegistration extends HttpServlet {
 			cs.doRegistration(username, password, email); // TODO rename method to addUser
 			ctx.setVariable("regOKMSG", "The registration went fine!");
 		} catch (UserAlreadyExistentException e) { // registration failed
-			ctx.setVariable("regOKMSG", "The registration went fine!");
+			ctx.setVariable("regOKMSG", "You were not able to create an account!");
 		} finally { // either ways
 			templateEngine.process(template, ctx, resp.getWriter());
 		}

@@ -34,42 +34,19 @@ public class GoToBuyPage extends HttpServlet {
 	private ServicePackageService sps;
 	private TemplateEngine templateEngine; 
 	
-	/**
-	 * REQUEST PARAMETERS: servicePackageID
-	 * RESPONSE : servicePackage, services, optionalProducts, ValidityPeriods 
-	 */
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// retrieve the package from the request
 		Integer packageID = Integer.parseInt(req.getParameter("pid")); 
 		ServicePackage sp = sps.findServicePackage(packageID);
-		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID); // TODO insert method on object 
-		
-		
-		//
-		//
-		OptionalProduct a = new OptionalProduct("op1", 2.1);
-		OptionalProduct b = new OptionalProduct("op2", 2.2);
-		OptionalProduct c = new OptionalProduct("op3", 2.3);
-		OptionalProduct d = new OptionalProduct("op4", 2.4);
-		OptionalProduct e = new OptionalProduct("op5", 2.5);
-		
-		opts.add(a);
-		opts.add(b);
-		opts.add(c);
-		opts.add(d);
-		opts.add(e);
-		//
-		//
-		
+		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID); // TODO insert method on object or change fetch policy (nope)  
 		
 		//template parameters insertion  
 		String template = "BuyPage"; 
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-		ctx.setVariable("servicePackage", sp); //String representation with services included 
+		ctx.setVariable("servicePackage", sp); //String representation with services included TODO change, extract from the template 
 		ctx.setVariable("associableOptionalProducts", opts); 
-		// TODO what about validity periods ? 
 		templateEngine.process(template, ctx, resp.getWriter());
 	}
 

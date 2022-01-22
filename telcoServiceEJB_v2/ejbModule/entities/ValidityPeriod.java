@@ -10,6 +10,10 @@ import javax.persistence.Table;
 @Entity 
 @Table(name = "ValidityPeriod", schema="telcoServiceDB")
 public class ValidityPeriod implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/*
 	 *MANYTOONE side of relationship between ValidityPeriod and ServicePackage can be omitted because 
 	 *no access from a given validityPeriod to its associated ServicePackages is done in the application. 
@@ -18,6 +22,11 @@ public class ValidityPeriod implements Serializable {
 	private int months;
 
 	public ValidityPeriod() {
+	}
+
+	@Override
+	public String toString() {
+		return months+"";
 	}
 
 	public int getMonths() {
