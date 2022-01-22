@@ -90,7 +90,7 @@ CREATE TABLE FixedInternetService
     id        INT NOT NULL AUTO_INCREMENT,
     gigabytes INT NOT NULL,
     fee       DECIMAL(8, 3),
-    CONSTRAINT signConstraintsMPS CHECK (gigabytes >= 0 AND fee >= 0.00),
+    CONSTRAINT signConstraintsFPS CHECK (gigabytes >= 0 AND fee >= 0.00),
     PRIMARY KEY (id),
     CONSTRAINT FOREIGN KEY (id) REFERENCES Service (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -197,7 +197,7 @@ CREATE TABLE ServiceActivationSchedule
 
 
 -- TUPLE INSERTION 
-LOCK TABLES Consumer WRITE , Service WRITE , MobilePhoneService WRITE , FixedInternetService WRITE , FixedPhoneService WRITE; 
+LOCK TABLES Consumer WRITE , Service WRITE , MobilePhoneService WRITE , FixedInternetService WRITE , FixedPhoneService WRITE, SPS WRITE; 
 
 INSERT INTO Consumer (username, email, password) VALUES ("a", "aa", "pw") ;
 INSERT INTO Service(DTYPE) VALUES ("MPS"),("FIS"), ("MIS"), ("FPS"); 

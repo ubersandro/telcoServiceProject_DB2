@@ -2,13 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="ISO-8859-1">
-<link rel="stylesheet" type="text/css" href="./css/mystyle.css"/>
+<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
 <title>Login page</title>
+<!-- LANDING PAGE -->
 </head>
 <body>
 	<h1>Welcome to the TELCO Service Consumer Application</h1>
 
-	<form action="DoLogin" method="POST">
+	<form action="Login" method="POST">
 		<div class="container">
 			<label for="uuname"><b>Username</b></label> <input type="text"
 				placeholder="Enter Username" name="loginUsername" required>
@@ -20,31 +21,29 @@
 			<p th:text=" ${loginFailedMSG}"></p>
 		</div>
 	</form>
-	<h3>
-		Don't have an account? Register form below
-	</h3>
-	
-	<form action="DoRegistration" method="POST">
+	<h3>Don't have an account? Register form below</h3>
+
+	<form action="Registration" method="POST">
 		<div class="container">
 			<label for="uuname"><b>E-Mail</b></label> <input type="text"
-				placeholder="Enter email" name="regEmail" required>
-			
-			<label for="uuname"><b>Username</b></label> <input type="text"
-				placeholder="Enter Username" name="regUsername" required>
-
-			<label for="uupsw"><b>Password</b></label> <input type="password"
+				placeholder="Enter email" name="regEmail" required> <label
+				for="uuname"><b>Username</b></label> <input type="text"
+				placeholder="Enter Username" name="regUsername" required> <label
+				for="uupsw"><b>Password</b></label> <input type="password"
 				placeholder="Enter Password" name="regPassword" required>
 
 			<button type="submit" value="Sign up">Sign up</button>
 			<p th:text=" ${regFailedMSG}"></p>
+			<p th:text=" ${regOKMSG}"></p>
+
 		</div>
 	</form>
-	
+
 	<form action="HomePage" method="GET">
 		<button type="submit" value="Take me to HOME PAGE">HomePage</button>
 	</form>
-	
-	
+
+
 
 </body>
 </html>

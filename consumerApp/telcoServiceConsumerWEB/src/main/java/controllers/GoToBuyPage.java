@@ -43,7 +43,7 @@ public class GoToBuyPage extends HttpServlet {
 		// retrieve the package from the request
 		Integer packageID = Integer.parseInt(req.getParameter("pid")); 
 		ServicePackage sp = sps.findServicePackage(packageID);
-		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID);
+		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID); // TODO insert method on object 
 		
 		
 		//
@@ -75,14 +75,11 @@ public class GoToBuyPage extends HttpServlet {
 
 	
 	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-		super.destroy();
-	}
+	public void destroy() {}
 
 	@Override
 	public void init() throws ServletException {
-		templateEngine = ServletUtils.initHelper(this); 
+		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); 
 	}
 
 }

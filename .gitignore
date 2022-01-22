@@ -1,2 +1,5 @@
 consumerApp/telcoServiceConsumerEJB/build
 consumerApp/telcoServiceConsumerWEB/build
+
+./telcoServiceEJB_v2/ejbModule/META-INF/persistence.*
+

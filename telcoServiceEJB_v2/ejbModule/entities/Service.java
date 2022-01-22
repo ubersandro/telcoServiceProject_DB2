@@ -1,5 +1,7 @@
 package entities;
 
+import java.io.Serializable;
+
 import javax.persistence.*;
 
 /**
@@ -14,7 +16,11 @@ import javax.persistence.*;
 			@NamedQuery (name = "Service.findAll", query = "SELECT s FROM Service s")
 		})
 @Table(name = "Service", 	schema="telcoServiceDB")
-public class Service {
+public class Service implements Serializable{ 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id @GeneratedValue (strategy = GenerationType.IDENTITY)
 	 private int id; 
 

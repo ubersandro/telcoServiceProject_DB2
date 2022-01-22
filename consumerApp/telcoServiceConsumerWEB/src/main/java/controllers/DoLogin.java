@@ -15,11 +15,12 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import controllers.utils.ServletUtils;
 import exceptions.*;
 import services.*;
 import entities.*;
 
-@WebServlet ("/DoLogin")
+@WebServlet ("/Login")
 public class DoLogin extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	@EJB
@@ -29,14 +30,13 @@ public class DoLogin extends HttpServlet{
 	public DoLogin() {}
 
 	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
+		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); 
 	}
 	
+	/**
+	 * TODO implements class UserService with method whatTypeIsIt(username) which tells whether a User is an Employee or a Consumer.
+	 * TODO include employee login 
+	 */
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) 
 			throws ServletException, IOException {
@@ -49,7 +49,7 @@ public class DoLogin extends HttpServlet{
 			req.getSession().setAttribute("user", c); // binds a customer object to the session
 			path = getServletContext().getContextPath() + "/HomePage";
 			resp.sendRedirect(path);
-		} catch (WrongCredentialsException | UserNotFoundException e) {  
+		} catch (WrongCredentialsException | UserNotFoundException e) {  	
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale()); //setting the error message in the template 
 			ctx.setVariable("loginFailedMSG", "Login FAILED! Incorrect username or password");
@@ -57,10 +57,8 @@ public class DoLogin extends HttpServlet{
 			templateEngine.process(path, ctx, resp.getWriter());
 			e.printStackTrace();
 		}
-			
 	}//doPost
 	
 	@Override
-	public void destroy() {}
-	
+	public void destroy() {}	
 }

@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.openejb.core.WebContext;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.*;
 
 import controllers.utils.ServletUtils;
 import entities.*;
@@ -40,7 +40,7 @@ public class DoBuy extends HttpServlet{
 
 	@Override
 	public void init() throws ServletException {
-		templateEngine = ServletUtils.initHelper(this); 
+		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); 
 	}
 
 	private static final long serialVersionUID = 1L;
@@ -63,24 +63,26 @@ public class DoBuy extends HttpServlet{
 		List<OptionalProduct> products = null; // TODO retrieve products (list ??? JSON???) 
 		ValidityPeriod validityPeriod= null; // TODO retrieve from request 
 		Consumer consumer = (Consumer) req.getSession().getAttribute("user");
-		
+		double totalValue = Double.parseDouble(req.getParameter("totalValue")); 
 		//order is created and written to DB 
-		Order o = os.addOrder(consumer, servicePackage, products, startingDate, packageID, validityPeriod); 
+		Order o = os.addOrder(consumer, servicePackage, products, startingDate, totalValue, validityPeriod); 
 		// payment attempt 
-		boolean orderAccepted = new Random().nextBoolean(); // PAYMENT SIMULATION -> call a service
+		boolean orderAccepted = new Random().nextBoolean(); // PAYMENT SIMULATION 
 		if(orderAccepted) {
 			//mark order as paid  
 			os.markAsPaid(o.getId()); 
-			//redirect user to homePage 
-			String homePath = getServletContext().getContextPath() + "/HomePage"; //to the Servlet 
-			resp.sendRedirect(homePath);
+			ServletContext servletContext = this.getServletContext();
+			final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
+			ctx.setVariable("orderSuccededMSG", "The order passed through!"); // TODO update home template 
+			String templatePath = "HomePage";
+			templateEngine.process(templatePath, ctx);
 		}
 		else {
 			//mark as rejected --> this activates the TRIGGERS 
 			os.markAsRejected(o.getId()); 
 			//redirect to error page 
-			req.getSession().setAttribute("order", o);//TODO check whether ID or Object 
-			String errorPagePath = "/OrderError"; //TODO toTheErrorManagement servlet 
+			req.getSession().setAttribute("orderID", o.getId()); 
+			String errorPagePath = "/OrderError";  
 			resp.sendRedirect(errorPagePath); 
 			
 		}

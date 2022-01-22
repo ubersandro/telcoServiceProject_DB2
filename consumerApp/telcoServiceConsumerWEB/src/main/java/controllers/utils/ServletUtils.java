@@ -9,15 +9,20 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 public final class ServletUtils {
 	private ServletUtils() {} 
-	
-	public static TemplateEngine initHelper (HttpServlet s) {
+	/**
+	 * HTML mode template engine initializer. 
+	 * @param s HttpServlet whose templateEngine has to be initialized. 
+	 * @param subFolder : something like "WEB-INF/templates/" where templates can be found. 
+	 * @return
+	 */
+	public static TemplateEngine initHelper (HttpServlet s, String subFolder) {
 		ServletContext servletContext = s.getServletContext();
 		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
 		templateResolver.setTemplateMode(TemplateMode.HTML);
 		TemplateEngine templateEngine = new TemplateEngine();
 		templateEngine.setTemplateResolver(templateResolver);
 		templateResolver.setSuffix(".html");
-		templateResolver.setPrefix("/WEB-INF/templates/");
+		templateResolver.setPrefix("/"+subFolder);
 		return templateEngine; 
 	}
 }
