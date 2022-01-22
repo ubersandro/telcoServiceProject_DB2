@@ -1,4 +1,5 @@
 package entities;
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
@@ -16,7 +17,9 @@ import javax.persistence.*;
 		query = "SELECT o FROM Order o WHERE o.consumer = :consumer and o.status = :status")})  
 @Entity 
 @Table (name = "Order", schema = "telcoServiceDB")
-public class Order {
+public class Order implements Serializable{
+	private static final long serialVersionUID = 1L;
+
 	@Id 
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private int id; 

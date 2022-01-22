@@ -3,7 +3,8 @@
 	xmlns="http://xmlns.jcp.org/xml/ns/persistence"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
-	<persistence-unit transaction-type="JTA" name="telcoServiceEJB_v2">
+	<persistence-unit transaction-type="JTA"
+		name="telcoServiceEJB_v2">
 		<jta-data-source>telcoServiceDB</jta-data-source>
 		<class>entities.Auditing</class>
 		<class>entities.Consumer</class>
@@ -21,10 +22,13 @@
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<properties>
 			<property name="eclipselink.logging.level" value="FINE" />
-			<property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/telcoServiceDB"/>
-        <property name="javax.persistence.jdbc.user" value="uber2"/>
-        <property name="javax.persistence.jdbc.password" value="uber"/>
-        <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+			<property name="javax.persistence.jdbc.url"
+				value="jdbc:mysql://localhost:3306/telcoServiceDB" />
+			<property name="javax.persistence.jdbc.user" value="uber2" />
+			<property name="javax.persistence.jdbc.password"
+				value="uber" />
+			<property name="javax.persistence.jdbc.driver"
+				value="com.mysql.jdbc.Driver" />
 		</properties>
 	</persistence-unit>
 

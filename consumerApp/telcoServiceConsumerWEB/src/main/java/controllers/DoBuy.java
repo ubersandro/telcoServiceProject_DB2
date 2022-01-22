@@ -46,7 +46,8 @@ public class DoBuy extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * Given all the info provided in the request (package, optProds selected, validityPeriod, startingDate, totalValue) 
+	 * Given all the info provided in the request 
+	 * (package, optProds selected, validityPeriod, startingDate, totalValue) 
 	 * 1) an Order is created 
 	 * 2) the payment of the order is attempted. 
 	 * 3a) If it is accepted the user gets redirected to the Home Page. 
@@ -66,7 +67,7 @@ public class DoBuy extends HttpServlet{
 		//order is created and written to DB 
 		Order o = os.addOrder(consumer, servicePackage, products, startingDate, packageID, validityPeriod); 
 		// payment attempt 
-		boolean orderAccepted = new Random().nextBoolean(); // PAYMENT SIMULATION 
+		boolean orderAccepted = new Random().nextBoolean(); // PAYMENT SIMULATION -> call a service
 		if(orderAccepted) {
 			//mark order as paid  
 			os.markAsPaid(o.getId()); 
@@ -78,7 +79,7 @@ public class DoBuy extends HttpServlet{
 			//mark as rejected --> this activates the TRIGGERS 
 			os.markAsRejected(o.getId()); 
 			//redirect to error page 
-			req.getSession().setAttribute("orderID", o.getId());
+			req.getSession().setAttribute("order", o);//TODO check whether ID or Object 
 			String errorPagePath = "/OrderError"; //TODO toTheErrorManagement servlet 
 			resp.sendRedirect(errorPagePath); 
 			

@@ -41,21 +41,17 @@ public class GoToBuyPage extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// retrieve the package from the request
-		int packageID = 0; // TODO find a way to extract it from a request 
+		Integer packageID = Integer.parseInt(req.getParameter("pid")); 
 		ServicePackage sp = sps.findServicePackage(packageID);
+		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID);
 		
-		
-//		List<OptionalProduct> associableProducts = sps.findAssociableOptionalProducts(packageID);
-//		Map<ValidityPeriod, Double> costs = sp.getCosts(); // eagerly fetched
-//		List<Service> services = sp.getServices(); // TODO diversification of Services
-//		
-		
-		//template retrieval and parameters insertion  
+		//template parameters insertion  
 		String template = "BuyPage"; 
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-		ctx.setVariable("servicePackage", sp);
-		// TODO check if you need to extract the parameters here or the template can do it itself. 
+		ctx.setVariable("servicePackage", sp); //String representation with services included 
+		ctx.setVariable("optionalProducts", opts); 
+		// TODO what about validity periods ? 
 		templateEngine.process(template, ctx, resp.getWriter());
 	}
 
