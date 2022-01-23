@@ -67,7 +67,11 @@ public class OrderService {
 		//em.flush();
 	}
 	
-	
+	@SuppressWarnings("unchecked")
+	public List<Order> findRejectedOrders(Consumer c){
+		return ((List<Order>) em.createNamedQuery("Order.findOrdersByUserAndStatus")
+				.setParameter("consumer", c).setParameter("status", OrderStatus.REJECTED).getResultList()); 
+	}
 	
 	public Order findOrderByID (int id) {
 		return em.find(Order.class, id); //the returned object is managed ????

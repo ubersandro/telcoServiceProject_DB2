@@ -24,7 +24,7 @@ public class OptionalProductService {
 
 		@SuppressWarnings("unchecked")
 		List<OptionalProduct> ops = (List<OptionalProduct>) em.createNamedQuery("OptionalProduct.findAll",
-				OptionalProduct.class);
+				OptionalProduct.class).getResultList();
 		return ops;
 
 	}

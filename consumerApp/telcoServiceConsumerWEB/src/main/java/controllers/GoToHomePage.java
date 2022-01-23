@@ -15,7 +15,10 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import controllers.utils.ServletUtils;
+import entities.Consumer;
+import entities.Order;
 import entities.ServicePackage;
+import services.OrderService;
 import services.ServicePackageService;
 
 @WebServlet("/HomePage")
@@ -23,19 +26,30 @@ public class GoToHomePage extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	@EJB
 	private ServicePackageService sps; 
+	@EJB 
+	OrderService os ; //debug
 	
 	private TemplateEngine templateEngine; 
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		//retrieve all the service packages 
-		List<ServicePackage> l  = sps.findAllServicePackages(); 
+		List<ServicePackage> servicePackages  = sps.findAllServicePackages(); 
+		List<Order> rejectedOrders = null; 
+		//DEBUG
+		if(req.getSession().getAttribute("user")!=null) {
+			Consumer c = (Consumer) req.getSession().getAttribute("user"); 
+			System.err.println("USER status :" +c.getStatus());
+			rejectedOrders = os.findRejectedOrders(c); 
+		}
+		//DEBUG
+		
 		//insert into template 
 		String template = "HomePage";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-		ctx.setVariable("servicePackages", l); 
-		//include a session ID to identify a non logged user and associate the state of his request (order from buy page) 
+		ctx.setVariable("servicePackages", servicePackages); 
+		ctx.setVariable("rejectedOrders", rejectedOrders);
 		templateEngine.process(template, ctx, resp.getWriter());	
 	}
 

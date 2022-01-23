@@ -16,29 +16,24 @@ public class UserService {
 	
 	public UserService () {}; 
 	
-	/**
-	 * The method check whether or not a Consumer with the given username exists. 
-	 * If it exists, the password provided is checked to reassure it is the right password for the given user. 
-	 * If the password is right, it just returns the Consumer identified by the username. 
-	 * @param username	
-	 * @param password
-	 * @return
-	 * @throws Exception
-	 */
-	public Consumer checkConsumerCredentials(String username, String password )
+	public TelcoUser checkUserCredentials(String username, String password )
 			throws WrongCredentialsException, UserNotFoundException{	
-		Consumer c = em.find(Consumer.class, username); //TODO improve with named query 
-		if(c == null) throw new UserNotFoundException();
-		if(!c.getPassword().equals(password)) throw new WrongCredentialsException(); 
-		return c; //detached 
+		TelcoUser user = em.find(TelcoUser.class, username); //TODO improve with named query 
+		if(user == null) throw new UserNotFoundException();
+		if(!user.getPassword().equals(password)) throw new WrongCredentialsException(); 
+		return user; //detached 
 	}
 	
-	public Employee checkEmployeeCredentials(String username, String password )
-			throws WrongCredentialsException, UserNotFoundException{	
-		Employee c = em.find(Employee.class, username); //TODO improve with named query 
-		if(c == null) throw new UserNotFoundException();
-		if(!c.getPassword().equals(password)) throw new WrongCredentialsException(); 
-		return c; //detached 
+	public boolean isConsumer(TelcoUser user) {
+		return em.find(Consumer.class, user.getUsername())!=null; 
+	}
+	
+	public Consumer retrieveConsumer(TelcoUser u) {
+		return em.find(Consumer.class, u.getUsername()); 
+	}
+	
+	public Employee retrieveEmployee(TelcoUser u) {
+		return em.find(Employee.class, u.getUsername()); 
 	}
 	
 	/**

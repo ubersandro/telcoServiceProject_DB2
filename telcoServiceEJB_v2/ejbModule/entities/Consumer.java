@@ -33,6 +33,10 @@ public class Consumer extends TelcoUser{
 	public UserStatus getStatus() {
 		return status;
 	}
+	
+	public boolean isInsolvent() {
+		return status.equals(UserStatus.INSOLVENT); 
+	}
 
 	public void setStatus(UserStatus status) {
 		this.status = status;

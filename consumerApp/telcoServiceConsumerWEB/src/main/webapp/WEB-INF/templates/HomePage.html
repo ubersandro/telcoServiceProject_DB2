@@ -7,11 +7,12 @@
 
 </head>
 <body>
-	<div align="right" th:if="${session.containsKey('user')}"
-		th:text="${session.user}">Tizio</div>
+	<div align="right" th:if="${session.user!=null}"
+		th:text="${session.user}">USER : Tizio</div>
+		
 	<h1>Welcome to the Telco Service Application Home Page</h1>
 
-	<h1>Service packages list</h1>
+	<h2>Service packages list</h2>
 
 	<table>
 		<tr>
@@ -32,5 +33,17 @@
 		</tr>
 	</table>
 	<p th:text=" ${orderSuccededMSG}"></p>
+	<br> <br>
+	
+	<table th:if="${rejectedOrders!=null}">
+		<tr>
+			<th>Rejected Order</th>
+			<th>Action</th>
+		</tr>
+		<tr th:each="ro : ${rejectedOrders}">
+			<td th:text="${ro.id}">4</td>
+			<td><a th:href="@{/Buy(rejectedOrderID=${ro.id})}">Attempt new payment</a></td>
+		</tr>
+	</table>
 </body>
 </html>

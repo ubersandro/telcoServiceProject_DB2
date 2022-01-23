@@ -73,7 +73,7 @@ public class GoToConfirmationPage extends HttpServlet {
 		// total value computation
 		double servicePackageMonthlyFee = servicePackage.getCosts().get(chosenVP);
 		double totalFeeOptionalProducts = 0D;
-		for (OptionalProduct op : chosenOptionalProducts)
+		for (OptionalProduct op : chosenOptionalProducts) //TODO check this calculation, orders have 0 value 
 			totalFeeOptionalProducts += op.getFee();
 		double totalValue = (servicePackageMonthlyFee + totalFeeOptionalProducts) * monthsOfSubscription;
 		//once all values have been extracted -> put into a session object 

@@ -5,21 +5,20 @@ xmlns="http://xmlns.jcp.org/xml/ns/javaee"
 xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" 
 version="4.0">
   <display-name>telcoServiceConsumerWEB</display-name>
-<!--   <filter> -->
-<!--   	<filter-name>LoginChecker</filter-name> -->
-<!--   	<filter-class>filters.LoggedIn</filter-class> -->
-<!--   </filter> -->
+  <filter>
+  	<filter-name>LoginChecker</filter-name>
+  	<filter-class>filters.LoggedIn</filter-class>
+  </filter>
 
-<!-- 	<filter-mapping> -->
-<!-- 		    <filter-name>LoginChecker</filter-name>  -->
-<!-- 			<url-pattern>/Confirmation</url-pattern>  -->
+	<filter-mapping>
+		    <filter-name>LoginChecker</filter-name> 
 						
-<!-- 			<url-pattern>/EmployeeHome</url-pattern> EMPLOYEE  -->
-<!-- 			<url-pattern>/CreateServicePackage</url-pattern> EMPLOYEE  -->
-<!-- 			<url-pattern>/CreateOptionalProduct</url-pattern> EMPLOYEE -->
-<!-- 			<url-pattern>/SalesReport</url-pattern> EMPLOYEE -->
+			<url-pattern>/EmployeeHome</url-pattern>  
+			<url-pattern>/CreateServicePackage</url-pattern>  
+			<url-pattern>/CreateOptionalProduct</url-pattern> 
+			<url-pattern>/SalesReport</url-pattern> 
 			 
-<!-- 	</filter-mapping> TODO check the mapping -->
+	</filter-mapping>
 </web-app>
 
 <!--   <welcome-file-list> -->

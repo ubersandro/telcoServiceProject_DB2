@@ -15,16 +15,20 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import controllers.utils.ServletUtils;
+import entities.OptionalProduct;
 import entities.ServicePackage;
+import services.OptionalProductService;
 import services.ServicePackageService;
 
-@WebServlet("/EmployeeHome")
+@WebServlet("/EmployeeHomePage")
 public class GoToEmployeeHome extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private TemplateEngine templateEngine;
 	
 	@EJB
 	private ServicePackageService sps; 
+	@EJB
+	private OptionalProductService optService; 
 	
 	/**
 	 * After the login the object session.user contains an Employee object. 
@@ -33,10 +37,13 @@ public class GoToEmployeeHome extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// retrieve all the service packages
 		List<ServicePackage> l = sps.findAllServicePackages();
+		List<OptionalProduct> opts = optService.findAllOptionalProducts(); 
 		String template = "EmployeeHomePage";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-		ctx.setVariable("servicePackages", l);
+		ctx.setVariable("servicePackages", l);		
+		ctx.setVariable("optionalProducts", opts);
+		
 		templateEngine.process(template, ctx, resp.getWriter());
 	}
 
