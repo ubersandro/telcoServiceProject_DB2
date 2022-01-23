@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
+
+<title>Optional product creation</title>
+</head>
+<body>
+
+	<h1>Create new Optional Product</h1>
+	<form action="CreateOptionalProduct" method="POST">
+
+		Product name : <input type="text" name="name" required> <br>
+		Product fee :<input type="text" name="fee" required> <br>
+		Associable Service Packages : <br>
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>Services</th>
+				<th>SELECT</th>
+			</tr>
+			<tr th:each="sp : ${servicePackages}">
+				<td th:text="${sp.name}">Family</td>
+				<td>
+					<table>
+						<tr th:each="s : ${sp.getServices()}">
+							<td th:text="${s.toString()}">Fixed Phone Service</td>
+					</table>
+				</td>
+				<td><input type="checkbox" th:field="${sp.id}" 
+					name="servicePackage" th:value="${sp.id}"	/></td>
+		</table>
+		<br>
+
+		<button type="submit" value="Create">Create</button>
+	</form>
+
+</body>
+</html>

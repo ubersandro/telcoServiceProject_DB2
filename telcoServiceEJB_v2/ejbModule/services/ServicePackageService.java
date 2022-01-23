@@ -78,6 +78,12 @@ public class ServicePackageService {
 		return sp.getOptionalProducts();  
 	}
 	
+	public void associateOptionalProduct (String productName, int packageID) {
+		ServicePackage sp = findServicePackage(packageID);
+		OptionalProduct op = em.find(OptionalProduct.class, productName); 
+		sp.addOptionalProduct(op);
+		em.merge(sp); //TODO check triggers 
+	}
 	
 
 }

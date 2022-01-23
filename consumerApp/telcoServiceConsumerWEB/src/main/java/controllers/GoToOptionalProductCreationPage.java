@@ -26,22 +26,21 @@ import services.*;
  * @author ubersandro
  *
  */
-@WebServlet("/CreateOptionalProduct")
+@WebServlet("/OptionalProductCreationPage")
 public class GoToOptionalProductCreationPage extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	@EJB
-	private OptionalProductService opts; 
+	private ServicePackageService sps; 
 	
 	private TemplateEngine templateEngine; 
 	
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		//retrieve all the optional products 
-		List<OptionalProduct> l  = opts.findAllOptionalProducts();
-		String template = "OptionalProductsCreationPage";
+		List<ServicePackage> l = sps.findAllServicePackages(); 
+		String template = "OptionalProductCreationPage";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-		ctx.setVariable("existentOptionalProducts", l); 
+		ctx.setVariable("servicePackages", l);
 		templateEngine.process(template, ctx, resp.getWriter());	
 	}
 

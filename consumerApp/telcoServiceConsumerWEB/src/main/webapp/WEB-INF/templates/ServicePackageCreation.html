@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
+
+<title>Service Package creation</title>
+</head>
+<body>
+
+	<h1>Create new Service Package</h1>
+
+
+	<form action="CreateServicePackage" method="POST">
+	
+		<table>
+			<tr>
+				<th>Services</th>
+				<th>Select</th>
+
+			</tr>
+			<tr th:each="serv : ${services}"
+				th:if="${services!=null}">
+				<td th:text="${serv}">service=[gigabytes=3, fee=4.5]</td>
+				<td><input type="checkbox" th:field="${op}"
+					name="service" th:value="${serv}" /></td>
+			</tr>
+		</table>
+		
+		<table>
+			<tr>
+				<th>Optional product</th>
+				<th>Select</th>
+
+			</tr>
+			<tr th:each="op : ${optionalProducts}"
+				th:if="${optionalProducts!=null}">
+				<td th:text="${op.name}">op1</td>
+				<td><input type="checkbox" th:field="${op}"
+					name="optionalProduct" th:value="${op.name}" /></td>
+			</tr>
+		</table>
+
+		<br> <br> Validity Periods <br>
+		<table>
+			<tr>
+				<th>Months</th>
+				<th>Fee</th>
+
+			</tr>
+			<tr>
+				<td >12</td>
+				<td><input type="text" name="fee12" required></td>
+			</tr>
+			<tr>
+				<td >24</td>
+				<td><input type="text" name="fee24" required></td>
+			</tr>
+			<tr>
+				<td >36</td>
+				<td><input type="text" name="fee36" required></td>
+			</tr>
+		</table>
+
+			<br>
+		Package name : <input type="text" name="packageName" required>	
+		<button type="submit" value="Create">Create</button>
+	</form>
+
+</body>
+</html>
