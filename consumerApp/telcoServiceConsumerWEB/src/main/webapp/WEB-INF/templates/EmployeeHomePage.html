@@ -8,9 +8,9 @@
 
 </head>
 <body>
-	<div align="right" th:if="${session.containsKey('user')}"
-		th:text="${session.user}">Tizio</div>
-	<h1>Employee page</h1>
+	<div align="right" 
+		th:text="WELCOME ${session.user}">WELCOME Tizio</div>
+	<h1>Employee HOME PAGE</h1>
 
 	<h1>Service packages list</h1>
 
@@ -19,7 +19,7 @@
 			<th>Name</th>
 			<th>Services</th>
 		</tr>
-		<tr th:each="sp : ${servicePackages}">
+		<tr th:each="sp : ${servicePackages}"  th:if="${associableOptionalProducts!=null}">
 			<td th:text="${sp.name}">Family</td>
 			<td>
 				<table>
@@ -27,5 +27,26 @@
 						<td th:text="${s.toString()}">Fixed Phone Service</td>
 				</table>
 	</table>
+	
+	<table>
+			<tr>
+				<th>Product name</th> 
+				<th>Monhtly fee</th>
+
+			</tr>
+			<tr th:each="op : ${optionalProducts}" th:if="${associableOptionalProducts!=null}">
+				<td th:text="${op.name}">op1</td>
+				<td th:text ="${op.fee}">1.90</td>
+			</tr>
+		</table>
+	
+	<form action="/CreateServicePackage">
+		<button type="submit" value="goToSPCreation">Create new service sackage</button>
+	</form>
+	
+	<form action="/CreateOptionalProduct">
+		<button type="submit" value="goToSPCreation">Create new optional product</button>
+	</form>
+	
 </body>
 </html>
