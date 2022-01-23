@@ -35,24 +35,25 @@ public class GoToConfirmationPage extends HttpServlet {
 	@EJB
 	private OptionalProductService optServ;
 
-	/**
-	 * When provided package, optional products, starting date, and validity period
-	 * this method populates the ConfirmationPage template and processes it.
-	 */
+	
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		//session retrieval 
+		HttpSession session = req.getSession(); 
+		System.err.println("SESSION:"+ session.getId());//debug 
+		
 		// info retrieval from request 
-		int packageID = Integer.parseInt(req.getParameter("servicePackageID")); 
-		String[] chosenOptsKeys = req.getParameterValues("optionalProduct");
+		String[] chosenOptsKeys = req.getParameterValues("optionalProduct"); // can be null!
 		String startingDateString = req.getParameter("startingDate");
 		int validityPeriodKEY = Integer.parseInt(req.getParameter("validityPeriod")); //MONTHS OF SUBSCRIPTION
 
 		// object retrieval
-		ServicePackage servicePackage = sps.findServicePackage(packageID);
-
+		ServicePackage servicePackage = (ServicePackage) session.getAttribute("chosenServicePackage"); 
+		assert(servicePackage!=null); //debug
 		List<OptionalProduct> chosenOptionalProducts = new LinkedList<OptionalProduct>();
-		for (String prodName : chosenOptsKeys)
-			chosenOptionalProducts.add(optServ.findOptionalProductByName(prodName));
+		if(chosenOptsKeys!=null) //if at least a product is chosen 
+			for (String prodName : chosenOptsKeys)
+				chosenOptionalProducts.add(optServ.findOptionalProductByName(prodName));
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date date;
@@ -61,11 +62,12 @@ public class GoToConfirmationPage extends HttpServlet {
 			date = sdf.parse(startingDateString);
 			startingDate = Calendar.getInstance();
 			startingDate.setTime(date);
+			//TODO CHECK AFTER TODAY
 		} catch (ParseException e) {
 			// TODO manage wrong date format ... CHECK AFTER TODAY, FORMAT ECC. 
 		}
-
-		ValidityPeriod chosenVP = new ValidityPeriod(validityPeriodKEY); // TODO correct it
+		
+		ValidityPeriod chosenVP = new ValidityPeriod(validityPeriodKEY); 
 		int monthsOfSubscription = validityPeriodKEY; // to be clear 
 		
 		// total value computation
@@ -74,18 +76,43 @@ public class GoToConfirmationPage extends HttpServlet {
 		for (OptionalProduct op : chosenOptionalProducts)
 			totalFeeOptionalProducts += op.getFee();
 		double totalValue = (servicePackageMonthlyFee + totalFeeOptionalProducts) * monthsOfSubscription;
+		//once all values have been extracted -> put into a session object 
+		 
+		Order tmp = new Order(); //with no time and date and customer
+		tmp.setStartingDate(startingDate);
+		tmp.setIncludedOptionalProducts(chosenOptionalProducts);
+		tmp.setServicePackage(servicePackage);
+		tmp.setValidityPeriod(chosenVP);
+		session.removeAttribute("chosenServicePackage");
+		session.setAttribute("tmpOrder", tmp);
+		
+		
 		//redirection to confirmation page
 		ServletContext servletContext = this.getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
 		ctx.setVariable("servicePackage", servicePackage);
 		ctx.setVariable("chosenOptionalProducts", chosenOptionalProducts);
-		ctx.setVariable("chosenValidityPeriod", chosenVP); //TODO months could be put here instead...
+		ctx.setVariable("chosenValidityPeriod", chosenVP); 
 		ctx.setVariable("chosenStartingDate", startingDate);
 		ctx.setVariable("totalValue", totalValue);
-		String templatePath = "Confirmation";
-		templateEngine.process(templatePath, ctx);
+		String templatePath = "ConfirmationPage";
+		templateEngine.process(templatePath, ctx, resp.getWriter());
 	}
-
+	
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		Order tmp = (Order) req.getSession().getAttribute("tmpOrder"); 
+		ServletContext servletContext = this.getServletContext();
+		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
+		ctx.setVariable("servicePackage", tmp.getServicePackage());
+		ctx.setVariable("chosenOptionalProducts", tmp.getIncludedOptionalProducts());
+		ctx.setVariable("chosenValidityPeriod", tmp.getValidityPeriod()); 
+		ctx.setVariable("chosenStartingDate", tmp.getStartingDate()); 
+		ctx.setVariable("totalValue", tmp.getTotalValue());
+		String templatePath = "ConfirmationPage";
+		templateEngine.process(templatePath, ctx, resp.getWriter());
+	}
+	
 	@Override
 	public void init() throws ServletException {
 		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/");

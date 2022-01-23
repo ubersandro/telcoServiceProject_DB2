@@ -13,6 +13,11 @@ import javax.persistence.Table;
 @Table (name = "FixedPhoneService", schema = "telcoServiceDB")
 public class FixedPhoneService extends Service{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public String toString() {
 		return "FixedPhoneService []";

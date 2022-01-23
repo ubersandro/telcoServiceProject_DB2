@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.*;
@@ -26,7 +27,7 @@ import services.*;
  * @author ubersandro
  *
  */
-@WebServlet ("/BuyServicePackage")
+@WebServlet ("/Buy")
 public class DoBuy extends HttpServlet{
 	@EJB  
 	private OrderService os;  
@@ -50,8 +51,7 @@ public class DoBuy extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 	
 	/**
-	 * Given all the info provided in the request 
-	 * (package, optProds selected, validityPeriod, startingDate, totalValue) 
+	 * Given the tmpOrder object 
 	 * 1) an Order is created 
 	 * 2) the payment of the order is attempted. 
 	 * 3a) If it is accepted the user gets redirected to the Home Page WITH OK MSG. 
@@ -59,56 +59,28 @@ public class DoBuy extends HttpServlet{
 	 * 		error message like "You have been marked as insolvent", "your purchase failed...."  
 	 */
 	@Override
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		//info retrieval from request 
-		int packageID = Integer.parseInt(req.getParameter("servicePackageID")); //TODO check the request for this param
-		String[] chosenOptsKeys = req.getParameterValues("optionalProduct");
-		String startingDateString = req.getParameter("startingDate"); 
-		int validityPeriodKEY = Integer.parseInt(req.getParameter("validityPeriod")); 
-		double totalValue = Double.parseDouble(req.getParameter("totalValue")); 
-		
-		//object retrieval 
-		ServicePackage servicePackage = sps.findServicePackage(packageID); 
-		
-		List<OptionalProduct> chosenOptionalProducts = new LinkedList<OptionalProduct>(); 
-		for(String prodName : chosenOptsKeys) chosenOptionalProducts.add(optServ.findOptionalProductByName(prodName)); 
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		Date date;
-		Calendar startingDate = Calendar.getInstance(); //TODO refactor! 
-		try {
-			date = sdf.parse(startingDateString);
-			startingDate = Calendar.getInstance();
-			startingDate.setTime(date);
-		} catch (ParseException e) {
-			// TODO manage wrong date format ... BUT REMEMBER, HERE NO CHECKS NEEDED
-		}
-		
-		ValidityPeriod chosenVP = new ValidityPeriod(validityPeriodKEY); //TODO correct it 
-		
-		Consumer consumer = (Consumer) req.getSession().getAttribute("user"); //TODO check login
-		
-		//order creation and write to DB 
-		Order o = os.addOrder(consumer, servicePackage, chosenOptionalProducts, 
-				startingDate, totalValue, chosenVP); 
-		// payment attempt 
-		boolean orderAccepted = new Random().nextBoolean(); // PAYMENT SIMULATION 
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		HttpSession session = req.getSession(); 
+		Order tmpOrder = (Order) session.getAttribute("tmpOrder"); 
+		session.removeAttribute("tmpOrder"); //performance 
+		boolean orderAccepted = req.getParameter("PAYMENT_MODE").equalsIgnoreCase("RIGHT"); 
+		tmpOrder.setConsumer((Consumer) session.getAttribute("user")); 
+		tmpOrder.setDate(Calendar.getInstance()) ; 
+		tmpOrder.setTime(new Date()); //TODO MANAGE ID
+		Order finalOrder = os.addOrder(tmpOrder); //orderPersisted 
 		if(orderAccepted) {
+			//COMPLETE THE ORDER 
 			//mark order as paid  
-			os.markAsPaid(o.getId()); 
-			ServletContext servletContext = this.getServletContext();
-			final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-			ctx.setVariable("orderSuccededMSG", "The order passed through!"); 
-			String templatePath = "HomePage";
-			templateEngine.process(templatePath, ctx);
+			os.markAsPaid(finalOrder.getId()); //activates the triggers  TODO change to Order, not id
+			resp.sendRedirect("HomePage"); // TODO print a message  
 		}
-		else {
+		else {//rejection 
 			//mark as rejected --> this activates the TRIGGERS 
-			os.markAsRejected(o.getId()); 
+			os.markAsRejected(finalOrder.getId()); 
 			//redirect to error page 
 			String orderErrorTemplate = "OrderRejected"; 
 			final WebContext ctx= new WebContext(req, resp, getServletContext(), req.getLocale());  
-			ctx.setVariable("orderID", o.getId()); 
+			ctx.setVariable("orderID", finalOrder.getId()); // TODO shitty templating, manage
 			templateEngine.process(orderErrorTemplate, ctx, resp.getWriter()); 
 		}
 	}

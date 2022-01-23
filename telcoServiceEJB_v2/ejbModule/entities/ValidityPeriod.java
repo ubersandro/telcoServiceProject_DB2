@@ -33,6 +33,23 @@ public class ValidityPeriod implements Serializable {
 		return months;
 	}
 
+	@Override
+	public int hashCode() {
+		return months; //naive but it works 
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ValidityPeriod other = (ValidityPeriod) obj;
+		return months == other.months;
+	}
+
 	public void setMonths(int months) {
 		this.months = months;
 	}

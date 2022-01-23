@@ -15,7 +15,7 @@ import javax.persistence.Table;
  */
 @Entity
 @NamedQueries({ @NamedQuery (name = "OptionalProduct.findAll", query = "SELECT ops FROM OptionalProduct ops")}) 
-@Table(schema="telcoServiceDB")
+@Table(name = "OptionalProduct", schema="telcoServiceDB")
 public class OptionalProduct {
 	@Id 
 	private String name; 

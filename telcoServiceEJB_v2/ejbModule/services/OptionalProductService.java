@@ -2,11 +2,12 @@ package services;
 
 import java.util.List;
 
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import entities.OptionalProduct;
-
+@Stateless
 public class OptionalProductService {
 	@PersistenceContext(unitName =  "telcoServiceEJB_v2")
 	private EntityManager em;

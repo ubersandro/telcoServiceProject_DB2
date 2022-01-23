@@ -13,13 +13,13 @@ import org.thymeleaf.context.*;
 
 import controllers.utils.ServletUtils;
 import exceptions.UserAlreadyExistentException;
-import services.ConsumerService;
+import services.UserService;
 
 @WebServlet("/Registration")
 public class DoRegistration extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	@EJB
-	private ConsumerService cs; // TODO change this, unify with Employee service
+	private UserService cs; // TODO change this, unify with Employee service
 	private TemplateEngine templateEngine;
 
 	@Override

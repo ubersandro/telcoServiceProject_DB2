@@ -11,6 +11,10 @@ import javax.persistence.*;
 @DiscriminatorValue("FIS")
 @Table (name = "FixedInternetService", schema = "telcoServiceDB")
 public class FixedInternetService extends Service{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int gigabytes; 
 	private double fee; 
 	

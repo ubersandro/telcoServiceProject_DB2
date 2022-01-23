@@ -7,9 +7,11 @@ import javax.ejb.EJB;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -40,15 +42,19 @@ public class GoToBuyPage extends HttpServlet {
 		Integer packageID = Integer.parseInt(req.getParameter("pid"));
 		ServicePackage sp = sps.findServicePackage(packageID);
 
-		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID); // TODO insert method on object or change fetch policy (nope)  
-		
+		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID);  
+		//manage packet selection session 
+		HttpSession session = req.getSession(true); 
+		session.setAttribute("chosenServicePackage", sp); //because that's the one the client wants to buy
+		System.err.println("SESSION:"+ session.getId());
+
 		//template parameters insertion  
 		String template = "BuyPage"; 
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-		ctx.setVariable("servicePackage", sp); //String representation with services included TODO change, extract from the template 
+		ctx.setVariable("servicePackage", sp); 
 		ctx.setVariable("associableOptionalProducts", opts); 
-		templateEngine.process(template, ctx, resp.getWriter());
+		templateEngine.process(template, ctx, resp.getWriter()); 
 	}
 
 	@Override

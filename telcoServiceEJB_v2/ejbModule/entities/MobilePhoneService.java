@@ -10,6 +10,10 @@ import javax.persistence.*;
 @DiscriminatorValue ("MPS")
 @Table(name = "MobilePhoneService", schema="telcoServiceDB")
 public class MobilePhoneService extends Service{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int minutes; 
 	private double extraMinutesFee;
 	private int SMSs; 

@@ -10,11 +10,11 @@ import exceptions.*;
 import entities.*;
 
 @Stateless 
-public class ConsumerService { 
+public class UserService { 
 	@PersistenceContext(unitName = "telcoServiceEJB_v2")
 	private EntityManager em ; 
 	
-	public ConsumerService () {}; 
+	public UserService () {}; 
 	
 	/**
 	 * The method check whether or not a Consumer with the given username exists. 
@@ -25,9 +25,17 @@ public class ConsumerService {
 	 * @return
 	 * @throws Exception
 	 */
-	public Consumer checkCredentials(String username, String password )
+	public Consumer checkConsumerCredentials(String username, String password )
 			throws WrongCredentialsException, UserNotFoundException{	
-		Consumer c = em.find(Consumer.class, username);
+		Consumer c = em.find(Consumer.class, username); //TODO improve with named query 
+		if(c == null) throw new UserNotFoundException();
+		if(!c.getPassword().equals(password)) throw new WrongCredentialsException(); 
+		return c; //detached 
+	}
+	
+	public Employee checkEmployeeCredentials(String username, String password )
+			throws WrongCredentialsException, UserNotFoundException{	
+		Employee c = em.find(Employee.class, username); //TODO improve with named query 
 		if(c == null) throw new UserNotFoundException();
 		if(!c.getPassword().equals(password)) throw new WrongCredentialsException(); 
 		return c; //detached 

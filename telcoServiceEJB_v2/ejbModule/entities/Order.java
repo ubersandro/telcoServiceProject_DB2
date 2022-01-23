@@ -9,7 +9,7 @@ import javax.persistence.*;
 /**
  * Persistent class for the Order table in the database. 
  * @author ubersandro 
- *
+ * TODO automatic date and time management and @payment set new date and time 
  */
 
 @NamedQueries (
@@ -36,7 +36,7 @@ public class Order implements Serializable{
 	private Calendar startingDate;
 	
 	@Enumerated(EnumType.ORDINAL)
-	private OrderStatus status; //DEFAULT NEWLY-CREATED -> SPECIFY ? 
+	private OrderStatus status = OrderStatus.NEWLY_CREATED; //DEFAULT NEWLY-CREATED -> SPECIFY ? 
 	
 	//Order is the owner of the MANY-TO-ONE relation between Order and Consumer 
 	@ManyToOne @JoinColumn (name="consUsername") 
@@ -142,6 +142,11 @@ public class Order implements Serializable{
 
 	public Collection<OptionalProduct> getIncludedOptionalProducts() {
 		return includedOptionalProducts;
+	}
+
+	@Override
+	public String toString() {
+		return "Order [id=" + id + ", status=" + status + "]";
 	}
 
 	public void setIncludedOptionalProducts(Collection<OptionalProduct> includedOptionalProducts) {

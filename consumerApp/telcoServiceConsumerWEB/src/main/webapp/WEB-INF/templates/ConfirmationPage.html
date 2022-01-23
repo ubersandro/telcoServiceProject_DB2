@@ -1,9 +1,3 @@
-<!-- ctx.setVariable("servicePackage", sp); -->
-<!-- 		ctx.setVariable("chosenOptionalProducts", chosenOpts); -->
-<!-- 		ctx.setVariable("chosenValidityPeriod", chosenVP); -->
-<!-- 		ctx.setVariable("chosenStartingDate", ctx); -->
-<!-- 		ctx.setVariable("totalValue", ctx); -->
-
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -18,8 +12,15 @@
 
 	<h2>Summary of the order</h2>
 
-	<div th:object="${servicePackage}">
-		<table>
+	<p>
+		Validity period: <span th:text="${session.tmpOrder}">Order
+			[id=3234234234, status=NEWLY_CREATED ]</span>
+	</p>
+
+
+
+	<div th:object="${servicePackage}" align="left">
+		<table th:if="${chosenOptionalProducts!=null}">
 			<tr>
 				<th>Optional product(s)</th>
 			</tr>
@@ -27,12 +28,38 @@
 				<td th:text="${op.name}">op1</td>
 			</tr>
 		</table>
+
+		<table>
+			<tr>
+				<th>Service(s)</th>
+			</tr>
+			<tr th:each="serv : *{services}">
+				<td th:text="${serv}">op1</td>
+			</tr>
+		</table>
 		<p>
 			Validity period: <span th:text="${chosenValidityPeriod}">12</span>
 		</p>
 		<p>
-			Starting date: <span th:text="${chosenStartingDate}">2020-11-25</span>
+			Starting date : <span
+				th:text="${#calendars.format(chosenStartingDate,'dd MMMM yyyy')}">13
+				May 2011</span>
 		</p>
-	</div>	
+	</div>
+
+	<a href="index.html" th:if="${session.user == null}">Go to login
+		page</a>
+
+	<form action="Buy" method="GET" th:if="${session.user != null}">
+		<input type="hidden" name="PAYMENT_MODE" value="RIGHT">
+		<button type="submit" value="PAY">PAY FOR THE ORDER</button>
+	</form>
+
+	<form action="Buy" method="GET" th:if="${session.user != null}">
+		<input type="hidden" name="PAYMENT_MODE" value="WRONG">
+
+		<button type="submit" value="PAY">PAYMENT FAILURE</button>
+	</form>
+
 </body>
 </html>

@@ -8,27 +8,24 @@
 </head>
 <body>
 
-	<h1>Buy the service package</h1>
+	<h1>Buy Service Package</h1>
 
 
-	<form name="optionalProducts" id="form1" action="@{/Confirmation}">
-
+	<form action="Confirmation" method="POST" >
 
 		<table>
 			<tr>
-				<th>Optional product</th>
-				<th>Select</th>
+				<th>Optional product</th> <th>Select</th>
 
 			</tr>
-			<tr th:each="op : ${associableOptionalProducts}">
+			<tr th:each="op : ${associableOptionalProducts}" th:if="${associableOptionalProducts!=null}">
 				<td th:text="${op.name}">op1</td>
 				<td><input type="checkbox" th:field="${op}"
 					name="optionalProduct" th:value="${op.name}" /></td>
 			</tr>
 		</table>
 
-		<br>
-		<br> Validity Period : <select th:field="vp"
+		<br> <br> Validity Period : <select th:field="vp"
 			name="validityPeriod">
 			<option disabled>Select a validity period for the package</option>
 			<option th:each="vp : ${servicePackage.costs.keySet()}"
@@ -36,12 +33,14 @@
 				th:text="|${vp.months} months -> ${servicePackage.costs.get(vp)} $/month|">12
 				months -> 10.43 $/month</option>
 		</select> <br>
+
+		
+
 		<br> <label for="startingDate">Starting date :</label> <input
 			type="date" id="startingDate" name="startingDate"> <br>
+
 		<br>
-		<button type="submit" value="Confirmation"
-			th:action="@{/Confirmation}" th:method="POST">Submit</button>
-		<!-- TODO check -->
+		<button type="submit" value ="submit">Confirm</button>
 	</form>
 
 </body>

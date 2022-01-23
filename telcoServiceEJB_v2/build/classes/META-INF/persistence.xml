@@ -19,6 +19,8 @@
 		<class>entities.ServiceActivationSchedule</class>
 		<class>entities.ServicePackage</class>
 		<class>entities.ValidityPeriod</class>
+				<class>entities.TelcoUser</class>
+		
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<properties>
 			<property name="eclipselink.logging.level" value="FINE" />

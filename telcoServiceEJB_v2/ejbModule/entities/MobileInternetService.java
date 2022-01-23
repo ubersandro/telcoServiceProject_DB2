@@ -10,6 +10,10 @@ import javax.persistence.*;
 @DiscriminatorValue ("MIS")
 @Table(name ="MobileInternetService", schema="telcoServiceDB")
 public class MobileInternetService extends Service {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int gigabytes; 
 	private double fee; 
 	

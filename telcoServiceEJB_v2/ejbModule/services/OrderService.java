@@ -45,12 +45,17 @@ public class OrderService {
 		return o; //return the detached object 
 	}
 	
+	public Order addOrder(Order o) {
+		em.persist(o); 
+		return o; //return the detached object 
+	}
+	
 	/**
 	 * Given the ID of an order, it marks it as paid (update) . 
 	 * TRIGGERS !!! 
 	 * @param orderID
 	 */
-	public void markAsPaid(int orderID) {
+	public void markAsPaid(int orderID) { //TODO change to order and do MERGE
 		Order o = em.find(Order.class, orderID); //now managed 
 		o.setStatus(OrderStatus.ACCEPTED); 
 		//em.flush(); 

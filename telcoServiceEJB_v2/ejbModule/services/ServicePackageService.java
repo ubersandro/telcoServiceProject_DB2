@@ -75,7 +75,7 @@ public class ServicePackageService {
 	 */
 	public List<OptionalProduct> findAssociableOptionalProducts(int servicePackageID){
 		ServicePackage sp = em.find(ServicePackage.class, servicePackageID); 
-		return sp.getOptionalProducts(); //associable optional products -> here DETACHED 
+		return sp.getOptionalProducts();  
 	}
 	
 	
