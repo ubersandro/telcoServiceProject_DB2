@@ -50,7 +50,7 @@ public class ServicePackageService {
 		sp.setServices(services);
 		sp.setOptionalProducts(optionalProducts);
 		sp.setCosts(costs);
-		System.out.println("ERROR NOT HERE");
+
 		em.persist(sp); 
 		return sp;
 	}

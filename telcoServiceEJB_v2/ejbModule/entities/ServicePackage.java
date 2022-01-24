@@ -56,7 +56,7 @@ public class ServicePackage implements Serializable {
 			joinColumns = @JoinColumn(name = "packageID"), schema = "telcoServiceDB") //this column holds the PK to the ServicePackage. 
 	@MapKeyJoinColumn (name = "validityMonths") //Specification of the column holding the PK of the ValidityPeriod entity used as an index in the map. 
 	@Column (name = "monthlyFee")
-	private Map<ValidityPeriod, Double> costs;  //CASCADE ? How do I specify Cascade.PERSIST
+	private Map<ValidityPeriod, Double> costs; 
 	
 	
 	
