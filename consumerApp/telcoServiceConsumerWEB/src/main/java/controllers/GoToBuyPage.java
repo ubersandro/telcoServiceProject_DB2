@@ -46,8 +46,6 @@ public class GoToBuyPage extends HttpServlet {
 		//manage packet selection session 
 		HttpSession session = req.getSession(true); 
 		session.setAttribute("chosenServicePackage", sp); //because that's the one the client wants to buy
-		System.err.println("SESSION:"+ session.getId());
-
 		//template parameters insertion  
 		String template = "BuyPage"; 
 		ServletContext servletContext = getServletContext();

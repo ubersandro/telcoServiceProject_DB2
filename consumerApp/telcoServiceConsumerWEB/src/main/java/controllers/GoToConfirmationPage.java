@@ -39,9 +39,7 @@ public class GoToConfirmationPage extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		//session retrieval 
-		HttpSession session = req.getSession(); 
-		System.err.println("SESSION:"+ session.getId());//debug 
-		
+		HttpSession session = req.getSession(); 		
 		// info retrieval from request 
 		String[] chosenOptsKeys = req.getParameterValues("optionalProduct"); // can be null!
 		String startingDateString = req.getParameter("startingDate");
@@ -83,6 +81,7 @@ public class GoToConfirmationPage extends HttpServlet {
 		tmp.setIncludedOptionalProducts(chosenOptionalProducts);
 		tmp.setServicePackage(servicePackage);
 		tmp.setValidityPeriod(chosenVP);
+		tmp.setTotalValue(totalValue);
 		session.removeAttribute("chosenServicePackage");
 		session.setAttribute("tmpOrder", tmp);
 		

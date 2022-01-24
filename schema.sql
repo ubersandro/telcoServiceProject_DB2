@@ -210,7 +210,7 @@ CREATE TABLE purchasesPerPackageVP( -- MATERIALIZED VIEW TABLE
     validityPeriodMonths INT,
     CONSTRAINT PRIMARY KEY (servicePackage, validityPeriodMonths),
     counter INT DEFAULT '0',
-    CONSTRAINT FOREIGN KEY (servicePackage) REFERENCES HasValidity (packageID, validityMonths)
+    CONSTRAINT FOREIGN KEY fk123 (servicePackage, validityPeriodMonths) REFERENCES HasValidity (packageID, validityMonths)
 );
 /**
   TRIGGERS
@@ -231,14 +231,14 @@ CREATE TABLE purchaseSP_sumOPTS_purWithOPTS (
 );
 -- QUERIES
     -- a) total value of sales WITH optional products
-        SELECT X.packageID AS ServicePackage,  X.purchasesWithOptionalProducts AS "Purchases with at least one product"
-        FROM  purchaseSP_sumOPTS_purWithOPTS X;
+        /*SELECT X.packageID AS ServicePackage,  X.purchasesWithOptionalProducts AS "Purchases with at least one product"
+        FROM  purchaseSP_sumOPTS_purWithOPTS X;*/
     -- b) total value of sales WITHOUT optional products -> TOTAL SALES - a)
 
     -- c) AVERAGE optional products sold with each servicePackage
-        SELECT  X.packageID as ServicePackage, sum(X.totalOptionalProducts) / sum (purchasesWithOptionalProducts) as average
+      /*  SELECT  X.packageID as ServicePackage, sum(X.totalOptionalProducts) / sum (purchasesWithOptionalProducts) as average
         FROM purchaseSP_sumOPTS_purWithOPTS X
-        GROUP BY X.packageID;
+        GROUP BY X.packageID;*/
 /**
   TRIGGERS
   T1) ON ORDER ACCEPTANCE -> IF "THERE IS AT LEAST ONE OPT IN THE ORDER" THEN purchasesWithOptionalProducts+=1,  totalOptionalProducts+=optionalProducts;
@@ -287,20 +287,35 @@ INSERT INTO TelcoUser (username, email, password, DTYPE) VALUES ("consumerA", "A
 INSERT INTO Consumer (username) VALUES ("consumerA") ;
 INSERT INTO Employee (username) VALUES ("employeeB") ;
 
-INSERT INTO Service(DTYPE) VALUES ("MPS"),("FIS"), ("MIS"), ("FPS"); 
-
-INSERT INTO FixedPhoneService(id) VALUES (4);
+INSERT INTO Service(DTYPE) VALUES ("MPS"),("FIS"), ("MIS"), ("FPS");
+INSERT INTO MobilePhoneService(id, SMSs, minutes, extraSMSsFee, extraMinutesFee) VALUES (1, 10, 10, 100.2, 400.4);
 INSERT INTO FixedInternetService(id, gigabytes, fee ) VALUES (2, 10, 1.0);
+INSERT INTO MobileInternetService(id, gigabytes, fee ) VALUES (3, 10, 1.0);
+INSERT INTO FixedPhoneService(id) VALUES (4);
+
+INSERT INTO ServicePackage (name) VALUES ("SP1"), ("SP2"), ("SP3");
 
 INSERT INTO OptionalProduct (name, fee) VALUES ("opt1", 1.2), ("opt2",3.4);
 
 INSERT INTO Offers (productName, packageID )VALUES ("opt1", 1), ("opt2", 1) ;
+INSERT INTO Offers (productName, packageID )VALUES ("opt1", 3), ("opt2", 3) ;
 
 INSERT INTO SPS (packageID, serviceID) VALUES (1,4), (1,2); 
+INSERT INTO SPS (packageID, serviceID) VALUES (3,4), (3,2);
+INSERT INTO SPS (packageID, serviceID) VALUES (2,4);
+
+INSERT INTO ValidityPeriod(months) VALUES (12),(24),(36);
 
 INSERT INTO HasValidity (packageID, validityMonths, monthlyFee) VALUES  (1, 12, 1.0), (1, 24, 2.0), (1, 36, 3.0);
+INSERT INTO HasValidity (packageID, validityMonths, monthlyFee) VALUES  (2, 12, 11.0), (2, 24, 21.0), (2, 36, 32.0);
+INSERT INTO HasValidity (packageID, validityMonths, monthlyFee) VALUES  (3, 12, 12.0), (3, 24, 22.0), (3, 36, 33.0);
 
-INSERT INTO ServicePackage (name) VALUES ("SP1"), ("SP2"), ("SP3");
+
+
 -- only three values
-INSERT INTO ValidityPeriod(months) VALUES (12),(24),(36);
+
 UNLOCK TABLES;
+
+
+-- TRIGGERS DEFINITION
+
