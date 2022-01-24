@@ -9,6 +9,11 @@ import javax.ejb.Stateless;
  */
 
 @Stateless
-public class SalesReportService { //TODO
+public class SalesReportService {
+	
+	
+	public SalesReportService() {}
+	
+	
 	
 }

@@ -201,7 +201,7 @@ CREATE TABLE purchasesPerPackageVP
   The table contains the number of optional products ever included in a given package purchase together with the
   number of purchases of the package where at least an optional product was included.
  */
-CREATE TABLE purchaseSP_sumOPTS_purWithOPTS
+CREATE TABLE salesSP_OP
 (
     packageID                     INT,
     totalOptionalProducts         INT, -- total number of optional products ever sold together with the package (ASSUMPTION: A PRODUCT CAN BE INCLUDED AND COUNTED MORE THAN ONE TIME
@@ -220,10 +220,10 @@ CREATE TABLE optionalProduct_sales
 
 
 -- TUPLE INSERTION
-LOCK TABLES Consumer WRITE , Service WRITE , MobilePhoneService WRITE , FixedInternetService WRITE ,
+/*LOCK TABLES Consumer WRITE , Service WRITE , MobilePhoneService WRITE , FixedInternetService WRITE ,
     FixedPhoneService WRITE, SPS WRITE, OptionalProduct WRITE, Offers WRITE, HasValidity WRITE, TelcoUser write , Employee write,
     ServicePackage WRITE,ValidityPeriod WRITE;
-
+*/
 INSERT INTO TelcoUser (username, email, password, DTYPE)
 VALUES ('consumerA', 'A@A.it', 'A', 'CONS'),
        ('employeeB', 'B@B.it', 'B', 'EMP');
@@ -294,7 +294,38 @@ VALUES ('2022-01-21', '123456', '200.0', '2022-01-22', 'consumerA', '1', '12');
 
 -- only three values
 
-UNLOCK TABLES;
+ /*UNLOCK TABLES;*/
+
+-- PROCEDURE DEFINITION
+CREATE OR REPLACE PROCEDURE updateProductSales(IN orderID INT)
+BEGIN
+    DECLARE currentProduct VARCHAR(45);
+    DECLARE done INT DEFAULT 0;
+
+
+    DECLARE curs CURSOR FOR
+        SELECT I.productName AS optionalProduct FROM Includes I WHERE I.orderId = orderId;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+    OPEN curs;
+
+    salesUpdateLoop : LOOP
+        FETCH curs INTO currentProduct;
+        IF done THEN
+            LEAVE salesUpdateLoop;
+        END IF;
+        -- UPDATE SALES REPORT TABLE
+
+        IF ((SELECT count(*) FROM optionalProduct_sales S WHERE S.productName=currentProduct) != '0') THEN
+            UPDATE optionalProduct_sales X SET sales=sales+1 WHERE X.productName=currentProduct;
+        ELSE -- THE TUPLE DOES NOT EXIST
+            INSERT INTO optionalProduct_sales(productName, sales) VALUES (currentProduct, '1');
+        END IF;
+
+
+    END LOOP;
+    CLOSE curs ;
+END;
 
 
 -- TRIGGERS DEFINITION
@@ -325,14 +356,14 @@ BEGIN
 
         -- purchaseSP_sumOPTS_purWithOPTS BEGIN
         IF ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) > '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
-            IF ((SELECT COUNT(*) FROM purchaseSP_sumOPTS_purWithOPTS P WHERE P.packageID = NEW.packageID) > '0') -- THE TUPLE EXISTS
+            IF ((SELECT COUNT(*) FROM salesSP_OP P WHERE P.packageID = NEW.packageID) > '0') -- THE TUPLE EXISTS
             THEN
-                UPDATE purchaseSP_sumOPTS_purWithOPTS
+                UPDATE salesSP_OP
                 SET purchasesWithOptionalProducts = purchasesWithOptionalProducts + '1' ,
                     totalOptionalProducts =   totalOptionalProducts + (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id)
                 WHERE packageID = NEW.packageID;
             ELSE -- THE TUPLE DOES NOT EXIST, CREATE IT
-                INSERT INTO purchaseSP_sumOPTS_purWithOPTS(packageID, totalOptionalProducts, purchasesWithOptionalProducts)
+                INSERT INTO salesSP_OP(packageID, totalOptionalProducts, purchasesWithOptionalProducts)
                 VALUES (NEW.packageID, (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id), 1);
             END IF;
             -- product sales statistics update
@@ -342,46 +373,6 @@ BEGIN
         -- end purchases update
     END IF;
 END;
-
--- preliminary cleaning
-DELETE FROM optionalProduct_sales ;
-DELETE FROM ServiceActivationSchedule ;
-DELETE FROM purchaseSP_sumOPTS_purWithOPTS ;
-DELETE FROM purchasesPerPackageVP;
-DELETE FROM `Order`;
-
--- test bench
-SET @orderId = 51;
-SET @packageID = 2; -- it includes opt1, opt2. Package 1 includes them as well.
-INSERT INTO `Order`(ID, DATE, TIME, TOTALVALUE, STARTINGDATE, CONSUSERNAME, PACKAGEID, VPMONTHS)
-VALUES (@orderId, '2022-01-21', '123456', '200.0', '2022-01-22', 'consumerA', @packageID, '12');
-SELECT *
-FROM `Order`;
-UPDATE `Order`
-SET status='1'
-WHERE id = @orderId;
-SELECT *
-FROM `Order`;
-
--- include opts in the order
-INSERT INTO Includes (orderId, productName)
-VALUES (@orderId, 'opt1');
-
-SELECT *
-FROM Includes I
-WHERE I.orderId = @orderId;
--- ORDER PAYMENT -> check purchases with optional products
-UPDATE `Order`
-SET status='2'
-WHERE id = @orderId;
-SELECT *
-FROM ServiceActivationSchedule;
-SELECT *
-FROM purchasesPerPackageVP;
-SELECT *
-FROM purchaseSP_sumOPTS_purWithOPTS;
-SELECT *
-FROM optionalProduct_sales;
 
 
 --  QUERIES
@@ -399,14 +390,14 @@ FROM purchasesPerPackageVP X;
 
 -- TOTAL NUMBER OF SERVICE PACKAGE SALES WITH AT LEAST ONE OPTIONAL PRODUCT
 SELECT X.packageID AS ServicePackage, X.purchasesWithOptionalProducts AS "Purchases with at least one product"
-FROM purchaseSP_sumOPTS_purWithOPTS X;
+FROM salesSP_OP X;
 
 -- TOTAL NUMBER OF SERVICE PACKAGE SALES WITHOUT ANY OPTIONAL PRODUCTS
 
 SELECT X.servicePackage AS "ServicePackage ID",
        sum(counter) -
        (SELECT COUNT(Y.purchasesWithOptionalProducts)
-        FROM purchaseSP_sumOPTS_purWithOPTS Y
+        FROM salesSP_OP Y
         WHERE Y.packageID = X.servicePackage)
                         AS "total purchases with no optional products included"
 FROM purchasesPerPackageVP X
@@ -416,7 +407,7 @@ GROUP BY X.servicePackage;
 -- AVERAGE NUMBER OF  OPTIONAL PRODUCT SOLD TOGETHER WITH EACH SERVICE PACKAGE
 SELECT X.packageID                                                       as ServicePackage,
        sum(X.totalOptionalProducts) / sum(purchasesWithOptionalProducts) as "Average number of optional products included"
-FROM purchaseSP_sumOPTS_purWithOPTS X
+FROM salesSP_OP X
 GROUP BY X.packageID;
 
 -- BEST SELLER OPTIONAL PRODUCT -> PRODUCT SOLD THE MAXIMUM NUMBER OF TIMES -> NON UNIQUE !
