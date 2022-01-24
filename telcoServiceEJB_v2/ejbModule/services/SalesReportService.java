@@ -41,7 +41,7 @@ public class SalesReportService {
 
 	@SuppressWarnings("unchecked")
 	public List<Object> findSalesAllSP () {
-		return (List<Object>) em.createNamedQuery("PurchasesPackageValidityPeriod.purchasesSP").getResultList(); // TODO check what concrete type has 
+		return (List<Object>) em.createNamedQuery("PurchasesPackageValidityPeriod.purchasesSP").getResultList(); // TODO check what concrete type has 		
 	}
 	
 	public Map<Integer, Double> findSPOPAVG(){
