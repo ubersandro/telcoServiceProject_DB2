@@ -24,6 +24,7 @@ import services.ServicesUtils;
 /**
  * Once the Employee created the product redirect it here setting creationMSG to
  * OK otherwise set it to error (template)...
+ * TODO fix addServicePackage not working 
  * 
  * @author ubersandro
  *
