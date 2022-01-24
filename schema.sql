@@ -156,7 +156,7 @@ CREATE TABLE Includes
     CONSTRAINT FOREIGN KEY (productName) REFERENCES OptionalProduct (name) ON DELETE CASCADE ON UPDATE CASCADE -- CAN AN OPTIONAL PRODUCT BE DELETED ?
 );
 
--- ServicePackage -<>- optionalProduct   @TODO VEDI NOME
+-- ServicePackage -<>- optionalProduct
 CREATE TABLE Offers
 (
     productName VARCHAR(45) NOT NULL,
@@ -183,13 +183,7 @@ CREATE TABLE ServiceActivationSchedule
     CONSTRAINT FOREIGN KEY (orderID) REFERENCES `Order` (ID) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- SALES REPORT PART OF THE SCHEMA 
--- 1) purchasesPerPackage TABLE 
--- 2) purchasesPerPackageVP TABLE -> 1) diventa non necessaria 
--- 3) purchasesPerPackageW_WO_OptionalProducts
--- 4) packageAvgOptProdsSoldTogether
--- 5) insolvent users, suspended orders and alerts -> EJB, no table 
--- 6) optionalProducts sales to choose the best selling one  
+-- SALES REPORT INFO
 
 /**
   The table contains the number of times a ServicePackage has been purchased with a given validity period.
@@ -216,18 +210,6 @@ CREATE TABLE purchaseSP_sumOPTS_purWithOPTS
     CONSTRAINT PRIMARY KEY (packageID)
 );
 
--- c) AVERAGE optional products sold with each servicePackage
-
-/**
-  TRIGGERS
-  T1) ON ORDER ACCEPTANCE -> IF "THERE IS AT LEAST ONE OPT IN THE ORDER" THEN purchasesWithOptionalProducts+=1,  totalOptionalProducts+=optionalProducts;
-  @TODO fire the trigger for each statement
-  ALTERNATIVE
-    FOR EACH TUPLE Order, Optional product included in Table Includes then do the modification to the table purchaseSP_sumOPTS_purWithOPTS
- */
-
-
-
 CREATE TABLE optionalProduct_sales
 (
     productName VARCHAR(45),
@@ -236,13 +218,6 @@ CREATE TABLE optionalProduct_sales
     CONSTRAINT PRIMARY KEY (productName)
 );
 
-/**
-  TRIGGERS:
-
-  T1) ON ORDER ACCEPTANCE -> IF "THERE IS AT LEAST ONE OPT IN THE ORDER" THEN FOR EACH PROD INCREMENT  optionalProduct_sales.sales
-  NO STATEMENT LEVEL --> SEE TRIGGER ABOVE
- */
-
 
 -- TUPLE INSERTION
 LOCK TABLES Consumer WRITE , Service WRITE , MobilePhoneService WRITE , FixedInternetService WRITE ,
@@ -250,7 +225,7 @@ LOCK TABLES Consumer WRITE , Service WRITE , MobilePhoneService WRITE , FixedInt
     ServicePackage WRITE,ValidityPeriod WRITE;
 
 INSERT INTO TelcoUser (username, email, password, DTYPE)
-VALUES ("consumerA", "A@A.it", "A", "CONS"),
+VALUES ('consumerA', 'A@A.it', 'A', 'CONS'),
        ("employeeB", "B@B.it", "B", "EMP");
 INSERT INTO Consumer (username)
 VALUES ("consumerA");
@@ -367,23 +342,28 @@ BEGIN
         END IF;
         -- purchaseSP_sumOPTS_purWithOPTS END
 
-
         -- optionalProduct_sales BEGIN
-/*        IF ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) != 0) THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
-
-
-        END IF;*/
+        IF ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) != '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
+            CALL updateProductSales(new.id);
+        END IF;
         --  optionalProduct_sales END
+
         -- end purchases update
     END IF;
-END ;
+END;
 
+-- preliminary cleaning
+DELETE FROM optionalProduct_sales ;
+DELETE FROM ServiceActivationSchedule ;
+DELETE FROM purchaseSP_sumOPTS_purWithOPTS ;
+DELETE FROM purchasesPerPackageVP;
+DELETE FROM `Order`;
 
 -- test bench
 SET @orderId = 3000;
 SET @packageID = 3; -- it includes opt1, opt2. Package 1 includes them as well.
 INSERT INTO `Order`(ID, DATE, TIME, TOTALVALUE, STARTINGDATE, CONSUSERNAME, PACKAGEID, VPMONTHS)
-VALUES (@orderId, '2022-01-21', '123456', '200.0', '2022-01-22', "consumerA", @packageID, '12');
+VALUES (@orderId, '2022-01-21', '123456', '200.0', '2022-01-22', 'consumerA', @packageID, '12');
 SELECT *
 FROM `Order`;
 UPDATE `Order`
@@ -396,22 +376,25 @@ FROM `Order`;
 INSERT INTO Includes (orderId, productName)
 VALUES (@orderId, 'opt1'),
        (@orderId, 'opt2');
-SELECT * FROM Includes I WHERE I.orderId=@orderId;
+SELECT *
+FROM Includes I
+WHERE I.orderId = @orderId;
 -- ORDER PAYMENT -> check purchases with optional products
 UPDATE `Order`
 SET status='2'
 WHERE id = @orderId;
 SELECT *
-FROM ServiceActivationSchedule; -- new service activation schedule has to be created
+FROM ServiceActivationSchedule;
 SELECT *
-FROM purchasesPerPackageVP; -- new purchase with validity period with new order
+FROM purchasesPerPackageVP;
 SELECT *
 FROM purchaseSP_sumOPTS_purWithOPTS;
-
--- new purchase with two optional products
+SELECT *
+FROM optionalProduct_sales;
 
 
 --  QUERIES
+
 --  TOTAL PURCHASES PER PACKAGE
 
 SELECT sum(counter)
@@ -448,4 +431,4 @@ GROUP BY X.packageID;
 -- BEST SELLER OPTIONAL PRODUCT -> PRODUCT SOLD THE MAXIMUM NUMBER OF TIMES -> NON UNIQUE !
 SELECT *
 FROM optionalProduct_sales S
-WHERE S.sales = (SELECT UNIQUE MAX(count) FROM optionalProduct_sales);
+WHERE S.sales = (SELECT DISTINCT MAX(ops.sales) FROM optionalProduct_sales ops);
