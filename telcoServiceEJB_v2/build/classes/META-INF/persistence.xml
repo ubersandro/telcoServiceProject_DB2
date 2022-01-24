@@ -20,7 +20,10 @@
 		<class>entities.ServicePackage</class>
 		<class>entities.ValidityPeriod</class>
 				<class>entities.TelcoUser</class>
-		
+		<class>entities.embeddable.PackageVPKEY</class>
+		<class>entities.PurchasesPackageValidityPeriod</class>
+		<class>entities.SalesSP_OP</class>
+		<class>entities.OptionalProduct_sales</class>
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<properties>
 			<property name="eclipselink.logging.level" value="FINE" />

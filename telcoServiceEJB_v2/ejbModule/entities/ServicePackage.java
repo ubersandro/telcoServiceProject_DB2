@@ -71,6 +71,23 @@ public class ServicePackage implements Serializable {
 		return id;
 	}
 
+	@Override
+	public int hashCode() {
+		return id;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ServicePackage other = (ServicePackage) obj;
+		return id == other.id;
+	}
+	
 	public void setId(int id) {
 		this.id = id;
 	}

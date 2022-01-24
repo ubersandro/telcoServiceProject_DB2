@@ -294,7 +294,7 @@ VALUES ('2022-01-21', '123456', '200.0', '2022-01-22', 'consumerA', '1', '12');
 
 -- only three values
 
- /*UNLOCK TABLES;*/
+/*UNLOCK TABLES;*/
 
 -- PROCEDURE DEFINITION
 CREATE OR REPLACE PROCEDURE updateProductSales(IN orderID INT)
@@ -309,22 +309,23 @@ BEGIN
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
     OPEN curs;
 
-    salesUpdateLoop : LOOP
+    salesUpdateLoop :
+    LOOP
         FETCH curs INTO currentProduct;
         IF done THEN
             LEAVE salesUpdateLoop;
         END IF;
         -- UPDATE SALES REPORT TABLE
 
-        IF ((SELECT count(*) FROM optionalProduct_sales S WHERE S.productName=currentProduct) != '0') THEN
-            UPDATE optionalProduct_sales X SET sales=sales+1 WHERE X.productName=currentProduct;
+        IF ((SELECT count(*) FROM optionalProduct_sales S WHERE S.productName = currentProduct) != '0') THEN
+            UPDATE optionalProduct_sales X SET sales=sales + 1 WHERE X.productName = currentProduct;
         ELSE -- THE TUPLE DOES NOT EXIST
             INSERT INTO optionalProduct_sales(productName, sales) VALUES (currentProduct, '1');
         END IF;
 
 
     END LOOP;
-    CLOSE curs ;
+    CLOSE curs;
 END;
 
 
@@ -359,8 +360,9 @@ BEGIN
             IF ((SELECT COUNT(*) FROM salesSP_OP P WHERE P.packageID = NEW.packageID) > '0') -- THE TUPLE EXISTS
             THEN
                 UPDATE salesSP_OP
-                SET purchasesWithOptionalProducts = purchasesWithOptionalProducts + '1' ,
-                    totalOptionalProducts =   totalOptionalProducts + (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id)
+                SET purchasesWithOptionalProducts = purchasesWithOptionalProducts + '1',
+                    totalOptionalProducts         = totalOptionalProducts +
+                                                    (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id)
                 WHERE packageID = NEW.packageID;
             ELSE -- THE TUPLE DOES NOT EXIST, CREATE IT
                 INSERT INTO salesSP_OP(packageID, totalOptionalProducts, purchasesWithOptionalProducts)
@@ -370,9 +372,95 @@ BEGIN
             CALL updateProductSales(new.id);
         END IF; -- purchase with optional products
 
-        -- end purchases update
+    -- end purchases update
     END IF;
 END;
+
+CREATE OR REPLACE TRIGGER setInsolventUser
+    AFTER UPDATE
+    ON `Order`
+    FOR EACH ROW
+BEGIN
+    -- an order is set as rejected and the SOLVENT user has to be marked as insolvent and the counter set from 0 to 1.
+    -- if the user is already insolvent the counter is incremented by 1
+    -- if the order was already rejected the user counter is incremented anyway because another payment failed
+    IF NEW.status = 1 -- REJECTED
+    THEN
+        UPDATE Consumer C
+        SET C.status = 1, C.counter = C.counter + 1
+        WHERE C.username = NEW.consUsername;
+    end if;
+END;
+
+/*CREATE VIEW lastRejectedOrders(user, date, time, value) AS
+SELECT O.consUsername AS user, O.date AS date, O.time AS time, O.totalValue AS value
+FROM `Order` O
+WHERE O.date IN (SELECT date FROM dateLastRejection D WHERE D.consumer = O.consUsername)
+GROUP BY O.consUsername
+HAVING max(O.time);
+
+CREATE VIEW dateLastRejection(consumer, date) AS
+SELECT O.consUsername AS consumer, MAX(O.date) AS date
+FROM `Order` O
+WHERE O.status = 1
+GROUP BY O.consUsername;
+
+CREATE OR REPLACE TRIGGER createAlert -- alert is created but never removed
+    AFTER UPDATE
+    ON Consumer
+    FOR EACH ROW
+BEGIN
+    --  if counter reaches 3 and the user has no alerts pending then put an alert in the auditing table
+    IF NEW.counter = 3 AND NEW.username NOT IN (SELECT A.username FROM Auditing A WHERE A.username = NEW.username) THEN
+        INSERT INTO Auditing(username, time, date, email, value)
+        VALUES (NEW.username, (SELECT l.time FROM lastRejectedOrders l LIMIT 1),
+                (SELECT l.date FROM lastRejectedOrders l LIMIT 1),
+                (SELECT T.email FROM TelcoUser T WHERE T.username = NEW.username),
+                (SELECT l.value FROM lastRejectedOrders l LIMIT 1));
+    END IF;
+END;
+*/
+
+CREATE OR REPLACE TRIGGER createAlert -- V2
+    AFTER UPDATE ON `Order`
+    FOR EACH ROW -- PRECEDENCE ????
+    BEGIN -- AFTER INCREMENT !!
+        IF NEW.status = 1 AND (SELECT C.counter FROM Consumer C WHERE C.username = NEW.consUsername ) = 3 AND
+            NEW.consUsername NOT IN (SELECT A.username FROM Auditing A WHERE A.username = NEW.consUsername) THEN
+             INSERT INTO Auditing(username, time, date, email, value)
+        VALUES (NEW.consUsername, NEW.time,
+                NEW.date, -- ASSUMING THIS IS THE VERY LAST REJECTION
+                (SELECT T.email FROM TelcoUser T WHERE T.username = NEW.consUsername),
+                NEW.totalValue);
+        end if;
+
+    END;
+
+/*CREATE OR REPLACE TRIGGER setSolventUser NOT WORKING ON MYSQL...
+    AFTER UPDATE
+    ON Consumer
+    FOR EACH ROW
+BEGIN
+    -- remove INSOLVENT flag and set user as solvent  when counter reaches 0
+    IF OLD.counter>0 AND NEW.counter = 0 THEN
+        UPDATE Consumer C SET C.status=0 WHERE C.username=NEW.username;
+    end if;
+END;*/
+
+CREATE OR REPLACE TRIGGER manageRejectedOrdersCounterOnPayment -- ON PAYMENT
+    AFTER UPDATE
+    ON `Order`
+    FOR EACH ROW
+BEGIN
+    IF OLD.status = 1 AND NEW.status = 2 THEN
+        IF (SELECT C.counter FROM Consumer C WHERE C.username = NEW.consUsername) = 1 THEN
+            UPDATE Consumer C SET C.status=0, C.counter = 0 WHERE C.username = NEW.consUsername; -- NO LONGER INSOLVENT
+        ELSE -- STILL INSOLVENT
+            UPDATE Consumer C SET C.counter = counter - 1 WHERE C.username = NEW.consUsername;
+        END IF;
+    END IF;
+END;
+
 
 
 --  QUERIES
