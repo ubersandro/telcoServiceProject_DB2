@@ -226,17 +226,17 @@ LOCK TABLES Consumer WRITE , Service WRITE , MobilePhoneService WRITE , FixedInt
 
 INSERT INTO TelcoUser (username, email, password, DTYPE)
 VALUES ('consumerA', 'A@A.it', 'A', 'CONS'),
-       ("employeeB", "B@B.it", "B", "EMP");
+       ('employeeB', 'B@B.it', 'B', 'EMP');
 INSERT INTO Consumer (username)
-VALUES ("consumerA");
+VALUES ('consumerA');
 INSERT INTO Employee (username)
-VALUES ("employeeB");
+VALUES ('employeeB');
 
 INSERT INTO Service(DTYPE)
-VALUES ("MPS"),
-       ("FIS"),
-       ("MIS"),
-       ("FPS");
+VALUES ('MPS'),
+       ('FIS'),
+       ('MIS'),
+       ('FPS');
 INSERT INTO MobilePhoneService(id, SMSs, minutes, extraSMSsFee, extraMinutesFee)
 VALUES (1, 10, 10, 100.2, 400.4);
 INSERT INTO FixedInternetService(id, gigabytes, fee)
@@ -247,20 +247,20 @@ INSERT INTO FixedPhoneService(id)
 VALUES (4);
 
 INSERT INTO ServicePackage (name)
-VALUES ("SP1"),
-       ("SP2"),
-       ("SP3");
+VALUES ('SP1'),
+       ('SP2'),
+       ('SP3');
 
 INSERT INTO OptionalProduct (name, fee)
-VALUES ("opt1", 1.2),
-       ("opt2", 3.4);
+VALUES ('opt1', 1.2),
+       ('opt2', 3.4);
 
 INSERT INTO Offers (productName, packageID)
-VALUES ("opt1", 1),
-       ("opt2", 1);
+VALUES ('opt1', 1),
+       ('opt2', 1);
 INSERT INTO Offers (productName, packageID)
-VALUES ("opt1", 3),
-       ("opt2", 3);
+VALUES ('opt1', 3),
+       ('opt2', 3);
 
 INSERT INTO SPS (packageID, serviceID)
 VALUES (1, 4),
@@ -289,8 +289,8 @@ VALUES (3, 12, 12.0),
        (3, 24, 22.0),
        (3, 36, 33.0);
 
-INSERT INTO `Order`(DATE, TIME, TOTALVALUE, STARTINGDATE, CONSUSERNAME, PACKAGEID, VPMONTHS)
-VALUES ('2022-01-21', '123456', '200.0', '2022-01-22', "consumerA", "1", '12');
+INSERT INTO `Order` (DATE, TIME, TOTALVALUE, STARTINGDATE, CONSUSERNAME, PACKAGEID, VPMONTHS)
+VALUES ('2022-01-21', '123456', '200.0', '2022-01-22', 'consumerA', '1', '12');
 
 -- only three values
 
@@ -310,8 +310,6 @@ BEGIN
         VALUES (new.id, ADDDATE(new.startingDate, INTERVAL NEW.vpMonths MONTH));
         -- end serviceActivationSchedule creation
 
-        -- purchases updates
-
         -- purchasesPerPackageVP BEGIN
         IF ((SELECT COUNT(*) FROM purchasesPerPackageVP P WHERE P.servicePackage = NEW.packageID) = '0')
         THEN
@@ -326,27 +324,20 @@ BEGIN
         -- purchasesPerPackageVP END
 
         -- purchaseSP_sumOPTS_purWithOPTS BEGIN
-        IF ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) != '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
-            IF ((SELECT COUNT(*) FROM purchaseSP_sumOPTS_purWithOPTS P WHERE P.packageID = NEW.packageID) =
-                '0') -- THE TUPLE DOES NOT EXIST
+        IF ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) > '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
+            IF ((SELECT COUNT(*) FROM purchaseSP_sumOPTS_purWithOPTS P WHERE P.packageID = NEW.packageID) > '0') -- THE TUPLE EXISTS
             THEN
+                UPDATE purchaseSP_sumOPTS_purWithOPTS
+                SET purchasesWithOptionalProducts = purchasesWithOptionalProducts + '1' ,
+                    totalOptionalProducts =   totalOptionalProducts + (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id)
+                WHERE packageID = NEW.packageID;
+            ELSE -- THE TUPLE DOES NOT EXIST, CREATE IT
                 INSERT INTO purchaseSP_sumOPTS_purWithOPTS(packageID, totalOptionalProducts, purchasesWithOptionalProducts)
                 VALUES (NEW.packageID, (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id), 1);
-            ELSE -- THE TUPLE EXISTS, UPDATE IT
-                UPDATE purchaseSP_sumOPTS_purWithOPTS
-                SET purchasesWithOptionalProducts=purchasesWithOptionalProducts + 1
-                    AND totalOptionalProducts =
-                        totalOptionalProducts + (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id)
-                WHERE packageID = NEW.packageID;
             END IF;
-        END IF;
-        -- purchaseSP_sumOPTS_purWithOPTS END
-
-        -- optionalProduct_sales BEGIN
-        IF ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) != '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
+            -- product sales statistics update
             CALL updateProductSales(new.id);
-        END IF;
-        --  optionalProduct_sales END
+        END IF; -- purchase with optional products
 
         -- end purchases update
     END IF;
@@ -360,8 +351,8 @@ DELETE FROM purchasesPerPackageVP;
 DELETE FROM `Order`;
 
 -- test bench
-SET @orderId = 3000;
-SET @packageID = 3; -- it includes opt1, opt2. Package 1 includes them as well.
+SET @orderId = 51;
+SET @packageID = 2; -- it includes opt1, opt2. Package 1 includes them as well.
 INSERT INTO `Order`(ID, DATE, TIME, TOTALVALUE, STARTINGDATE, CONSUSERNAME, PACKAGEID, VPMONTHS)
 VALUES (@orderId, '2022-01-21', '123456', '200.0', '2022-01-22', 'consumerA', @packageID, '12');
 SELECT *
@@ -374,8 +365,8 @@ FROM `Order`;
 
 -- include opts in the order
 INSERT INTO Includes (orderId, productName)
-VALUES (@orderId, 'opt1'),
-       (@orderId, 'opt2');
+VALUES (@orderId, 'opt1');
+
 SELECT *
 FROM Includes I
 WHERE I.orderId = @orderId;
@@ -397,7 +388,7 @@ FROM optionalProduct_sales;
 
 --  TOTAL PURCHASES PER PACKAGE
 
-SELECT sum(counter)
+SELECT X.servicePackage AS PACKAGE, sum(counter) AS SALES
 FROM purchasesPerPackageVP X
 GROUP BY X.servicePackage;
 
