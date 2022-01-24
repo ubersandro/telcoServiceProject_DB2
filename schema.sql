@@ -8,23 +8,23 @@ CREATE TABLE TelcoUser
     email    VARCHAR(45) NOT NULL,
     password VARCHAR(45) NOT NULL,
     CONSTRAINT pkeyUser PRIMARY KEY (username),
-    DTYPE varchar(45)-- included to map inheritance
+    DTYPE    varchar(45)-- included to map inheritance
 );
 
 CREATE TABLE Employee
 (
-	username VARCHAR(45) NOT NULL, 
-    	CONSTRAINT fKeyEmp FOREIGN KEY (username) REFERENCES TelcoUser (username) ON DELETE CASCADE ON UPDATE CASCADE,
-	PRIMARY KEY (username)
+    username VARCHAR(45) NOT NULL,
+    CONSTRAINT fKeyEmp FOREIGN KEY (username) REFERENCES TelcoUser (username) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (username)
 );
 
 CREATE TABLE Consumer
 (
-    username  VARCHAR(45) NOT NULL,
-    status TINYINT     NOT NULL DEFAULT '0',
-    counter   INT         NOT NULL DEFAULT '0',
+    username VARCHAR(45) NOT NULL,
+    status   TINYINT     NOT NULL DEFAULT '0',
+    counter  INT         NOT NULL DEFAULT '0',
     PRIMARY KEY (`username`),
-	CONSTRAINT fKeyCons FOREIGN KEY (username) REFERENCES TelcoUser (username) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fKeyCons FOREIGN KEY (username) REFERENCES TelcoUser (username) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT nonNegCounter CHECK (counter >= 0)
     -- we assume that Insolvent == 0 IFF FALSE and Insolvent > 0 IFF TRUE
 );
@@ -59,7 +59,7 @@ CREATE TABLE OptionalProduct
 
 CREATE TABLE Service
 (
-    id INT NOT NULL AUTO_INCREMENT,
+    id    INT NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id),
     DTYPE varchar(45)-- included to map inheritance
 );
@@ -67,9 +67,9 @@ CREATE TABLE Service
 
 CREATE TABLE MobileInternetService
 (
-    id        INT NOT NULL AUTO_INCREMENT,
+    id        INT           NOT NULL AUTO_INCREMENT,
     PRIMARY KEY (id),
-    gigabytes INT NOT NULL,
+    gigabytes INT           NOT NULL,
     fee       DECIMAL(8, 2) NOT NULL,
     CONSTRAINT signConstraintsMIS CHECK (gigabytes >= 0 AND fee >= 0.00),
     CONSTRAINT FOREIGN KEY (id) REFERENCES Service (id) ON DELETE CASCADE ON UPDATE CASCADE
@@ -83,7 +83,7 @@ CREATE TABLE MobilePhoneService
     SMSs            INT NOT NULL,
     extraSMSsFee    DECIMAL(8, 2),
     CONSTRAINT signConstraintsMPS CHECK (minutes >= 0 AND extraMinutesFee >= 0.00 AND
-                                      SMSs >= 0 AND extraSMSsFee >= 0.00),
+                                         SMSs >= 0 AND extraSMSsFee >= 0.00),
     PRIMARY KEY (id),
     CONSTRAINT FOREIGN KEY (id) REFERENCES Service (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
@@ -125,7 +125,7 @@ CREATE TABLE `Order`
     time         TIME(3)       NOT NULL,
     totalValue   DECIMAL(8, 3) NOT NULL,
     startingDate DATE          NOT NULL,
-    status       TINYINT(1) DEFAULT NULL,         -- NULL @creation, TRUE (FALSE) AFTER APPROVAL (REJECTION)
+    status       TINYINT(1) DEFAULT '0',          -- NULL @creation, TRUE (FALSE) AFTER APPROVAL (REJECTION)
     consUsername VARCHAR(45)   NOT NULL,
     packageID    INT           NOT NULL,
     vpMonths     INT           NOT NULL,
@@ -192,53 +192,32 @@ CREATE TABLE ServiceActivationSchedule
 -- 6) optionalProducts sales to choose the best selling one  
 
 /**
-    QUERIES
-  TOTAL PURCHASES PER PACKAGE
-
-    SELECT sum(counter)
-    FROM purchasesPerPackageVP X
-    GROUP BY X.servicePackage
-
-  TOTAL PURCHASES PER PACKAGE AND VP
-
-    SELECT *
-    FROM purchasesPerPackageVP X
-
+  The table contains the number of times a ServicePackage has been purchased with a given validity period.
  */
-CREATE TABLE purchasesPerPackageVP( -- MATERIALIZED VIEW TABLE
-    servicePackage     INT ,
+CREATE TABLE purchasesPerPackageVP
+( -- MATERIALIZED VIEW TABLE
+    servicePackage       INT,
     validityPeriodMonths INT,
     CONSTRAINT PRIMARY KEY (servicePackage, validityPeriodMonths),
-    counter INT DEFAULT '0',
-    CONSTRAINT FOREIGN KEY fk123 (servicePackage, validityPeriodMonths) REFERENCES HasValidity (packageID, validityMonths)
+    counter              INT DEFAULT '0',
+    CONSTRAINT FOREIGN KEY fk123 (servicePackage, validityPeriodMonths) REFERENCES HasValidity (packageID, validityMonths) ON DELETE CASCADE ON UPDATE CASCADE
 );
-/**
-  TRIGGERS
-  T1) ON ORDER ACCEPTANCE (order marked as accepted, no matter what the previous state was) -> ADD SP WITH VP HERE
-
- */
 
 /**
   The table contains the number of optional products ever included in a given package purchase together with the
   number of purchases of the package where at least an optional product was included.
  */
-CREATE TABLE purchaseSP_sumOPTS_purWithOPTS (
-    packageID INT,
-    totalOptionalProducts INT, -- total number of optional products ever sold together with the package
+CREATE TABLE purchaseSP_sumOPTS_purWithOPTS
+(
+    packageID                     INT,
+    totalOptionalProducts         INT, -- total number of optional products ever sold together with the package (ASSUMPTION: A PRODUCT CAN BE INCLUDED AND COUNTED MORE THAN ONE TIME
     purchasesWithOptionalProducts INT, -- total number of purchases of the ServicePackage with AT LEAST ONE optional prod.
-    CONSTRAINT FOREIGN KEY (packageID) REFERENCES ServicePackage(id),
+    CONSTRAINT FOREIGN KEY (packageID) REFERENCES ServicePackage (id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PRIMARY KEY (packageID)
 );
--- QUERIES
-    -- a) total value of sales WITH optional products
-        /*SELECT X.packageID AS ServicePackage,  X.purchasesWithOptionalProducts AS "Purchases with at least one product"
-        FROM  purchaseSP_sumOPTS_purWithOPTS X;*/
-    -- b) total value of sales WITHOUT optional products -> TOTAL SALES - a)
 
-    -- c) AVERAGE optional products sold with each servicePackage
-      /*  SELECT  X.packageID as ServicePackage, sum(X.totalOptionalProducts) / sum (purchasesWithOptionalProducts) as average
-        FROM purchaseSP_sumOPTS_purWithOPTS X
-        GROUP BY X.packageID;*/
+-- c) AVERAGE optional products sold with each servicePackage
+
 /**
   TRIGGERS
   T1) ON ORDER ACCEPTANCE -> IF "THERE IS AT LEAST ONE OPT IN THE ORDER" THEN purchasesWithOptionalProducts+=1,  totalOptionalProducts+=optionalProducts;
@@ -249,12 +228,11 @@ CREATE TABLE purchaseSP_sumOPTS_purWithOPTS (
 
 
 
-
-
-CREATE TABLE optionalProduct_sales (
-    productName VARCHAR (45),
-    sales INT,
-    CONSTRAINT FOREIGN KEY (productName) REFERENCES OptionalProduct(name),
+CREATE TABLE optionalProduct_sales
+(
+    productName VARCHAR(45),
+    sales       INT,
+    CONSTRAINT FOREIGN KEY (productName) REFERENCES OptionalProduct (name) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PRIMARY KEY (productName)
 );
 
@@ -265,52 +243,79 @@ CREATE TABLE optionalProduct_sales (
   NO STATEMENT LEVEL --> SEE TRIGGER ABOVE
  */
 
-/**
-    QUERY :
 
-    SELECT X.productName "Best seller Product"
-    FROM optionalProduct_sales AS X
-    WHERE X.sales IN (SELECT max(sales) FROM optionalProduct_sales);
-  */
-
-
-
-
-
-
--- TUPLE INSERTION 
+-- TUPLE INSERTION
 LOCK TABLES Consumer WRITE , Service WRITE , MobilePhoneService WRITE , FixedInternetService WRITE ,
     FixedPhoneService WRITE, SPS WRITE, OptionalProduct WRITE, Offers WRITE, HasValidity WRITE, TelcoUser write , Employee write,
-    ServicePackage WRITE,ValidityPeriod WRITE ;
+    ServicePackage WRITE,ValidityPeriod WRITE;
 
-INSERT INTO TelcoUser (username, email, password, DTYPE) VALUES ("consumerA", "A@A.it", "A", "CONS"), ("employeeB", "B@B.it", "B", "EMP");
-INSERT INTO Consumer (username) VALUES ("consumerA") ;
-INSERT INTO Employee (username) VALUES ("employeeB") ;
+INSERT INTO TelcoUser (username, email, password, DTYPE)
+VALUES ("consumerA", "A@A.it", "A", "CONS"),
+       ("employeeB", "B@B.it", "B", "EMP");
+INSERT INTO Consumer (username)
+VALUES ("consumerA");
+INSERT INTO Employee (username)
+VALUES ("employeeB");
 
-INSERT INTO Service(DTYPE) VALUES ("MPS"),("FIS"), ("MIS"), ("FPS");
-INSERT INTO MobilePhoneService(id, SMSs, minutes, extraSMSsFee, extraMinutesFee) VALUES (1, 10, 10, 100.2, 400.4);
-INSERT INTO FixedInternetService(id, gigabytes, fee ) VALUES (2, 10, 1.0);
-INSERT INTO MobileInternetService(id, gigabytes, fee ) VALUES (3, 10, 1.0);
-INSERT INTO FixedPhoneService(id) VALUES (4);
+INSERT INTO Service(DTYPE)
+VALUES ("MPS"),
+       ("FIS"),
+       ("MIS"),
+       ("FPS");
+INSERT INTO MobilePhoneService(id, SMSs, minutes, extraSMSsFee, extraMinutesFee)
+VALUES (1, 10, 10, 100.2, 400.4);
+INSERT INTO FixedInternetService(id, gigabytes, fee)
+VALUES (2, 10, 1.0);
+INSERT INTO MobileInternetService(id, gigabytes, fee)
+VALUES (3, 10, 1.0);
+INSERT INTO FixedPhoneService(id)
+VALUES (4);
 
-INSERT INTO ServicePackage (name) VALUES ("SP1"), ("SP2"), ("SP3");
+INSERT INTO ServicePackage (name)
+VALUES ("SP1"),
+       ("SP2"),
+       ("SP3");
 
-INSERT INTO OptionalProduct (name, fee) VALUES ("opt1", 1.2), ("opt2",3.4);
+INSERT INTO OptionalProduct (name, fee)
+VALUES ("opt1", 1.2),
+       ("opt2", 3.4);
 
-INSERT INTO Offers (productName, packageID )VALUES ("opt1", 1), ("opt2", 1) ;
-INSERT INTO Offers (productName, packageID )VALUES ("opt1", 3), ("opt2", 3) ;
+INSERT INTO Offers (productName, packageID)
+VALUES ("opt1", 1),
+       ("opt2", 1);
+INSERT INTO Offers (productName, packageID)
+VALUES ("opt1", 3),
+       ("opt2", 3);
 
-INSERT INTO SPS (packageID, serviceID) VALUES (1,4), (1,2); 
-INSERT INTO SPS (packageID, serviceID) VALUES (3,4), (3,2);
-INSERT INTO SPS (packageID, serviceID) VALUES (2,4);
+INSERT INTO SPS (packageID, serviceID)
+VALUES (1, 4),
+       (1, 2);
+INSERT INTO SPS (packageID, serviceID)
+VALUES (3, 4),
+       (3, 2);
+INSERT INTO SPS (packageID, serviceID)
+VALUES (2, 4);
 
-INSERT INTO ValidityPeriod(months) VALUES (12),(24),(36);
+INSERT INTO ValidityPeriod(months)
+VALUES (12),
+       (24),
+       (36);
 
-INSERT INTO HasValidity (packageID, validityMonths, monthlyFee) VALUES  (1, 12, 1.0), (1, 24, 2.0), (1, 36, 3.0);
-INSERT INTO HasValidity (packageID, validityMonths, monthlyFee) VALUES  (2, 12, 11.0), (2, 24, 21.0), (2, 36, 32.0);
-INSERT INTO HasValidity (packageID, validityMonths, monthlyFee) VALUES  (3, 12, 12.0), (3, 24, 22.0), (3, 36, 33.0);
+INSERT INTO HasValidity (packageID, validityMonths, monthlyFee)
+VALUES (1, 12, 1.0),
+       (1, 24, 2.0),
+       (1, 36, 3.0);
+INSERT INTO HasValidity (packageID, validityMonths, monthlyFee)
+VALUES (2, 12, 11.0),
+       (2, 24, 21.0),
+       (2, 36, 32.0);
+INSERT INTO HasValidity (packageID, validityMonths, monthlyFee)
+VALUES (3, 12, 12.0),
+       (3, 24, 22.0),
+       (3, 36, 33.0);
 
-
+INSERT INTO `Order`(DATE, TIME, TOTALVALUE, STARTINGDATE, CONSUSERNAME, PACKAGEID, VPMONTHS)
+VALUES ('2022-01-21', '123456', '200.0', '2022-01-22', "consumerA", "1", '12');
 
 -- only three values
 
@@ -319,3 +324,128 @@ UNLOCK TABLES;
 
 -- TRIGGERS DEFINITION
 
+CREATE OR REPLACE TRIGGER createServiceActivationSchedule
+    AFTER UPDATE
+    ON `Order`
+    FOR EACH ROW
+BEGIN
+    IF new.status = '2' THEN -- WHENEVER AN ORDER IS MARKED AS PAID (STATUS = 2)
+    -- serviceActivationSchedule creation
+        INSERT INTO ServiceActivationSchedule(orderID, endDate)
+        VALUES (new.id, ADDDATE(new.startingDate, INTERVAL NEW.vpMonths MONTH));
+        -- end serviceActivationSchedule creation
+
+        -- purchases updates
+
+        -- purchasesPerPackageVP BEGIN
+        IF ((SELECT COUNT(*) FROM purchasesPerPackageVP P WHERE P.servicePackage = NEW.packageID) = '0')
+        THEN
+            INSERT INTO purchasesPerPackageVP(servicePackage, validityPeriodMonths, counter)
+            VALUES (NEW.packageID, NEW.vpMonths, 1);
+        ELSE
+            UPDATE purchasesPerPackageVP
+            SET counter=counter + 1
+            WHERE servicePackage = NEW.packageID
+              AND validityPeriodMonths = NEW.vpMonths;
+        END IF;
+        -- purchasesPerPackageVP END
+
+        -- purchaseSP_sumOPTS_purWithOPTS BEGIN
+        IF ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) != '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
+            IF ((SELECT COUNT(*) FROM purchaseSP_sumOPTS_purWithOPTS P WHERE P.packageID = NEW.packageID) =
+                '0') -- THE TUPLE DOES NOT EXIST
+            THEN
+                INSERT INTO purchaseSP_sumOPTS_purWithOPTS(packageID, totalOptionalProducts, purchasesWithOptionalProducts)
+                VALUES (NEW.packageID, (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id), 1);
+            ELSE -- THE TUPLE EXISTS, UPDATE IT
+                UPDATE purchaseSP_sumOPTS_purWithOPTS
+                SET purchasesWithOptionalProducts=purchasesWithOptionalProducts + 1
+                    AND totalOptionalProducts =
+                        totalOptionalProducts + (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id)
+                WHERE packageID = NEW.packageID;
+            END IF;
+        END IF;
+        -- purchaseSP_sumOPTS_purWithOPTS END
+
+
+        -- optionalProduct_sales BEGIN
+/*        IF ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) != 0) THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
+
+
+        END IF;*/
+        --  optionalProduct_sales END
+        -- end purchases update
+    END IF;
+END ;
+
+
+-- test bench
+SET @orderId = 3000;
+SET @packageID = 3; -- it includes opt1, opt2. Package 1 includes them as well.
+INSERT INTO `Order`(ID, DATE, TIME, TOTALVALUE, STARTINGDATE, CONSUSERNAME, PACKAGEID, VPMONTHS)
+VALUES (@orderId, '2022-01-21', '123456', '200.0', '2022-01-22', "consumerA", @packageID, '12');
+SELECT *
+FROM `Order`;
+UPDATE `Order`
+SET status='1'
+WHERE id = @orderId;
+SELECT *
+FROM `Order`;
+
+-- include opts in the order
+INSERT INTO Includes (orderId, productName)
+VALUES (@orderId, 'opt1'),
+       (@orderId, 'opt2');
+SELECT * FROM Includes I WHERE I.orderId=@orderId;
+-- ORDER PAYMENT -> check purchases with optional products
+UPDATE `Order`
+SET status='2'
+WHERE id = @orderId;
+SELECT *
+FROM ServiceActivationSchedule; -- new service activation schedule has to be created
+SELECT *
+FROM purchasesPerPackageVP; -- new purchase with validity period with new order
+SELECT *
+FROM purchaseSP_sumOPTS_purWithOPTS;
+
+-- new purchase with two optional products
+
+
+--  QUERIES
+--  TOTAL PURCHASES PER PACKAGE
+
+SELECT sum(counter)
+FROM purchasesPerPackageVP X
+GROUP BY X.servicePackage;
+
+-- TOTAL PURCHASES PER PACKAGE AND VP
+
+SELECT *
+FROM purchasesPerPackageVP X;
+
+-- TOTAL NUMBER OF SERVICE PACKAGE SALES WITH AT LEAST ONE OPTIONAL PRODUCT
+SELECT X.packageID AS ServicePackage, X.purchasesWithOptionalProducts AS "Purchases with at least one product"
+FROM purchaseSP_sumOPTS_purWithOPTS X;
+
+-- TOTAL NUMBER OF SERVICE PACKAGE SALES WITHOUT ANY OPTIONAL PRODUCTS
+
+SELECT X.servicePackage AS "ServicePackage ID",
+       sum(counter) -
+       (SELECT COUNT(Y.purchasesWithOptionalProducts)
+        FROM purchaseSP_sumOPTS_purWithOPTS Y
+        WHERE Y.packageID = X.servicePackage)
+                        AS "total purchases with no optional products included"
+FROM purchasesPerPackageVP X
+GROUP BY X.servicePackage;
+-- NOT NECESSARY
+
+-- AVERAGE NUMBER OF  OPTIONAL PRODUCT SOLD TOGETHER WITH EACH SERVICE PACKAGE
+SELECT X.packageID                                                       as ServicePackage,
+       sum(X.totalOptionalProducts) / sum(purchasesWithOptionalProducts) as "Average number of optional products included"
+FROM purchaseSP_sumOPTS_purWithOPTS X
+GROUP BY X.packageID;
+
+-- BEST SELLER OPTIONAL PRODUCT -> PRODUCT SOLD THE MAXIMUM NUMBER OF TIMES -> NON UNIQUE !
+SELECT *
+FROM optionalProduct_sales S
+WHERE S.sales = (SELECT UNIQUE MAX(count) FROM optionalProduct_sales);
