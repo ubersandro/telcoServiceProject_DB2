@@ -1,6 +1,5 @@
 package entities;
 import javax.persistence.*;
-import javax.ws.rs.client.CompletionStageRxInvoker;
 
 import java.io.Serializable;
 import java.util.*;

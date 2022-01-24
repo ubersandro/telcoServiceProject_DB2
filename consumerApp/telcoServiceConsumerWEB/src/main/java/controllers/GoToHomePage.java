@@ -18,6 +18,7 @@ import controllers.utils.ServletUtils;
 import entities.Consumer;
 import entities.Order;
 import entities.ServicePackage;
+import entities.UserStatus;
 import services.OrderService;
 import services.ServicePackageService;
 
@@ -36,13 +37,10 @@ public class GoToHomePage extends HttpServlet{
 		//retrieve all the service packages 
 		List<ServicePackage> servicePackages  = sps.findAllServicePackages(); 
 		List<Order> rejectedOrders = null; 
-		//DEBUG
 		if(req.getSession().getAttribute("user")!=null) {
 			Consumer c = (Consumer) req.getSession().getAttribute("user"); 
-			System.err.println("USER status :" +c.getStatus());
-			rejectedOrders = os.findRejectedOrders(c); 
+			if(c.getStatus().equals(UserStatus.INSOLVENT))rejectedOrders = os.findRejectedOrders(c); 
 		}
-		//DEBUG
 		
 		//insert into template 
 		String template = "HomePage";

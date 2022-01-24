@@ -77,11 +77,22 @@ public class ServicePackageService {
 		return sp.getOptionalProducts();  
 	}
 	
+	public ServicePackage addServicePackage(String name) {
+		ServicePackage sp = new ServicePackage(); 
+		sp.setName(name);
+		em.persist(sp);
+		return sp; 
+	}
+	
 	public void associateOptionalProduct (String productName, int packageID) {
 		ServicePackage sp = findServicePackage(packageID);
 		OptionalProduct op = em.find(OptionalProduct.class, productName); 
 		sp.addOptionalProduct(op);
 		em.merge(sp); //TODO check triggers 
+	}
+	
+	public ServicePackage refreshServicePackage(ServicePackage sp) {
+		return em.merge(sp); 	
 	}
 	
 

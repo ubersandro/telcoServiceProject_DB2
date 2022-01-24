@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,12 +44,14 @@ public class DoCreateServicePackage extends HttpServlet {
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// services optionalproducts costs
 		String serviceIDStrings[] = req.getParameterValues("service");
+		System.out.println(Arrays.toString(serviceIDStrings));
 		String name = req.getParameter("packageName");
 		String productNames[] = req.getParameterValues("optionalProduct");
 		Double fee12 = Double.parseDouble(req.getParameter("fee12"));
 		Double fee24 = Double.parseDouble(req.getParameter("fee24"));
 		Double fee36 = Double.parseDouble(req.getParameter("fee36"));
 		int[] serviceIDs = new int[serviceIDStrings.length]; 
+		for(int i=0; i<serviceIDStrings.length; i++) serviceIDs[i] = Integer.parseInt(serviceIDStrings[i]); 
 		// objects
 		List<OptionalProduct> optionalProducts = new LinkedList<>();
 		if (productNames != null) {
@@ -61,7 +64,9 @@ public class DoCreateServicePackage extends HttpServlet {
 		List<Service> services = new LinkedList<>();
 		if (serviceIDs != null) { //TODO enforce the choice of at least one service
 			for (int id : serviceIDs) {
+				System.out.println("SERVICE ID : "+id);
 				Service tmp = servUtil.findServiceById(id);
+				System.err.println(tmp);
 				assert (tmp != null);
 				services.add(tmp);
 
@@ -71,7 +76,12 @@ public class DoCreateServicePackage extends HttpServlet {
 		costs.put(new ValidityPeriod(12), fee12);
 		costs.put(new ValidityPeriod(24), fee24);
 		costs.put(new ValidityPeriod(36), fee36);
-		sps.addServicePackage(name, services, optionalProducts, costs);
+		ServicePackage sp = sps.addServicePackage(name);
+		//if a service package with the very same name doesn't exist then it is created and populated 
+		sp.setCosts(costs);
+		sp.setOptionalProducts(optionalProducts);
+		sp.setServices(services);
+		sps.refreshServicePackage(sp); 
 		resp.sendRedirect(getServletContext().getContextPath() + "/EmployeeHomePage");
 	}
 
