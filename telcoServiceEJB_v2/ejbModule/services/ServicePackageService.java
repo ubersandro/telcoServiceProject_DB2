@@ -41,18 +41,17 @@ public class ServicePackageService {
 	 * @param costs
 	 * @return
 	 */
-	public ServicePackage createServicePackage(String name, List<Service> services,
+	public ServicePackage addServicePackage(String name, List<Service> services,
 			List<OptionalProduct> optionalProducts, Map<ValidityPeriod, Double> costs) {
 
 		ServicePackage sp = new ServicePackage();
-
+		
 		sp.setName(name);
 		sp.setServices(services);
 		sp.setOptionalProducts(optionalProducts);
 		sp.setCosts(costs);
-
-		em.persist(sp);
-
+		System.out.println("ERROR NOT HERE");
+		em.persist(sp); 
 		return sp;
 	}
 

@@ -22,8 +22,8 @@
 			<tr th:each="serv : ${services}"
 				th:if="${services!=null}">
 				<td th:text="${serv}">service=[gigabytes=3, fee=4.5]</td>
-				<td><input type="checkbox" th:field="${op}"
-					name="service" th:value="${serv}" /></td>
+				<td><input type="checkbox" th:field="${serv}"
+					name="service" th:value="${serv.getId()}" /></td>
 			</tr>
 		</table>
 		

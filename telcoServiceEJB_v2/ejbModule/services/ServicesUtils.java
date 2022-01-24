@@ -29,6 +29,10 @@ public class ServicesUtils {
 				em.createNamedQuery("Service.findAll", //@todo check how to retrieve Service entities of the right type. 
 						Service.class).getResultList(); 
 	}
+	
+	public Service findServiceById(int id){
+		return (Service) em.find(Service.class, id); 
+	}
 	//4 different queries ? 	
 	
 	

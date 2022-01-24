@@ -27,7 +27,7 @@ public class ServicePackage implements Serializable {
 	// MERGE  --> what changes can I make to a ServicePackage? NONE (in the app) , so merging is immaterial 
 	// REFRESH 
 	// DETACH -> no because there could be more ServicePackages in the PC. 
-	@ManyToMany (fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST}) // ASSUMING THAT in the Home page services have to be displayed immediately
+	@ManyToMany (fetch = FetchType.EAGER ) // ASSUMING THAT in the Home page services have to be displayed immediately
 	@JoinTable (name="SPS", joinColumns = 
 			@JoinColumn(name = "packageID"), //owner (according to this particular choice).  
 			inverseJoinColumns = @JoinColumn(name = "serviceID"), schema ="telcoServiceDB") //service FATHER entity
@@ -38,7 +38,7 @@ public class ServicePackage implements Serializable {
 	 * Fetch type is LAZY because optional products that could be associated with a given product 
 	 * are retrieved only when the user explicitly asks.    
 	 */
-	@ManyToMany (fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)  
+	@ManyToMany (fetch = FetchType.LAZY)  
 	@JoinTable (name="Offers", joinColumns = 
 			@JoinColumn(name = "packageID"), //packageID is the owner of the relation according to this choice (no natural owner). 
 			inverseJoinColumns = @JoinColumn(name = "productName"),schema ="telcoServiceDB")
