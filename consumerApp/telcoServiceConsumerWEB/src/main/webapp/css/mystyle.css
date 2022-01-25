@@ -21,15 +21,18 @@ table, th, td {
 	text-align: left;
 }
 
+th, td {
+	border-bottom: 1px solid #ddd;
+}
+
 th {
 	background-color: #04AA6D;
 	color: white;
 }
 
-tr:nth-child(even) {background-color: #c4e6c6;}
-
-
-
+/* table.main tr:nth-child(even) { */
+/* 	background-color: #c4e6c6; */
+/* } */
 h2 {
 	padding: 20px;
 	text-align: left;
@@ -61,7 +64,7 @@ input[type=text], input[type=password], input[type=email] {
 }
 
 /* label */
-*{
+* {
 	font-family: Calibri;
 }
 /* Set a style for all buttons */

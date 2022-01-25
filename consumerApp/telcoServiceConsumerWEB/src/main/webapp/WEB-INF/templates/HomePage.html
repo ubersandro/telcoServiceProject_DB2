@@ -28,7 +28,7 @@
 		<tr th:each="sp : ${servicePackages}">
 			<td th:text="${sp.name}">Family</td>
 			<td>
-				<table class = "subtable">
+				<table>
 					<tr th:each="s : ${sp.getServices()}">
 						<td th:text="${s.toString()}">Fixed Phone Service</td>
 					</tr>
