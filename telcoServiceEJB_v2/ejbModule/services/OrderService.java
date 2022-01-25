@@ -12,6 +12,7 @@ import entities.ServiceActivationSchedule;
 import entities.Consumer; 
 import entities.ServicePackage;
 import entities.ValidityPeriod;
+import exceptions.NoSuchUserException;
 
 @Stateless 
 public class OrderService {
@@ -82,6 +83,14 @@ public class OrderService {
 		return (List<ServiceActivationSchedule> ) 
 				em.createNamedQuery("ServiceActivationSchedule.findAll", 
 						ServiceActivationSchedule.class).getResultList(); 
+	}
+	
+	public List<Order> findRejectedOrdersByUsername(String consumer) throws NoSuchUserException{
+		Consumer c = em.find(Consumer.class, consumer); 
+		if(c==null) throw new NoSuchUserException("Rejected orders retrieval failed because there is no such user."); 
+		List<Order> l = (List<Order>) em.createNamedQuery("Oder.findOrdersByUserAndStatus", Order.class)
+				.setParameter("c", c).setParameter("s", OrderStatus.REJECTED).getResultList(); 
+		return l; 
 	}
 	
 		

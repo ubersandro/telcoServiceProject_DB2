@@ -54,7 +54,7 @@ public class SalesReportService {
 	
 	@SuppressWarnings("unchecked")
 	public List<Auditing> findAllAuditing (){
-		return (List<Auditing>) em.createNamedQuery("Auditing.findAll", Auditing.class); 
+		return (List<Auditing>) em.createNamedQuery("Auditing.findAll", Auditing.class).getResultList(); 
 	}
 	
 	public List<Consumer> findInsolventUsers (){ 

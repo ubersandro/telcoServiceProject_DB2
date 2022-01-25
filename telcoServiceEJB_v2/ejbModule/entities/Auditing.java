@@ -4,13 +4,17 @@ import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-
+@NamedQueries({
+	@NamedQuery (name = "Auditing.findAll", query = "SELECT a FROM Auditing A")
+})
 @Entity
 @Table (name = "Auditing", schema = "telcoServiceDB")
 public class Auditing {

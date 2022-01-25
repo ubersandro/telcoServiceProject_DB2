@@ -14,7 +14,7 @@ import javax.persistence.Table;
 					+ " FROM SalesSP_OP S "
 					+ "GROUP BY S.packageID"),
 	
-	@NamedQuery (name="SalesSP_OP.purchaseOptionalProducts", 
+	@NamedQuery (name="SalesSP_OP.purchasesOptionalProducts", 
 	query = "SELECT S.packageID,S.purchasesWithOptionalProducts "
 			+ " FROM SalesSP_OP S ")
 })
