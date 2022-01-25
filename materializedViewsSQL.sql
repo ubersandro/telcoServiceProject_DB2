@@ -45,6 +45,6 @@ CREATE VIEW alerts AS
 SELECT *
 FROM  Auditing A
 
--- average optional products 
+-- average optional products
 
 
