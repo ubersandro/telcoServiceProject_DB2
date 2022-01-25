@@ -29,8 +29,7 @@ SELECT X.servicePackage AS "ServicePackage ID",
         WHERE Y.packageID = X.servicePackage)
                         AS "total purchases with no optional products included"
 FROM purchasesPerPackageVP X
-GROUP BY X.servicePackage;
--- NOT NECESSARY
+GROUP BY X.servicePackage; -- NOT NECESSARY
 
 -- AVERAGE NUMBER OF  OPTIONAL PRODUCT SOLD TOGETHER WITH EACH SERVICE PACKAGE
 SELECT X.packageID                                                       as ServicePackage,
