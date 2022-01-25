@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>SalesReport</title>
+<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
+</head>
+<body>
+	<h1>Sales report page</h1>
+	<div>
+		Number of purchases per service package:
+		<table>
+			<tr>
+				<th>Service Package ID</th>
+				<th>Number of purchases</th>
+			</tr>
+			<tr th:each="x : ${purchasesPerPackage.keySet()}">
+				<td th:text="${x}">2</td>
+				<td th:text="${purchasesPerPackage.get(x)}">4</td>
+			</tr>
+		</table>
+	</div>
+	<div>
+		Number of purchases per service package:
+		<table>
+			<tr>
+				<th>Service Package ID</th>
+				<th>Validity Period</th>
+				<th>Number of purchases</th>
+			</tr>
+			<tr th:each="p : ${purchasesPerPackageVP}">
+				<td th:text="${p.servicePackage}">4</td>
+				<td th:text="${p.validityPeriodMonths">12</td>
+				<td th:text="${p.counter}">2</td>
+			</tr>
+		</table>
+	</div>
+	<div>
+		Total value of sales per package with and without the optional
+		products:
+		<table>
+			<tr>
+				<th>Service Package ID</th>
+				<th>Number of sales with at least an optional product</th>
+				<th>Number of sales without an optional product</th>
+			</tr>
+
+			<tr th:each="s : ${salesSP_OP}">
+				<td th:text="${s.packageID}">4</td>
+				<td th:text="${s.purchasesWithOptionalProducts">3</td>
+				<td th:text="{s.purchasesWithNOOptionalProducts}">2</td>
+			</tr>
+		</table>
+	</div>
+	<div>
+		Average number of optional products sold together with each service
+		package.
+		<table>
+			<tr>
+				<th>Service Package ID</th>
+				<th>Avarage number of sales</th>
+			</tr>
+
+			<tr th:each="a : ${avaragesNumberOfSalesSPOP.keySet()}">
+				<td th:text="${a}">4</td>
+				<td th:text="{avaragesNumberOfSalesSPOP.get(a)}">2</td>
+			</tr>
+		</table>
+	</div>
+	<div>
+		List of insolvent Users
+		<table>
+			<tr>
+				<th>Service Package ID</th>
+				<th>Optional Product Name</th>
+				<th>Avarage number of sales</th>
+			</tr>
+
+			<tr th:each="a : ${avaragesNumberOfSalesSPOP}">
+				<td th:text="${a.packageID}">4</td>
+				<td th:text="${a.optionalProductName">3</td>
+				<td th:text="{a.value}">2</td>
+			</tr>
+		</table>
+	</div>
+	<div>
+	<p th:text="|Best seller Optional Product: ${bestSellerOptionalProduct}|">Best seller Optional Product: op1</p>
+	</div>
+	
+</body>
+</html>
