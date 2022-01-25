@@ -9,22 +9,19 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @NamedQueries({
-	@NamedQuery (name="SalesSP_OP.avgOpts", 
-			query = "SELECT S.packageID, S.totalOptionalProducts/S.purchasesWithOptionalProducts "
-					+ " FROM SalesSP_OP S "
-					+ "GROUP BY S.packageID"),
-	
-	@NamedQuery (name="SalesSP_OP.purchasesOptionalProducts", 
-	query = "SELECT S.packageID,S.purchasesWithOptionalProducts "
-			+ " FROM SalesSP_OP S ")
-})
+		@NamedQuery(name = "SalesSP_OP.avgOpts", query = "SELECT S.packageID, S.totalOptionalProducts/S.purchasesWithOptionalProducts "
+				+ " FROM SalesSP_OP S " + "GROUP BY S.packageID"),
+
+		@NamedQuery(name = "SalesSP_OP.purchasesOptionalProducts", query = "SELECT S.packageID,S.purchasesWithOptionalProducts "
+				+ " FROM SalesSP_OP S ") })
 @Entity
-@Table (name="salesSP_OP" , schema = "telcoServiceDB")
-public class SalesSP_OP implements Serializable{
+@Table(name = "salesSP_OP", schema = "telcoServiceDB")
+public class SalesSP_OP implements Serializable {
 	private static final long serialVersionUID = 1L;
-	@Id 
-	private int packageID ;
-	private int totalOptionalProducts ;
+	@Id
+	private int packageID;
+	private int totalOptionalProducts;
+
 	public int getPackageID() {
 		return packageID;
 	}
@@ -49,9 +46,9 @@ public class SalesSP_OP implements Serializable{
 		this.purchasesWithOptionalProducts = purchasesWithOptionalProducts;
 	}
 
-	private int purchasesWithOptionalProducts ;
-	
-	public SalesSP_OP() {	
+	private int purchasesWithOptionalProducts;
+
+	public SalesSP_OP() {
 		// TODO Auto-generated constructor stub
 	}
 

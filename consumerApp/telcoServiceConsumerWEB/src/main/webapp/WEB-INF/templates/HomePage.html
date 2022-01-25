@@ -7,8 +7,13 @@
 
 </head>
 <body>
+			
 	<div align="right" th:if="${session.user!=null}"
 		th:text="${session.user}">USER : Tizio</div>
+		<br>
+	<div align="right" th:if="${session.user!=null}"> <a th:href="@{/Logout}">LOGOUT</a></div>
+			<br>
+		
 		
 	<h1>Welcome to the Telco Service Application Home Page</h1>
 
@@ -23,12 +28,11 @@
 		<tr th:each="sp : ${servicePackages}">
 			<td th:text="${sp.name}">Family</td>
 			<td>
-				<table>
+				<table class = "subtable">
 					<tr th:each="s : ${sp.getServices()}">
 						<td th:text="${s.toString()}">Fixed Phone Service</td>
 					</tr>
 				</table>
-			</td>
 			<td><a th:href="@{/BuyPage(pid=${sp.id})}">BUY</a></td>
 		</tr>
 	</table>

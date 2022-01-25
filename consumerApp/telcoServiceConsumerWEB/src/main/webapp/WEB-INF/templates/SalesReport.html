@@ -3,10 +3,13 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>SalesReport</title>
-<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
+<link rel="stylesheet" type="text/css" href="./css/salesReport.css" />
 </head>
 <body>
 	<h1>Sales report page</h1>
+
+	<br>
+	<br>
 	<div>
 		Number of purchases per service package:
 		<table>
@@ -117,20 +120,22 @@
 			<tr>
 				<th>Consumer Username</th>
 			</tr>
-			<tr th:each="c : ${alerts}">
+			<tr th:each="a : ${alerts}">
 				<td th:text="${a.getUsername()}">Tizio</td>
 			</tr>
 		</table>
 	</div>
 	<br>
 	<br>
-	<div>
-		<p
-			th:text="|Best seller Optional Product: ${bestSellers.get(0)}|">Best
-			seller Optional Product: op1</p>
-	</div>
+	<p>
+		Best seller Optional Product: <span
+			th:text="${{bestSellers.get(0).getProductName()}">op1</span>
+	</p>
+	<br>
+	<br>
 	<form action="EmployeeHomePage" method="GET">
-		<button type="submit" value="Take me to EMPLOYEE HOME PAGE">Return to EmployeeHomePage</button>
+		<button type="button" value="Take me to EMPLOYEE HOME PAGE">HomePage</button>
 	</form>
+
 </body>
 </html>

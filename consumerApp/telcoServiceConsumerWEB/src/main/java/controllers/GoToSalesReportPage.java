@@ -64,7 +64,7 @@ public class GoToSalesReportPage extends HttpServlet{
 		templateEngine.process(template, ctx, resp.getWriter()); 
 		
 	}//doGet
-	
+		//TODO fix negative numbers in total purchases no opts 
 	@Override
 	public void init() throws ServletException {
 		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); 

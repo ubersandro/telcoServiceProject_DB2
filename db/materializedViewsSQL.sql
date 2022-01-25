@@ -17,16 +17,18 @@ GROUP BY O.packageID;
 
 -- number of total purchases per package with optional products
 CREATE VIEW totalPurchasesSPwithOptionalProducts(package, purchasesOPT) AS
-SELECT O.packageID AS package, COUNT(DISTINCT(O.id)) AS purchasesOPT
-FROM `Order` O INNER JOIN
+SELECT O.packageID AS package, COUNT(DISTINCT (O.id)) AS purchasesOPT
+FROM `Order` O
+         INNER JOIN
      `Includes` I
 GROUP BY O.packageID;
 
 -- number of total purchases per package WITHOUT optional products
 CREATE VIEW totalPurchasesSPwithoutOptionalProducts (package, purchases) AS
-    SELECT T.PACKAGE AS package, (T.Sales - W.purchasesOPT) AS purchases
-    FROM totalSalesSP T, totalPurchasesSPwithOptionalProducts W
-    WHERE T.PACKAGE = W.package;
+SELECT T.PACKAGE AS package, (T.Sales - W.purchasesOPT) AS purchases
+FROM totalSalesSP T,
+     totalPurchasesSPwithOptionalProducts W
+WHERE T.PACKAGE = W.package;
 
 -- INSOLVENT USERS
 CREATE VIEW insolventUsers AS
@@ -43,7 +45,7 @@ WHERE O.status = 1;
 -- ALERTS
 CREATE VIEW alerts AS
 SELECT *
-FROM  Auditing;
+FROM Auditing;
 
 -- average optional products
 /**
@@ -52,9 +54,10 @@ FROM  Auditing;
   (sum of the orders of the SP/total number of products ever sold with the sp)
  */
 CREATE VIEW avgOptsSoldSP(package, avgOpts) AS
-    SELECT O.packageID AS package, COUNT(O.id)/COUNT (I.productName) AS avgOpts
-FROM `Order` O RIGHT JOIN  `Includes` I on O.id = I.orderId
+SELECT O.packageID AS package, COUNT(O.id) / COUNT(I.productName) AS avgOpts
+FROM `Order` O
+         RIGHT JOIN `Includes` I on O.id = I.orderId
 GROUP BY O.packageID, O.id;
 /**
-  @TODO check last query  
+  @TODO check last query
  */

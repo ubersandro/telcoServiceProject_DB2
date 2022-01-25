@@ -42,7 +42,7 @@ public class DoCreateOptionalProduct extends HttpServlet {
 		}
 		resp.sendRedirect(getServletContext().getContextPath() + "/EmployeeHomePage");
 	}
-
+// TODO put error message when you select no services... 
 	@Override
 	public void init() throws ServletException {
 

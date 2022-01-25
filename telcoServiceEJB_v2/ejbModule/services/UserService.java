@@ -18,7 +18,8 @@ public class UserService {
 	
 	public TelcoUser checkUserCredentials(String username, String password )
 			throws WrongCredentialsException, UserNotFoundException{	
-		TelcoUser user = em.find(TelcoUser.class, username); //TODO improve with named query 
+		TelcoUser user = em.createNamedQuery("TelcoUser.checkCredentials", Consumer.class).
+				setParameter("username", username).setParameter("password", password).getSingleResult(); //because there can only be one user with the given username   
 		if(user == null) throw new UserNotFoundException();
 		if(!user.getPassword().equals(password)) throw new WrongCredentialsException(); 
 		return user; //detached 
@@ -28,7 +29,7 @@ public class UserService {
 		return em.find(Consumer.class, user.getUsername())!=null; 
 	}
 	
-	public Consumer retrieveConsumer(TelcoUser u) {
+	public Consumer retrieveConsumer(TelcoUser u) { // not refreshed
 		return em.find(Consumer.class, u.getUsername()); 
 	}
 		
@@ -50,7 +51,7 @@ public class UserService {
 			throw new UserAlreadyExistentException(); 
 		Consumer consumer = new Consumer(username, email, password);
 		em.persist(consumer); //bound to be written to DB 
-		em.flush(); //so that changes are written ASAP 
+		em.flush(); //s	o that changes are written ASAP 
 		return ; 
 	}
 	
@@ -70,6 +71,11 @@ public class UserService {
 				.setParameter("status", UserStatus.INSOLVENT).getResultList(); 
 	}
 	
+	public boolean consumerIsInsolvent(String username) {
+		Consumer x = em.find(Consumer.class, username); 
+		em.refresh(x);
+		return x.isInsolvent(); 
+	}
 	
 	
 }
