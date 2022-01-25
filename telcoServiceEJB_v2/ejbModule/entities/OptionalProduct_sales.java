@@ -27,7 +27,7 @@ public class OptionalProduct_sales implements Serializable{
 	public OptionalProduct_sales() {}
 	public String getProductName() {
 		return productName;
-	}
+	}	
 	public void setProductName(String productName) {
 		this.productName = productName;
 	}

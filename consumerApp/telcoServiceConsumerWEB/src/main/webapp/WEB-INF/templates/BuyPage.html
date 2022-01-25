@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="ISO-8859-1">
-<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
+<link rel="stylesheet" type="text/css" href="../css/mystyle.css" />
 
 <title>Buy page</title>
 </head>
@@ -37,7 +37,7 @@
 		
 
 		<br> <label for="startingDate">Starting date :</label> <input
-			type="date" id="startingDate" name="startingDate"> <br>
+			type="date" min="2022-02-01" th:min=${tomorrow} id="startingDate" name="startingDate"> <br>
 
 		<br>
 		<button type="submit" value ="submit">Confirm</button>

@@ -85,11 +85,10 @@ public class OrderService {
 						ServiceActivationSchedule.class).getResultList(); 
 	}
 	
-	public List<Order> findRejectedOrdersByUsername(String consumer) throws NoSuchUserException{
-		Consumer c = em.find(Consumer.class, consumer); 
-		if(c==null) throw new NoSuchUserException("Rejected orders retrieval failed because there is no such user."); 
-		List<Order> l = (List<Order>) em.createNamedQuery("Oder.findOrdersByUserAndStatus", Order.class)
-				.setParameter("c", c).setParameter("s", OrderStatus.REJECTED).getResultList(); 
+	public List<Order> findRejectedOrdersByUsername(String consumer){
+		Consumer c = em.find(Consumer.class, consumer);  
+		List<Order> l = (List<Order>) em.createNamedQuery("Order.findOrdersByUserAndStatus", Order.class)
+				.setParameter("consumer", c).setParameter("status", OrderStatus.REJECTED).getResultList(); 
 		return l; 
 	}
 	

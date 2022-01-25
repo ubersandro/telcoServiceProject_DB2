@@ -3,12 +3,17 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>Home</title>
-<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
+<link rel="stylesheet" type="text/css" href="../../css/mystyle.css" />
 
 </head>
 <body>
+			
 	<div align="right" th:if="${session.user!=null}"
 		th:text="${session.user}">USER : Tizio</div>
+		<br>
+	<div align="right" th:if="${session.user!=null}"> <a th:href="@{/Logout}">LOGOUT</a></div>
+			<br>
+		
 		
 	<h1>Welcome to the Telco Service Application Home Page</h1>
 

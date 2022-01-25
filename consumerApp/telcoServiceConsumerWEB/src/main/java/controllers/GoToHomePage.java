@@ -22,53 +22,52 @@ import entities.UserStatus;
 import exceptions.NoSuchUserException;
 import services.OrderService;
 import services.ServicePackageService;
+import services.UserService;
 
 @WebServlet("/HomePage")
-public class GoToHomePage extends HttpServlet{
+public class GoToHomePage extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	@EJB
-	private ServicePackageService sps; 
-	@EJB 
-	OrderService os ; //debug
-	
-	private TemplateEngine templateEngine; 
-	
+	private ServicePackageService sps;
+	@EJB
+	private UserService userService;
+	@EJB
+	private OrderService orderService;
+
+	private TemplateEngine templateEngine;
+
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		//retrieve all the service packages 
-		List<ServicePackage> servicePackages  = sps.findAllServicePackages(); 
-		List<Order> rejectedOrders = null; 
-		if(req.getSession().getAttribute("user")!=null) {
-			Consumer c = (Consumer) req.getSession().getAttribute("user"); 
-			if(c.getStatus().equals(UserStatus.INSOLVENT))
-				try {
-					rejectedOrders = os.findRejectedOrdersByUsername(c.getUsername());
-				} catch (NoSuchUserException e) {
-					// TODO review
-					e.printStackTrace();
-				} 
-		}
-		
-		//insert into template 
+		// retrieve all the service packages
+		List<ServicePackage> servicePackages = sps.findAllServicePackages();
+		List<Order> rejectedOrders = null;
+		if (req.getSession().getAttribute("user") != null) {
+			Consumer c = (Consumer) req.getSession().getAttribute("user");
+			if (userService.consumerIsInsolvent(c.getUsername())) //TODO schould I update the session object ?
+				rejectedOrders = orderService.findRejectedOrdersByUsername(c.getUsername());
+		}//IF THE USER IS LOGGED IN 
+
+		// insert into template
 		String template = "HomePage";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-		ctx.setVariable("servicePackages", servicePackages); 
+		ctx.setVariable("servicePackages", servicePackages);
 		ctx.setVariable("rejectedOrders", rejectedOrders);
-		templateEngine.process(template, ctx, resp.getWriter());	
+		templateEngine.process(template, ctx, resp.getWriter());
 	}
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		doGet(req, resp); 
+		doGet(req, resp);
 	}
 
 	@Override
-	public void destroy() {}
+	public void destroy() {
+	}
 
 	@Override
 	public void init() throws ServletException {
-		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); //templates root 
+		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); // templates root
 	}
-	
+
 }

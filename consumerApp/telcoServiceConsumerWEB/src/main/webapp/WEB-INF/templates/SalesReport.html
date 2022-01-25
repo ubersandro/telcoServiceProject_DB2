@@ -3,7 +3,7 @@
 <head>
 <meta charset="ISO-8859-1">
 <title>SalesReport</title>
-<link rel="stylesheet" type="text/css" href="./css/mystyle.css" />
+<link rel="stylesheet" type="text/css" href="../css/mystyle.css" />
 </head>
 <body>
 	<h1>Sales report page</h1>
@@ -117,7 +117,7 @@
 			<tr>
 				<th>Consumer Username</th>
 			</tr>
-			<tr th:each="c : ${alerts}">
+			<tr th:each="a : ${alerts}">
 				<td th:text="${a.getUsername()}">Tizio</td>
 			</tr>
 		</table>
@@ -126,9 +126,12 @@
 	<br>
 	<div>
 		<p
-			th:text="|Best seller Optional Product: ${bestSellers.get(0)}|">Best
-			seller Optional Product: op1</p>
+			th:text="|Best seller Optional Product: ${bestSellers.get(0).getProductName()}|">Best
+			seller Optional Product: opt1</p>
 	</div>
 
+<form action="EmployeeHomePage" METHOD = "GET" >
+		<button type="submit" value="backToHomePage">Go to home page </button>
+	</form>
 </body>
 </html>

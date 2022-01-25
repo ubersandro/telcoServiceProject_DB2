@@ -14,6 +14,11 @@ h1 {
   font-weight: 700; 
 }
 
+table, th, td {
+  border: 1px solid black;
+  width: 100%; 
+}
+
 h2 {
   padding: 20px;
   text-align: left;
@@ -51,7 +56,7 @@ label[for^="u"] {
 /* Set a style for all buttons */
 button {
   background-color: #4CAF50;
-  color: white;
+  color: rgb(38, 162, 105);
   padding: 14px 20px;
   margin: 8px 0;
   border: none;

@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+@NamedQuery(name = "TelcoUser.checkCredentials", query = "SELECT t FROM TelcoUser t  WHERE t.username = :username and t.password = :password")   
+
 @Entity 
 @Table (name ="TelcoUser", schema = "telcoServiceDB")
 @Inheritance (strategy = InheritanceType.JOINED)

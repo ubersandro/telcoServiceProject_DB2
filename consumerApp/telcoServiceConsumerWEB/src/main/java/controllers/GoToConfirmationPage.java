@@ -47,7 +47,6 @@ public class GoToConfirmationPage extends HttpServlet {
 
 		// object retrieval
 		ServicePackage servicePackage = (ServicePackage) session.getAttribute("chosenServicePackage"); 
-		assert(servicePackage!=null); //debug
 		List<OptionalProduct> chosenOptionalProducts = new LinkedList<OptionalProduct>();
 		if(chosenOptsKeys!=null) //if at least a product is chosen 
 			for (String prodName : chosenOptsKeys)
