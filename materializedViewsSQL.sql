@@ -43,8 +43,18 @@ WHERE O.status = 1;
 -- ALERTS
 CREATE VIEW alerts AS
 SELECT *
-FROM  Auditing A
+FROM  Auditing;
 
 -- average optional products
-
-
+/**
+  REPHRASED : for each service package
+  the average number of optional products inserted in an order
+  (sum of the orders of the SP/total number of products ever sold with the sp)
+ */
+CREATE VIEW avgOptsSoldSP(package, avgOpts) AS
+    SELECT O.packageID AS package, COUNT(O.id)/COUNT (I.productName) AS avgOpts
+FROM `Order` O RIGHT JOIN  `Includes` I on O.id = I.orderId
+GROUP BY O.packageID, O.id;
+/**
+  @TODO check last query  
+ */
