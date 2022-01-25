@@ -31,7 +31,7 @@ public class UserService {
 	public Consumer retrieveConsumer(TelcoUser u) {
 		return em.find(Consumer.class, u.getUsername()); 
 	}
-	
+		
 	public Employee retrieveEmployee(TelcoUser u) {
 		return em.find(Employee.class, u.getUsername()); 
 	}
@@ -63,13 +63,7 @@ public class UserService {
 	 * @param c
 	 * @return
 	 */
-	public List<Order> findRejectedOrdersByUsername(String consumer) throws NoSuchUserException{
-		Consumer c = em.find(Consumer.class, consumer); 
-		if(c==null) throw new NoSuchUserException("Rejected orders retrieval failed because there is no such user."); 
-		List<Order> l = (List<Order>) em.createNamedQuery("Oder.findOrdersByUserAndStatus", Order.class)
-				.setParameter("c", c).setParameter("s", OrderStatus.REJECTED).getResultList(); 
-		return l; 
-	}
+	
 	
 	public List<Consumer> findInsolventUsers(){
 		return (List<Consumer>) em.createNamedQuery("Consumer.findUserByStatus", Consumer.class)

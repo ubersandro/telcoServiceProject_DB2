@@ -19,6 +19,7 @@ import entities.Consumer;
 import entities.Order;
 import entities.ServicePackage;
 import entities.UserStatus;
+import exceptions.NoSuchUserException;
 import services.OrderService;
 import services.ServicePackageService;
 
@@ -39,7 +40,13 @@ public class GoToHomePage extends HttpServlet{
 		List<Order> rejectedOrders = null; 
 		if(req.getSession().getAttribute("user")!=null) {
 			Consumer c = (Consumer) req.getSession().getAttribute("user"); 
-			if(c.getStatus().equals(UserStatus.INSOLVENT))rejectedOrders = os.findAllRejectedOrders(c); 
+			if(c.getStatus().equals(UserStatus.INSOLVENT))
+				try {
+					rejectedOrders = os.findRejectedOrdersByUsername(c.getUsername());
+				} catch (NoSuchUserException e) {
+					// TODO review
+					e.printStackTrace();
+				} 
 		}
 		
 		//insert into template 

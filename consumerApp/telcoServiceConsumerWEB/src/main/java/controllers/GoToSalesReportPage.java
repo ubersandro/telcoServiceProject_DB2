@@ -4,6 +4,7 @@ package controllers;
 import java.io.IOException;
 
 import javax.ejb.EJB;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.*;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.WebContext;
 
 import controllers.utils.ServletUtils;
 import entities.Auditing;
@@ -45,10 +47,26 @@ public class GoToSalesReportPage extends HttpServlet{
 		List<Consumer> insolventUsers = userService.findInsolventUsers();
 		List<Order> rejectedOrders = orderService.findAllRejectedOrders(); 
 		List<Object []> avgOptsSP = salesReport.findAvgOpts(); 
-	}
+		
+		// insert data into the template 
+		String template = "SalesReport"; 
+		ServletContext servletContext = getServletContext();
+		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
+		ctx.setVariable("salesPerSP", salesPerSP); 
+		ctx.setVariable("alerts", alerts); 
+		ctx.setVariable("bestSellers", bestSellers); 
+		ctx.setVariable("salesSpVp", salesSpVp); 
+		ctx.setVariable("salesSpWithOpts", salesSpWithOpts); 
+		ctx.setVariable("salesSpWithoutOpts", salesSpWithoutOpts); 
+		ctx.setVariable("insolventUser", insolventUsers); 
+		ctx.setVariable("rejectedOrders", rejectedOrders); 
+		ctx.setVariable("avgOptsSP", avgOptsSP); 
+		templateEngine.process(template, ctx, resp.getWriter()); 
+		
+	}//doGet
 	
 	@Override
 	public void init() throws ServletException {
-		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates"); 
+		templateEngine = ServletUtils.initHelper(this, "WEB-INF/templates/"); 
 	}
 }

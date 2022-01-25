@@ -28,6 +28,10 @@ public class OptionalProduct {
 	public String getName() {
 		return name;
 	}
+	@Override
+	public String toString() {
+		return "OptionalProduct [name=" + name + ", fee=" + fee + "]";
+	}
 	public void setName(String name) {
 		this.name = name;
 	}

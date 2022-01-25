@@ -90,7 +90,7 @@ public class DoBuy extends HttpServlet {
 			os.markAsPaid(finalOrder.getId()); 
 			resp.sendRedirect("HomePage"); // TODO print a message
 		} else {// rejection
-				// mark as rejected --> this activates the TRIGGERS TODO managed change from REJECTED TO REJECTED 
+				// mark as rejected --> this activates the TRIGGERS 
 			os.markAsRejected(finalOrder.getId());
 			String orderErrorTemplate = "OrderRejected";
 			final WebContext ctx = new WebContext(req, resp, getServletContext(), req.getLocale());
