@@ -12,7 +12,6 @@ import entities.ServiceActivationSchedule;
 import entities.Consumer; 
 import entities.ServicePackage;
 import entities.ValidityPeriod;
-import io.opentracing.tag.IntTag;
 
 @Stateless 
 public class OrderService {
@@ -42,12 +41,12 @@ public class OrderService {
 		o.setTotalValue(totalValue);
 		o.setServicePackage(sp);
 		em.persist(o); 
-		return o; //return the detached object 
+		return o; 
 	}
 	
 	public Order addOrder(Order o) {
 		em.persist(o); 
-		return o; //return the detached object 
+		return o; 
 	}
 	
 	/**
@@ -68,13 +67,13 @@ public class OrderService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Order> findRejectedOrders(Consumer c){ //TODO remove from Consumer 
-		return ((List<Order>) em.createNamedQuery("Order.findOrdersByUserAndStatus")
-				.setParameter("consumer", c).setParameter("status", OrderStatus.REJECTED).getResultList()); 
+	public List<Order> findAllRejectedOrders(){ //TODO write it 
+		return ((List<Order>) em.createNamedQuery("Order.findOrdersByStatus")
+				.setParameter("status", OrderStatus.REJECTED).getResultList()); 
 	}
 	
 	public Order findOrderByID (int id) {
-		return em.find(Order.class, id); //the returned object is managed ????
+		return em.find(Order.class, id);
 	}
 	
 	//DEBUG - DEMO purposes only methods 

@@ -14,7 +14,8 @@ import javax.persistence.*;
 
 @NamedQueries (
 		{@NamedQuery (name = "Order.findOrdersByUserAndStatus",
-		query = "SELECT o FROM Order o WHERE o.consumer = :consumer and o.status = :status")})  
+		query = "SELECT o FROM Order o WHERE o.consumer = :consumer and o.status = :status"), 
+			@NamedQuery (name= "Order.findOrdersByStatus", query = "SELECT o FROM Order o WHERE o.status=:status")})  
 @Entity 
 @Table (name = "Order", schema = "telcoServiceDB")
 public class Order implements Serializable{

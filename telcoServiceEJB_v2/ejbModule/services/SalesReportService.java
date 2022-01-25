@@ -21,7 +21,7 @@ public class SalesReportService {
 	private EntityManager em; 
 	public SalesReportService() {}
 	
-	public List<PurchasesPackageValidityPeriod> findAllSPPurchasesVP (){
+	public List<PurchasesPackageValidityPeriod> findSalesAllSPVP (){
 		return (List<PurchasesPackageValidityPeriod>) 
 				em.createNamedQuery("PurchasesPackageValidityPeriod.findAll",PurchasesPackageValidityPeriod.class).getResultList(); 
 	}
@@ -64,5 +64,6 @@ public class SalesReportService {
 	public List<OptionalProduct_sales> findBestSeller () {
 		return (List<OptionalProduct_sales>) em.createNamedQuery("OptionalProduct_sales.findBestSeller", OptionalProduct_sales.class).getResultList(); 
 	}
+
 	
 }

@@ -39,7 +39,7 @@ public class GoToHomePage extends HttpServlet{
 		List<Order> rejectedOrders = null; 
 		if(req.getSession().getAttribute("user")!=null) {
 			Consumer c = (Consumer) req.getSession().getAttribute("user"); 
-			if(c.getStatus().equals(UserStatus.INSOLVENT))rejectedOrders = os.findRejectedOrders(c); 
+			if(c.getStatus().equals(UserStatus.INSOLVENT))rejectedOrders = os.findAllRejectedOrders(c); 
 		}
 		
 		//insert into template 
