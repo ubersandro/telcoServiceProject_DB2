@@ -1,8 +1,8 @@
 package services;
 
-import java.util.HashMap;
+
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -37,10 +37,20 @@ public class SalesReportService {
 				.getResultList(); 
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<Object[]> findAvgOpts(){
-		return (List<Object[]>) em.createNamedQuery("SalesSP_OP.avgOpts")
-				.getResultList(); 
+		List<Object[]> salesSP = findSalesAllSP();
+		List<Object[]> ret = new LinkedList<>();  //TODO try to fix named query 
+		final int servicePackage = 0, totalSales =1; 
+		for(Object [] couple : salesSP) {
+			int packageID = (Integer) couple[servicePackage]; 
+			long  sales = (Long) couple[totalSales]; 
+			int totalOpSold = (Integer) em.createQuery("SELECT S.totalOptionalProducts FROM SalesSP_OP S WHERE S.packageID = :ID").setParameter("ID", packageID).getSingleResult();  
+			Object [] o = new Object[2];
+			o[0] = packageID; 
+			o[1] = (0D + totalOpSold)/sales; 
+			ret.add(o); 
+		}
+		return ret; 
 	}
 	
 	
@@ -52,7 +62,6 @@ public class SalesReportService {
 	
 	
 	
-	@SuppressWarnings("unchecked")
 	public List<Auditing> findAllAuditing (){
 		return (List<Auditing>) em.createNamedQuery("Auditing.findAll", Auditing.class).getResultList(); 
 	}

@@ -43,7 +43,7 @@ public class GoToHomePage extends HttpServlet {
 		List<Order> rejectedOrders = null;
 		if (req.getSession().getAttribute("user") != null) {
 			Consumer c = (Consumer) req.getSession().getAttribute("user");
-			if (userService.consumerIsInsolvent(c.getUsername())) //TODO schould I update the session object ?
+			if (userService.consumerIsInsolvent(c.getUsername())) //TODO should I update the session object ?
 				rejectedOrders = orderService.findRejectedOrdersByUsername(c.getUsername());
 		}//IF THE USER IS LOGGED IN 
 

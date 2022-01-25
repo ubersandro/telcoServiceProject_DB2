@@ -53,11 +53,11 @@ CREATE OR REPLACE TRIGGER updateSalesSPVP
     FOR EACH ROW
 BEGIN
     IF new.status = '2' THEN -- WHENEVER AN ORDER IS MARKED AS PAID (STATUS = 2)
-        IF ((SELECT COUNT(*) FROM purchasesPerPackageVP P WHERE P.servicePackage = NEW.packageID) = '0')
-        THEN
+        IF ((SELECT COUNT(*) FROM purchasesPerPackageVP P WHERE P.servicePackage = NEW.packageID AND P.validityPeriodMonths = NEW.vpMonths) = '0')
+        THEN -- THERE NOT EXISTS A TUPLE WITH THE GIVEN PACKAGE (NOR WITH THE CORRESPONDENT VALIDITY PERIODS)
             INSERT INTO purchasesPerPackageVP(servicePackage, validityPeriodMonths, counter)
             VALUES (NEW.packageID, NEW.vpMonths, 1);
-        ELSE
+        ELSE -- THERE EXISTS AT LEAST A TUPLE WITH THE GIVEN SERVICE PACKAGE AND THE GIVEN VALIDITY PERIOD
             UPDATE purchasesPerPackageVP
             SET counter=counter + 1
             WHERE servicePackage = NEW.packageID

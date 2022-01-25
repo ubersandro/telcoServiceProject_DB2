@@ -58,7 +58,7 @@ public class GoToSalesReportPage extends HttpServlet{
 		ctx.setVariable("salesSpVp", salesSpVp); 
 		ctx.setVariable("salesSpWithOpts", salesSpWithOpts); 
 		ctx.setVariable("salesSpWithoutOpts", salesSpWithoutOpts); 
-		ctx.setVariable("insolventUser", insolventUsers); 
+		ctx.setVariable("insolventUsers", insolventUsers); 
 		ctx.setVariable("rejectedOrders", rejectedOrders); 
 		ctx.setVariable("avgOptsSP", avgOptsSP); 
 		templateEngine.process(template, ctx, resp.getWriter()); 

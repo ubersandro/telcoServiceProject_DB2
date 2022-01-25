@@ -9,11 +9,14 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @NamedQueries({
-		@NamedQuery(name = "SalesSP_OP.avgOpts", query = "SELECT S.packageID, S.totalOptionalProducts/S.purchasesWithOptionalProducts "
-				+ " FROM SalesSP_OP S " + "GROUP BY S.packageID"),
 
-		@NamedQuery(name = "SalesSP_OP.purchasesOptionalProducts", query = "SELECT S.packageID,S.purchasesWithOptionalProducts "
-				+ " FROM SalesSP_OP S ") })
+	@NamedQuery (name="SalesSP_OP.avgOpts", 
+			query = "SELECT S.packageID, (S.totalOptionalProducts/sum(P.counter)) FROM SalesSP_OP S, PurchasesPackageValidityPeriod P WHERE S.packageID = P.key.servicePackage GROUP BY P.key.servicePackage, S.packageID"),
+	
+	@NamedQuery (name="SalesSP_OP.purchasesOptionalProducts", 
+	query = "SELECT S.packageID,S.purchasesWithOptionalProducts "
+			+ " FROM SalesSP_OP S ")
+})
 @Entity
 @Table(name = "salesSP_OP", schema = "telcoServiceDB")
 public class SalesSP_OP implements Serializable {
