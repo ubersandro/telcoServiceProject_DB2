@@ -19,7 +19,6 @@ import entities.*;
 public class SalesReportService {
 	@PersistenceContext (unitName = "telcoServiceEJB_v2")
 	private EntityManager em; 
-	
 	public SalesReportService() {}
 	
 	public List<PurchasesPackageValidityPeriod> findAllSPPurchasesVP (){
@@ -27,49 +26,43 @@ public class SalesReportService {
 				em.createNamedQuery("PurchasesPackageValidityPeriod.findAll",PurchasesPackageValidityPeriod.class).getResultList(); 
 	}
 	
-//	public Map<Integer, Integer> findAllSPsales (){
-//		List<PurchasesPackageValidityPeriod> l = findAllSPPurchasesVP(); 
-//		Map<Integer, Integer> ret = new HashMap<>(); 
-//		for(PurchasesPackageValidityPeriod p : l) {
-//			if(ret.containsKey(p.getKey().getServicePackage())) 
-//				ret.put(p.getKey().getServicePackage(), ret.get(p.getKey().getServicePackage())+p.getCounter()); 
-//			else ret.put(p.getKey().getServicePackage(), 1); 
-//		}
-//		return ret; 
-//	}
-//	
-
 	@SuppressWarnings("unchecked")
-	public List<Object> findSalesAllSP () {
-		return (List<Object>) em.createNamedQuery("PurchasesPackageValidityPeriod.purchasesSP").getResultList(); // TODO check what concrete type has 		
+	public List<Object[]> findSalesAllSP () { 
+		return (List<Object[]>) em.createNamedQuery("PurchasesPackageValidityPeriod.purchasesSP").getResultList();  		
 	}
 	
-	public Map<Integer, Double> findSPOPAVG(){
-		List<SalesSP_OP> l = (List<SalesSP_OP>) 
-				em.createNamedQuery("SalesSP_OP.findAll",SalesSP_OP.class).getResultList();
-		Map<Integer, Double> ret = new HashMap<>(); 
-		for(SalesSP_OP s : l) {
-			ret.put(s.getPackageID(), 0D + s.getTotalOptionalProducts()/s.getPurchasesWithOptionalProducts() ); 
-		}
-		return ret; 
+	@SuppressWarnings("unchecked")
+	public List<Object[]> findTotalSalesWithoutOPs(){
+		return (List<Object[]>) em.createNamedQuery("PurchasesPackageValidityPeriod.purchasesNoOptionalProducts")
+				.getResultList(); 
 	}
 	
-	 
+	@SuppressWarnings("unchecked")
+	public List<Object[]> findAvgOpts(){
+		return (List<Object[]>) em.createNamedQuery("SalesSP_OP.avgOpts")
+				.getResultList(); 
+	}
 	
 	
+	@SuppressWarnings("unchecked")
+	public List<Object[]> findTotalSalesWithOPs(){
+		return (List<Object[]>) em.createNamedQuery("SalesSP_OP.purchasesOptionalProducts")
+				.getResultList(); 
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
 	public List<Auditing> findAllAuditing (){
-		return null; //TODO 
+		return (List<Auditing>) em.createNamedQuery("Auditing.findAll", Auditing.class); 
 	}
 	
-	public List<Consumer> findInsolventUsers (){ //TODO NAMED QUERY 
-		return null; //TODO 
+	public List<Consumer> findInsolventUsers (){ 
+		return (List<Consumer>) em.createNamedQuery("Consumer.findUserByStatus", Consumer.class).getResultList(); 
 	}
-	
-	
-//	public List<Auditing> findAllAuditing (){
-//		return null; //TODO 
-//	}
-//	
-		
+
+	public List<OptionalProduct_sales> findBestSeller () {
+		return (List<OptionalProduct_sales>) em.createNamedQuery("OptionalProduct_sales.findBestSeller", OptionalProduct_sales.class).getResultList(); 
+	}
 	
 }

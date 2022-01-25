@@ -4,7 +4,16 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+
+@NamedQueries({
+	@NamedQuery (name="OptionalProduct_sales.findBestSeller", // there could be more than one 
+			query = "SELECT S"
+					+ " FROM OptionalProduct_sales S "
+					+ "WHERE S.sales IN (SELECT max(y.sales) FROM OptionalProduct_sales y)")
+})
 
 @Entity
 @Table (name="optionalProduct_sales" , schema = "telcoServiceDB")

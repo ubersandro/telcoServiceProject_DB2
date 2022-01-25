@@ -5,12 +5,15 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 
-
-@NamedQuery(name = "Consumer.checkCredentials", query = "SELECT c FROM Consumer c  WHERE c.username = ?1 and c.password = ?2")  
+@NamedQueries({
+@NamedQuery(name = "Consumer.checkCredentials", query = "SELECT c FROM Consumer c  WHERE c.username = ?1 and c.password = ?2"),   
+@NamedQuery(name = "Consumer.findUserByStatus", query = "SELECT c FROM Consumer c WHERE c.status = :status") 
+}) 
 @Entity 
 @Table (name = "Consumer", schema = "telcoServiceDB")
 @DiscriminatorValue("CONS")

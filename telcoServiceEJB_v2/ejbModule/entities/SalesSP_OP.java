@@ -4,8 +4,20 @@ import java.io.Serializable;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+@NamedQueries({
+	@NamedQuery (name="SalesSP_OP.avgOpts", 
+			query = "SELECT S.packageID, S.totalOptionalProducts/S.purchasesWithOptionalProducts "
+					+ " FROM SalesSP_OP S "
+					+ "GROUP BY S.packageID"),
+	
+	@NamedQuery (name="SalesSP_OP.purchaseOptionalProducts", 
+	query = "SELECT S.packageID,S.purchasesWithOptionalProducts "
+			+ " FROM SalesSP_OP S ")
+})
 @Entity
 @Table (name="salesSP_OP" , schema = "telcoServiceDB")
 public class SalesSP_OP implements Serializable{
@@ -39,7 +51,7 @@ public class SalesSP_OP implements Serializable{
 
 	private int purchasesWithOptionalProducts ;
 	
-	public SalesSP_OP() {
+	public SalesSP_OP() {	
 		// TODO Auto-generated constructor stub
 	}
 

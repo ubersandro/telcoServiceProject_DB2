@@ -68,7 +68,7 @@ public class OrderService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Order> findRejectedOrders(Consumer c){
+	public List<Order> findRejectedOrders(Consumer c){ //TODO remove from Consumer 
 		return ((List<Order>) em.createNamedQuery("Order.findOrdersByUserAndStatus")
 				.setParameter("consumer", c).setParameter("status", OrderStatus.REJECTED).getResultList()); 
 	}
