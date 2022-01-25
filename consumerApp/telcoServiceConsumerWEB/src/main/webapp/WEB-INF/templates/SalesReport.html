@@ -14,12 +14,14 @@
 				<th>Service Package ID</th>
 				<th>Number of purchases</th>
 			</tr>
-			<tr th:each="x : ${purchasesPerPackage.keySet()}">
-				<td th:text="${x}">2</td>
-				<td th:text="${purchasesPerPackage.get(x)}">4</td>
+			<tr th:each="x : ${salesPerSP}">
+				<td th:text="${x[0]}">2</td>
+				<td th:text="${x[1]}">4</td>
 			</tr>
 		</table>
 	</div>
+	<br>
+	<br>
 	<div>
 		Number of purchases per service package:
 		<table>
@@ -29,29 +31,44 @@
 				<th>Number of purchases</th>
 			</tr>
 			<tr th:each="p : ${purchasesPerPackageVP}">
-				<td th:text="${p.servicePackage}">4</td>
-				<td th:text="${p.validityPeriodMonths">12</td>
-				<td th:text="${p.counter}">2</td>
+				<td th:text="${p.PackageVPKEY.getServicePackage()}">4</td>
+				<td th:text="${p.PackageVPKEY.getValidityPeriodMonths()">12</td>
+				<td th:text="${p.getCounter()}">2</td>
 			</tr>
 		</table>
 	</div>
+	<br>
+	<br>
 	<div>
-		Total value of sales per package with and without the optional
-		products:
+		Total value of sales per package with at least one optional product:
 		<table>
 			<tr>
 				<th>Service Package ID</th>
-				<th>Number of sales with at least an optional product</th>
-				<th>Number of sales without an optional product</th>
+				<th>Number of sales with at least one optional product</th>
 			</tr>
-
-			<tr th:each="s : ${salesSP_OP}">
-				<td th:text="${s.packageID}">4</td>
-				<td th:text="${s.purchasesWithOptionalProducts">3</td>
-				<td th:text="{s.purchasesWithNOOptionalProducts}">2</td>
+			<tr th:each="w : ${salesSpWithOpts}">
+				<td th:text="${w[0]}">4</td>
+				<td th:text="${w[1]">3</td>
 			</tr>
 		</table>
 	</div>
+	<br>
+	<br>
+	<div>
+		Total value of sales per package without an optional product:
+		<table>
+			<tr>
+				<th>Service Package ID</th>
+				<th>Number of sales without an optional product</th>
+			</tr>
+			<tr th:each="s : ${salesSpWithoutOpts}">
+				<td th:text="${s[0]}">4</td>
+				<td th:text="${s[1]">3</td>
+			</tr>
+		</table>
+	</div>
+	<br>
+	<br>
 	<div>
 		Average number of optional products sold together with each service
 		package.
@@ -60,32 +77,58 @@
 				<th>Service Package ID</th>
 				<th>Avarage number of sales</th>
 			</tr>
-
-			<tr th:each="a : ${avaragesNumberOfSalesSPOP.keySet()}">
-				<td th:text="${a}">4</td>
-				<td th:text="{avaragesNumberOfSalesSPOP.get(a)}">2</td>
+			<tr th:each="a : ${avgOptsSP}">
+				<td th:text="${a[0]}">4</td>
+				<td th:text="{a[1]}">2</td>
 			</tr>
 		</table>
 	</div>
+	<br>
+	<br>
 	<div>
-		List of insolvent Users
+		List of insolvent Users:
 		<table>
 			<tr>
-				<th>Service Package ID</th>
-				<th>Optional Product Name</th>
-				<th>Avarage number of sales</th>
+				<th>Username</th>
 			</tr>
-
-			<tr th:each="a : ${avaragesNumberOfSalesSPOP}">
-				<td th:text="${a.packageID}">4</td>
-				<td th:text="${a.optionalProductName">3</td>
-				<td th:text="{a.value}">2</td>
+			<tr th:each="i : ${insolventUsers}">
+				<td th:text="${i.getUsername()}">Tizio</td>
 			</tr>
 		</table>
 	</div>
+	<br>
+	<br>
 	<div>
-	<p th:text="|Best seller Optional Product: ${bestSellerOptionalProduct}|">Best seller Optional Product: op1</p>
+		List of suspended orders:
+		<table>
+			<tr>
+				<th>OrderID</th>
+			</tr>
+			<tr th:each="o : ${rejectedOrders}">
+				<td th:text="${o.getId()}">4</td>
+			</tr>
+		</table>
 	</div>
-	
+	<br>
+	<br>
+	<div>
+		List of alerts:
+		<table>
+			<tr>
+				<th>Consumer Username</th>
+			</tr>
+			<tr th:each="c : ${alerts}">
+				<td th:text="${a.getUsername()}">Tizio</td>
+			</tr>
+		</table>
+	</div>
+	<br>
+	<br>
+	<div>
+		<p
+			th:text="|Best seller Optional Product: ${bestSellers.get(0)}|">Best
+			seller Optional Product: op1</p>
+	</div>
+
 </body>
 </html>
