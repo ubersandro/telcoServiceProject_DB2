@@ -30,6 +30,8 @@ FROM totalSalesSP T,
      totalPurchasesSPwithOptionalProducts W
 WHERE T.PACKAGE = W.package;
 
+SELECT * FROM totalPurchasesSPwithoutOptionalProducts;
+
 -- INSOLVENT USERS
 CREATE VIEW insolventUsers AS
 SELECT *

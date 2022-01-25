@@ -29,13 +29,17 @@ SELECT X.servicePackage AS "ServicePackage ID",
         WHERE Y.packageID = X.servicePackage)
                         AS "total purchases with no optional products included"
 FROM purchasesPerPackageVP X
-GROUP BY X.servicePackage; -- NOT NECESSARY
+GROUP BY X.servicePackage;
+-- NOT NECESSARY
 
 -- AVERAGE NUMBER OF  OPTIONAL PRODUCT SOLD TOGETHER WITH EACH SERVICE PACKAGE
-SELECT X.packageID                                                       as ServicePackage,
-       sum(X.totalOptionalProducts) / sum(purchasesWithOptionalProducts) as "Average number of optional products included"
-FROM salesSP_OP X
-GROUP BY X.packageID;
+SELECT S.packageID AS ServicePackage,
+       sum(S.totalOptionalProducts) / (SELECT sum(counter)
+                                       FROM purchasesPerPackageVP X
+                                       WHERE X.servicePackage = S.packageID
+                                       GROUP BY X.servicePackage) AS "Average number of optional products included"
+FROM salesSP_OP S
+GROUP BY S.packageID;
 
 -- BEST SELLER OPTIONAL PRODUCT -> PRODUCT SOLD THE MAXIMUM NUMBER OF TIMES -> NON UNIQUE !
 SELECT *

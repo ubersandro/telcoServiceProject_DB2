@@ -23,16 +23,16 @@
 	<br>
 	<br>
 	<div>
-		Number of purchases per service package:
+		Number of purchases per service package and validity period:
 		<table>
 			<tr>
 				<th>Service Package ID</th>
 				<th>Validity Period</th>
 				<th>Number of purchases</th>
 			</tr>
-			<tr th:each="p : ${purchasesPerPackageVP}">
-				<td th:text="${p.PackageVPKEY.getServicePackage()}">4</td>
-				<td th:text="${p.PackageVPKEY.getValidityPeriodMonths()">12</td>
+			<tr th:each="p : ${salesSpVp}">
+				<td th:text="${p.getKey().getServicePackage()}">4</td>
+				<td th:text="${p.getKey().getValidityPeriodMonths()}">12</td>
 				<td th:text="${p.getCounter()}">2</td>
 			</tr>
 		</table>
