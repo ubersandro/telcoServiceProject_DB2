@@ -3,7 +3,6 @@ LOCK TABLES Consumer WRITE , Service WRITE , MobilePhoneService WRITE , FixedInt
     FixedPhoneService WRITE, SPS WRITE, OptionalProduct WRITE, Offers WRITE, HasValidity WRITE,
     TelcoUser write , Employee write, ServicePackage WRITE,ValidityPeriod WRITE , ServiceActivationSchedule WRITE,
     `Order` WRITE;
-
 INSERT INTO TelcoUser (username, email, password, DTYPE)
 VALUES ('A', 'A@A.it', 'A', 'CONS'),
        ('B', 'A@A.it', 'B', 'CONS'),

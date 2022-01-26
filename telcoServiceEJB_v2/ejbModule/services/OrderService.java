@@ -43,15 +43,19 @@ public class OrderService {
 	
 
 	public void markAsPaid(int orderID) {
+		 
 		Order o = em.find(Order.class, orderID); //now managed 
 		o.setStatus(OrderStatus.ACCEPTED); 
-		em.flush(); 
+		em.merge(o); 
 	}
 	
 	public void markAsRejected(int orderID) {
-		Order o = em.find(Order.class, orderID); 
+		System.err.println("REJECTED");
+		Order o = em.createQuery("SELECT O FROM Order O where O.id = :id", Order.class).setParameter("id", orderID).getSingleResult();
+		//Order o = em.find(Order.class, orderID); 
+		System.err.println("REJECTED");
 		o.setStatus(OrderStatus.REJECTED);
-		em.flush();
+		em.merge(o); 
 	}
 	
 	@SuppressWarnings("unchecked")

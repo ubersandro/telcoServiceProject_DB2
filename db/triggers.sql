@@ -167,10 +167,8 @@ CREATE OR REPLACE TRIGGER updateConsumerOnPayment -- ON PAYMENT
     FOR EACH ROW
 BEGIN
     IF OLD.status = 1 AND NEW.status = 2 THEN
-        IF (SELECT C.counter FROM Consumer C WHERE C.username = NEW.consUsername) = 1 THEN
-            UPDATE Consumer C SET C.status=0, C.counter = 0 WHERE C.username = NEW.consUsername; -- NO LONGER INSOLVENT
-        ELSE -- STILL INSOLVENT
-            UPDATE Consumer C SET C.counter = counter - 1 WHERE C.username = NEW.consUsername;
+        IF (SELECT * FROM `Order` O WHERE O.consUsername = NEW.consUsername AND O.status=1) = 0 THEN
+            UPDATE  Consumer C SET C.status = 0 WHERE C.username = NEW.consUsername;
         END IF;
     END IF;
 END;

@@ -18,11 +18,11 @@ public class UserService {
 	
 	public TelcoUser checkUserCredentials(String username, String password )
 			throws WrongCredentialsException, TupleNotFoundException{	
-		TelcoUser user = em.createNamedQuery("TelcoUser.checkCredentials", Consumer.class).
-				setParameter("username", username).setParameter("password", password).getSingleResult(); //because there can only be one user with the given username   
-		if(user == null) throw new TupleNotFoundException();
-		if(!user.getPassword().equals(password)) throw new WrongCredentialsException(); 
-		return user;  
+		List<TelcoUser> user = em.createNamedQuery("TelcoUser.checkCredentials", TelcoUser.class).
+				setParameter("username", username).setParameter("password", password).getResultList(); //because there can only be one user with the given username   
+		if(user == null || user.size()==0 ) throw new TupleNotFoundException();
+		if(!user.get(0).getPassword().equals(password)) throw new WrongCredentialsException(); 
+		return user.get(0);  
 	}
 	
 	/**
