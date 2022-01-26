@@ -92,6 +92,37 @@ BEGIN
     END IF; -- ORDER PAID
 END;
 
+CREATE OR REPLACE TRIGGER updateSalesSPOP
+    AFTER UPDATE
+    ON `Order`
+    FOR EACH ROW
+BEGIN
+    IF new.status = '2' THEN -- WHENEVER AN ORDER IS MARKED AS PAID (STATUS = 2)
+        IF ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) > '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
+            IF ((SELECT COUNT(*) FROM salesSP_OP P WHERE P.packageID = NEW.packageID) > '0') -- THE TUPLE EXISTS
+            THEN
+                UPDATE salesSP_OP
+                SET purchasesWithOptionalProducts = purchasesWithOptionalProducts + '1',
+                    totalOptionalProducts         = totalOptionalProducts +
+                                                    (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id)
+                WHERE packageID = NEW.packageID;
+           ELSE --  PURCHASE INCLUDES OPTIONAL PRODUCTS BUT THE TUPLE DOES NOT EXIST
+                INSERT INTO salesSP_OP(packageID, totalOptionalProducts, purchasesWithOptionalProducts)
+                VALUES (NEW.packageID, (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id), 1);
+            END IF;
+            -- product sales statistics update
+            CALL updateProductSales(new.id);
+             ELSE  -- THE ORDER DOES NOT INCLUDE OPT PRODS BUT YOU PUT A SERVICE PACKAGE IN ANYWAYS 
+                 IF (SELECT COUNT(*) FROM salesSP_OP S WHERE S.packageID = NEW.packageID) = 0 THEN -- if the SP is not there add a tuple !
+                     INSERT INTO salesSP_OP(packageID, totalOptionalProducts, purchasesWithOptionalProducts) VALUES (NEW.packageID, 0,0);
+                 END IF ;
+        END IF; -- purchase with optional products
+    END IF; -- ORDER PAID
+END;
+
+
+
+
 /**
   Whatever the state of a user is, whenever a failed payment is inserted into the payment table
   this trigger marks the user as INSOLVENT.
