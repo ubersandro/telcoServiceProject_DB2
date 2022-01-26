@@ -9,10 +9,10 @@
 <body>
 
 	<h1>Buy Service Package</h1>
-
+	
 
 	<form action="Confirmation" method="POST" >
-
+		<input type = "hidden" value = "1" th:attr="value=${servicePackage.getId()}" name ="packageID">
 		<table>
 			<tr>
 				<th>Optional product</th> <th>Select</th>

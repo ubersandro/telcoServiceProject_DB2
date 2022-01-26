@@ -1,12 +1,10 @@
 package controllers;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
 
 import javax.ejb.EJB;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -15,12 +13,15 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.*;
+import org.thymeleaf.context.WebContext;
 
 import controllers.utils.ServletUtils;
-import entities.*;
-
-import services.*;
+import entities.Consumer;
+import entities.Order;
+import entities.OrderStatus;
+import services.OptionalProductService;
+import services.OrderService;
+import services.ServicePackageService;
 
 /**
  * From the CONFIRMATION page, the user goes on to attempt a payment for a given
@@ -63,10 +64,13 @@ public class DoBuy extends HttpServlet {
 	 */
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		HttpSession session = req.getSession(); // TODO payment of an order already created and rejected
-		Order finalOrder;
-		if (session.getAttribute("tmpOrder") != null) {
-			//partial order retrieval 
+		Order toBePaid;
+		String rejectedOrderIDString = req.getParameter("rejectedOrderID"); //input hidden field with id if the order put in confirmation is rejected 
+		if(rejectedOrderIDString!=null) {  
+			toBePaid = os.findOrderByID(Integer.parseInt(rejectedOrderIDString));   
+		}
+		else { //there is a temporary order in the session 
+			HttpSession session = req.getSession(); 
 			Order tmpOrder = (Order) session.getAttribute("tmpOrder"); //ORDER OBJECT MISSING SOME ATTRIBUTES
 			session.removeAttribute("tmpOrder"); 
 			//order completion 
@@ -74,27 +78,22 @@ public class DoBuy extends HttpServlet {
 			tmpOrder.setDate(Calendar.getInstance()); //DATE 
 			tmpOrder.setTime(new Date()); //TIME OF CREATION 
 			tmpOrder.setStatus(OrderStatus.NEWLY_CREATED); 
-			finalOrder = os.addOrder(tmpOrder); // orderPersisted 
-		} else // preexistent (already persisted) order
-		{
-			int orderID = Integer.parseInt(req.getParameter("rejectedOrderID")); 
-			finalOrder = os.findOrderByID(orderID);  
+			toBePaid = os.addOrder(tmpOrder); // orderPersisted 
 		}
-		
 		//PAYMENT SIMULATION
 		boolean orderAccepted = req.getParameter("PAYMENT_MODE")!=null? req.getParameter("PAYMENT_MODE").equalsIgnoreCase("RIGHT"):true;
 		//PAYMENT SIMULATION
 		
 		if (orderAccepted) {
 			// mark order as paid
-			os.markAsPaid(finalOrder.getId()); 
-			resp.sendRedirect("HomePage"); // TODO print a message
+			os.markAsPaid(toBePaid.getId()); 
+			resp.sendRedirect("HomePage"); 
 		} else {// rejection
 				// mark as rejected --> this activates the TRIGGERS 
-			os.markAsRejected(finalOrder.getId());
+			os.markAsRejected(toBePaid.getId());
 			String orderErrorTemplate = "OrderRejected";
 			final WebContext ctx = new WebContext(req, resp, getServletContext(), req.getLocale());
-			ctx.setVariable("orderID", finalOrder.getId()); //TODO explain this extra step 
+			ctx.setVariable("orderID", toBePaid.getId()); //TODO explain this extra step 
 			templateEngine.process(orderErrorTemplate, ctx, resp.getWriter());
 		}
 

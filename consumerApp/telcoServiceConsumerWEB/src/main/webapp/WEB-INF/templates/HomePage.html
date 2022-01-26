@@ -46,7 +46,7 @@
 		</tr>
 		<tr th:each="ro : ${rejectedOrders}">
 			<td th:text="${ro.id}">4</td>
-			<td><a th:href="@{/Buy(rejectedOrderID=${ro.id})}">Attempt new payment</a></td>
+			<td><a th:href="@{/Confirmation(rejectedOrderID=${ro.id})}">Attempt new payment</a></td>
 		</tr>
 	</table>
 </body>

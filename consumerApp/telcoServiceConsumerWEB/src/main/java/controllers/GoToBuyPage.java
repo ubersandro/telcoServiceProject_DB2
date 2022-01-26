@@ -41,20 +41,16 @@ public class GoToBuyPage extends HttpServlet {
 		// retrieve the package from the request
 		Integer packageID = Integer.parseInt(req.getParameter("pid"));
 		ServicePackage sp = sps.findServicePackage(packageID);
-		
-		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID);  
-		//manage packet selection session 
-		HttpSession session = req.getSession(true); 
-		session.setAttribute("chosenServicePackage", sp); //because that's the one the client wants to buy
-		//template parameters insertion  
+		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID);   
+		//set the date 
+		Calendar tomorrow = Calendar.getInstance(); 
+		tomorrow.add(Calendar.DATE, 1);
+		//insert into the template 
 		String template = "BuyPage"; 
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
 		ctx.setVariable("servicePackage", sp); 
 		ctx.setVariable("associableOptionalProducts", opts); 
-		//INJECT tomorrow'S DATE 
-		Calendar tomorrow = Calendar.getInstance(); 
-		tomorrow.add(Calendar.DATE, 1);
 		ctx.setVariable("minimumDate", tomorrow);
 		templateEngine.process(template, ctx, resp.getWriter()); 
 	}

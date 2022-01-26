@@ -3,20 +3,31 @@ package controllers;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import controllers.utils.ServletUtils;
-import services.*;
-import entities.*;
+import entities.OptionalProduct;
+import entities.Order;
+import entities.ServicePackage;
+import entities.ValidityPeriod;
+import services.OptionalProductService;
+import services.OrderService;
+import services.ServicePackageService;
 
 /**
  * This servlet manages the display of Order data for confirmation. In case of
@@ -34,19 +45,26 @@ public class GoToConfirmationPage extends HttpServlet {
 	private ServicePackageService sps;
 	@EJB
 	private OptionalProductService optServ;
-
+	@EJB
+	private OrderService orderService; 
 	
+	/**
+	 * This method assumes that a generic user (even not logged in) has created an order request. It fecthes the 
+	 * parameters of the order request (service subscription) but it does not create an order. Only logged customers can 
+	 * create orders, so the method redirects the user to a Confirmation page which displays all the information about the
+	 * given TENTATIVE purchase.
+	 */
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		//session retrieval 
-		HttpSession session = req.getSession(); 		
 		// info retrieval from request 
 		String[] chosenOptsKeys = req.getParameterValues("optionalProduct"); // can be null!
 		String startingDateString = req.getParameter("startingDate");
-		int validityPeriodKEY = Integer.parseInt(req.getParameter("validityPeriod")); //MONTHS OF SUBSCRIPTION
-
+		int validityPeriodKEY = Integer.parseInt(req.getParameter("validityPeriod")); //months of subscription 
+		int packageID = Integer.parseInt(req.getParameter("packageID"));  
 		// object retrieval
-		ServicePackage servicePackage = (ServicePackage) session.getAttribute("chosenServicePackage"); 
+		ServicePackage servicePackage = sps.findServicePackage(packageID);  
+
 		List<OptionalProduct> chosenOptionalProducts = new LinkedList<OptionalProduct>();
 		if(chosenOptsKeys!=null) //if at least a product is chosen 
 			for (String prodName : chosenOptsKeys)
@@ -54,23 +72,20 @@ public class GoToConfirmationPage extends HttpServlet {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date date;
-		Calendar startingDate = Calendar.getInstance(); // TODO refactor!
+		Calendar startingDate = Calendar.getInstance(); 
 		try {
 			date = sdf.parse(startingDateString);
 			startingDate = Calendar.getInstance();
 			startingDate.setTime(date);
-			//TODO CHECK AFTER TODAY
-		} catch (ParseException e) {
-			// TODO manage wrong date format ... CHECK AFTER TODAY, FORMAT ECC. 
-		}
+		} catch (ParseException e) {}
 		
 		ValidityPeriod chosenVP = new ValidityPeriod(validityPeriodKEY); 
-		int monthsOfSubscription = validityPeriodKEY; // to be clear 
+		int monthsOfSubscription = validityPeriodKEY; 
 		
 		// total value computation
 		double servicePackageMonthlyFee = servicePackage.getCosts().get(chosenVP);
 		double totalFeeOptionalProducts = 0D;
-		for (OptionalProduct op : chosenOptionalProducts) //TODO check this calculation, orders have 0 value 
+		for (OptionalProduct op : chosenOptionalProducts)
 			totalFeeOptionalProducts += op.getFee();
 		double totalValue = (servicePackageMonthlyFee + totalFeeOptionalProducts) * monthsOfSubscription;
 		//once all values have been extracted -> put into a session object 
@@ -81,9 +96,8 @@ public class GoToConfirmationPage extends HttpServlet {
 		tmp.setServicePackage(servicePackage);
 		tmp.setValidityPeriod(chosenVP);
 		tmp.setTotalValue(totalValue);
-		session.removeAttribute("chosenServicePackage");
-		session.setAttribute("tmpOrder", tmp);
-		
+		HttpSession session = req.getSession(); 		
+		session.setAttribute("tmpOrder", tmp); //persist the temporary order in the session 
 		
 		//redirection to confirmation page
 		ServletContext servletContext = this.getServletContext();
@@ -92,21 +106,42 @@ public class GoToConfirmationPage extends HttpServlet {
 		ctx.setVariable("chosenOptionalProducts", chosenOptionalProducts);
 		ctx.setVariable("chosenValidityPeriod", chosenVP); 
 		ctx.setVariable("chosenStartingDate", startingDate);
-		ctx.setVariable("totalValue", totalValue);
+		ctx.setVariable("totalValue", totalValue); 
 		String templatePath = "ConfirmationPage";
 		templateEngine.process(templatePath, ctx, resp.getWriter());
 	}
 	
+	/**
+	 * Two cases have to be distinguished
+	 * 1) an user has logged in and is ready to pay the incomplete not yet persisted order he was creating
+	 * 2) an INSOLVENT user wants to attempt a new payment for an OLD already persisted order 
+	 */
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		Order tmp = (Order) req.getSession().getAttribute("tmpOrder"); 
+		Order tmp; 
+		ServicePackage servicePackage; 
+		List<OptionalProduct> chosenOptionalProducts = null;  
+		if(req.getParameter("rejectedOrderID")!=null) { 
+			tmp = orderService.findOrderByID(Integer.parseInt(req.getParameter("rejectedOrderID"))); //it already exists, it will have an associate customer and a date/time
+			servicePackage = orderService.retrieveServicePackageFromOrderId(tmp.getId()); 
+			chosenOptionalProducts = orderService.retrieveIncludedOptionalProductsFromOrderId(tmp.getId()) ;
+		}else {
+			tmp = (Order) req.getSession().getAttribute("tmpOrder"); 
+			servicePackage = tmp.getServicePackage(); 
+			chosenOptionalProducts = //optional products in the tmpOrder can't be null TODO test without this code...
+					tmp.getIncludedOptionalProducts()!=null ?
+							new LinkedList<>(tmp.getIncludedOptionalProducts()): null; 
+		}
+		
 		ServletContext servletContext = this.getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
-		ctx.setVariable("servicePackage", tmp.getServicePackage());
-		ctx.setVariable("chosenOptionalProducts", tmp.getIncludedOptionalProducts());
+		ctx.setVariable("servicePackage", servicePackage);
+		ctx.setVariable("chosenOptionalProducts", chosenOptionalProducts);
 		ctx.setVariable("chosenValidityPeriod", tmp.getValidityPeriod()); 
-		ctx.setVariable("chosenStartingDate", tmp.getStartingDate()); 
-		ctx.setVariable("totalValue", tmp.getTotalValue());
+		ctx.setVariable("chosenStartingDate", tmp.getStartingDate());
+		ctx.setVariable("totalValue", tmp.getTotalValue()); 
+		if(req.getParameter("rejectedOrderID")!=null) 
+			ctx.setVariable("rejectedOrderID", Integer.parseInt(req.getParameter("rejectedOrderID"))); //mark it
 		String templatePath = "ConfirmationPage";
 		templateEngine.process(templatePath, ctx, resp.getWriter());
 	}

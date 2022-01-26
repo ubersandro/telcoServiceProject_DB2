@@ -81,6 +81,11 @@ public class OrderService {
 						ServiceActivationSchedule.class).getResultList(); 
 	}
 	
-	
+	public ServicePackage retrieveServicePackageFromOrderId(int orderID){
+		return em.find(Order.class, orderID).getServicePackage(); //navigation
+	}
 		
+	public List<OptionalProduct> retrieveIncludedOptionalProductsFromOrderId (int orderID){
+		return new LinkedList<>(em.find(Order.class, orderID).getIncludedOptionalProducts()); //navigation
+	}
 }

@@ -47,7 +47,7 @@ public class Order implements Serializable{
 	@JoinColumn(name="packageID")
 	private ServicePackage servicePackage; 
 	
-	@ManyToOne @JoinColumn(name="vpMonths")
+	@ManyToOne (fetch = FetchType.EAGER) @JoinColumn(name="vpMonths")
 	private ValidityPeriod validityPeriod;
 	
 	@OneToOne (mappedBy = "order") 
@@ -57,7 +57,7 @@ public class Order implements Serializable{
 	@JoinTable (name="Includes", joinColumns = 
 			@JoinColumn(name = "orderID"), 
 			inverseJoinColumns = @JoinColumn(name = "productName"), schema ="telcoServiceDB")
-	private Collection<OptionalProduct> includedOptionalProducts;
+	private Collection<OptionalProduct> includedOptionalProducts; // TODO default to empty list 
 	
 	public Order(){}
 
