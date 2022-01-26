@@ -8,11 +8,12 @@ import javax.persistence.*;
 import entities.OptionalProduct ;
 import entities.Order;
 import entities.OrderStatus;
+import entities.Payment;
+import entities.PaymentStatus;
 import entities.ServiceActivationSchedule;
 import entities.Consumer; 
 import entities.ServicePackage;
 import entities.ValidityPeriod;
-import exceptions.NoSuchTupleException;
 
 @Stateless 
 public class OrderService {
@@ -42,20 +43,30 @@ public class OrderService {
 	}
 	
 
-	public void markAsPaid(int orderID) {
-		 
-		Order o = em.find(Order.class, orderID); //now managed 
-		o.setStatus(OrderStatus.ACCEPTED); 
-		em.merge(o); 
+	public void markAsPaid(int orderID, String username) {
+		Order o = em.find(Order.class, orderID); 
+		Consumer c = em.find(Consumer.class, username); 
+		Payment p = new Payment();
+		p.setOrder(o);
+		p.setUser(c); 
+		p.setStatus(PaymentStatus.APPROVED);
+		p.setDate(Calendar.getInstance());
+		p.setTime(new Date()); 
+		p.setTotalValue(o.getTotalValue());
+		em.persist(p); 
 	}
 	
-	public void markAsRejected(int orderID) {
-		System.err.println("REJECTED");
-		Order o = em.createQuery("SELECT O FROM Order O where O.id = :id", Order.class).setParameter("id", orderID).getSingleResult();
-		//Order o = em.find(Order.class, orderID); 
-		System.err.println("REJECTED");
-		o.setStatus(OrderStatus.REJECTED);
-		em.merge(o); 
+	public void markAsRejected(int orderID, String username) {
+		Order o = em.find(Order.class, orderID); 
+		Consumer c = em.find(Consumer.class, username); 
+		Payment p = new Payment();
+		p.setOrder(o);
+		p.setUser(c); 
+		p.setStatus(PaymentStatus.REJECTED);
+		p.setDate(Calendar.getInstance());
+		p.setTime(new Date()); 
+		p.setTotalValue(o.getTotalValue());
+		em.persist(p); 
 	}
 	
 	@SuppressWarnings("unchecked")

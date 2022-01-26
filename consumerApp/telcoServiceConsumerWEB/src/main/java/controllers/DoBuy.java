@@ -83,14 +83,14 @@ public class DoBuy extends HttpServlet {
 		//PAYMENT SIMULATION
 		boolean orderAccepted = req.getParameter("PAYMENT_MODE")!=null? req.getParameter("PAYMENT_MODE").equalsIgnoreCase("RIGHT"):true;
 		//PAYMENT SIMULATION
-		
+		Consumer c = (Consumer) req.getSession().getAttribute("user"); 
 		if (orderAccepted) {
 			// mark order as paid
-			os.markAsPaid(toBePaid.getId()); 
+			os.markAsPaid(toBePaid.getId(), c.getUsername()); 
 			resp.sendRedirect("HomePage"); 
 		} else {// rejection
 				// mark as rejected --> this activates the TRIGGERS 
-			os.markAsRejected(toBePaid.getId());
+			os.markAsRejected(toBePaid.getId(), c.getUsername());
 			String orderErrorTemplate = "OrderRejected";
 			final WebContext ctx = new WebContext(req, resp, getServletContext(), req.getLocale());
 			ctx.setVariable("orderID", toBePaid.getId()); //TODO explain this extra step 

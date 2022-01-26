@@ -9,16 +9,21 @@
 <body>
 
 	<h1>Buy Service Package</h1>
-	
+	<p
+		th:text="|Service Package name and ID: ${servicePackage.getName()}, ${servicePackage.getId()}|">Service
+		Package: name, id</p>
 
-	<form action="Confirmation" method="POST" >
-		<input type = "hidden" value = "1" th:attr="value=${servicePackage.getId()}" name ="packageID">
+	<form action="Confirmation" method="POST">
+		<input type="hidden" value="1"
+			th:attr="value=${servicePackage.getId()}" name="packageID">
 		<table>
 			<tr>
-				<th>Optional product</th> <th>Select</th>
+				<th>Optional product</th>
+				<th>Select</th>
 
 			</tr>
-			<tr th:each="op : ${associableOptionalProducts}" th:if="${associableOptionalProducts!=null}">
+			<tr th:each="op : ${associableOptionalProducts}"
+				th:if="${associableOptionalProducts!=null}">
 				<td th:text="${op.name}">op1</td>
 				<td><input type="checkbox" th:field="${op}"
 					name="optionalProduct" th:value="${op.name}" /></td>
@@ -32,15 +37,11 @@
 				th:value="${vp.months}"
 				th:text="|${vp.months} months -> ${servicePackage.costs.get(vp)} $/month|">12
 				months -> 10.43 $/month</option>
-		</select> <br>
-
-		
-
-		<br> <label for="startingDate">Starting date :</label> <input
-			type="date" min="2022-02-01" th:attr="min=${#calendars.format(minimumDate,'yyyy-MM-dd')}" id="startingDate" name="startingDate" required> <br>
-
-		<br>
-		<button type="submit" value ="submit">Confirm</button>
+		</select> <br> <br> <label for="startingDate">Starting date :</label>
+		<input type="date" min="2022-02-01"
+			th:attr="min=${#calendars.format(minimumDate,'yyyy-MM-dd')}"
+			id="startingDate" name="startingDate" required> <br> <br>
+		<button type="submit" value="submit">Confirm</button>
 	</form>
 
 </body>

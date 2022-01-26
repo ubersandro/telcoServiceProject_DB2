@@ -14,16 +14,17 @@
 		<class>entities.MobileInternetService</class>
 		<class>entities.MobilePhoneService</class>
 		<class>entities.OptionalProduct</class>
+		<class>entities.OptionalProduct_sales</class>
 		<class>entities.Order</class>
+		<class>entities.Payment</class>
+		<class>entities.PurchasesPackageValidityPeriod</class>
+		<class>entities.SalesSP_OP</class>
 		<class>entities.Service</class>
 		<class>entities.ServiceActivationSchedule</class>
 		<class>entities.ServicePackage</class>
+		<class>entities.TelcoUser</class>
 		<class>entities.ValidityPeriod</class>
-				<class>entities.TelcoUser</class>
 		<class>entities.embeddable.PackageVPKEY</class>
-		<class>entities.PurchasesPackageValidityPeriod</class>
-		<class>entities.SalesSP_OP</class>
-		<class>entities.OptionalProduct_sales</class>
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
 		<properties>
 			<property name="eclipselink.logging.level" value="FINE" />

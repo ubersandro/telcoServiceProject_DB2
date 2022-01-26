@@ -1,4 +1,3 @@
-
 -- PROCEDURE DEFINITION
 /**
   This procedure is provided with an order ID as input parameter and, for each optional product
@@ -44,7 +43,7 @@ BEGIN
     IF new.status = '2' THEN -- WHENEVER AN ORDER IS MARKED AS PAID (STATUS = 2)
         INSERT INTO ServiceActivationSchedule(orderID, endDate)
         VALUES (new.id, ADDDATE(new.startingDate, INTERVAL NEW.vpMonths MONTH));
-    END IF ;
+    END IF;
 END;
 
 CREATE OR REPLACE TRIGGER updateSalesSPVP
@@ -53,7 +52,10 @@ CREATE OR REPLACE TRIGGER updateSalesSPVP
     FOR EACH ROW
 BEGIN
     IF new.status = '2' THEN -- WHENEVER AN ORDER IS MARKED AS PAID (STATUS = 2)
-        IF ((SELECT COUNT(*) FROM purchasesPerPackageVP P WHERE P.servicePackage = NEW.packageID AND P.validityPeriodMonths = NEW.vpMonths) = '0')
+        IF ((SELECT COUNT(*)
+             FROM purchasesPerPackageVP P
+             WHERE P.servicePackage = NEW.packageID
+               AND P.validityPeriodMonths = NEW.vpMonths) = '0')
         THEN -- THERE NOT EXISTS A TUPLE WITH THE GIVEN PACKAGE (NOR WITH THE CORRESPONDENT VALIDITY PERIODS)
             INSERT INTO purchasesPerPackageVP(servicePackage, validityPeriodMonths, counter)
             VALUES (NEW.packageID, NEW.vpMonths, 1);
@@ -90,88 +92,71 @@ BEGIN
     END IF; -- ORDER PAID
 END;
 
-CREATE OR REPLACE TRIGGER setInsolventUser
-    AFTER UPDATE
-    ON `Order`
+/**
+  Whatever the state of a user is, whenever a failed payment is inserted into the payment table
+  this trigger marks the user as INSOLVENT.
+ */
+CREATE OR REPLACE TRIGGER markUserInsolventAfterFailedPayment
+    AFTER INSERT
+    ON `Payment`
     FOR EACH ROW
 BEGIN
-    -- an order is set as rejected and the SOLVENT user has to be marked as insolvent and the counter set from 0 to 1.
-    -- if the user is already insolvent the counter is incremented by 1
-    -- if the order was already rejected the user counter is incremented anyway because another payment failed
     IF NEW.status = 1 -- REJECTED
     THEN
         UPDATE Consumer C
-        SET C.status = 1, C.counter = C.counter + 1
-        WHERE C.username = NEW.consUsername;
+        SET C.status  = 1
+        WHERE C.username = NEW.user;
     END IF;
 END;
 
 
 
-/*CREATE VIEW lastRejectedOrders(user, date, time, value) AS
-SELECT O.consUsername AS user, O.date AS date, O.time AS time, O.totalValue AS value
-FROM `Order` O
-WHERE O.date IN (SELECT date FROM dateLastRejection D WHERE D.consumer = O.consUsername)
-GROUP BY O.consUsername
-HAVING max(O.time);
-
-CREATE VIEW dateLastRejection(consumer, date) AS
-SELECT O.consUsername AS consumer, MAX(O.date) AS date
-FROM `Order` O
-WHERE O.status = 1
-GROUP BY O.consUsername;
-
-CREATE OR REPLACE TRIGGER createAlert -- alert is created but never removed
-    AFTER UPDATE
-    ON Consumer
+/**
+  This trigger creates an alert as soon as the third failed payment is inserted into the Payment table.
+ */
+CREATE OR REPLACE TRIGGER createAlertOnThirdFailedPayment
+    AFTER INSERT
+    ON Payment
     FOR EACH ROW
 BEGIN
-    --  if counter reaches 3 and the user has no alerts pending then put an alert in the auditing table
-    IF NEW.counter = 3 AND NEW.username NOT IN (SELECT A.username FROM Auditing A WHERE A.username = NEW.username) THEN
+    IF NEW.status = 1 AND (SELECT COUNT(*) FROM Payment P WHERE P.user = NEW.user AND P.status=1) = 3 AND
+       NEW.user NOT IN (SELECT A.username FROM Auditing A WHERE A.username = NEW.user) THEN  -- WE COUNT PAYMENTS!
         INSERT INTO Auditing(username, time, date, email, value)
-        VALUES (NEW.username, (SELECT l.time FROM lastRejectedOrders l LIMIT 1),
-                (SELECT l.date FROM lastRejectedOrders l LIMIT 1),
-                (SELECT T.email FROM TelcoUser T WHERE T.username = NEW.username),
-                (SELECT l.value FROM lastRejectedOrders l LIMIT 1));
-    END IF;
-END;
-*/
-
-/**
-  This trigger must fire only AFTER the counter of rejected payments of a given user has been incremented.
-  If the new value of the counter is 3 and no alerts for the given user exist, then an alert is created.
- */
-CREATE OR REPLACE TRIGGER createAlert -- V2
-    AFTER UPDATE ON `Order`
-    FOR EACH ROW
-    FOLLOWS setInsolventUser
-    BEGIN
-        IF NEW.status = 1 AND (SELECT C.counter FROM Consumer C WHERE C.username = NEW.consUsername ) = 3 AND
-            NEW.consUsername NOT IN (SELECT A.username FROM Auditing A WHERE A.username = NEW.consUsername) THEN
-             INSERT INTO Auditing(username, time, date, email, value)
-        VALUES (NEW.consUsername, NEW.time,
+        VALUES (NEW.user, NEW.time,
                 NEW.date, -- ASSUMING THIS IS THE VERY LAST REJECTION
-                (SELECT T.email FROM TelcoUser T WHERE T.username = NEW.consUsername),
+                (SELECT T.email FROM TelcoUser T WHERE T.username = NEW.user),
                 NEW.totalValue);
-        end if;
+    end if;
 
-    END;
+END;
 
-/**
-  If a rejected order is paid, the counter of the associated user is decremented. If this latter reaches the value 0, the
-  user is no longer insolvent.
- */
-CREATE OR REPLACE TRIGGER updateConsumerOnPayment -- ON PAYMENT
-    AFTER UPDATE
-    ON `Order`
+
+
+
+CREATE OR REPLACE TRIGGER updateOrderOnPayment -- ON PAYMENT
+    AFTER INSERT -- FIRST TRIGGER TO FIRE
+    ON `Payment`
     FOR EACH ROW
 BEGIN
-    IF OLD.status = 1 AND NEW.status = 2 THEN
-        IF (SELECT * FROM `Order` O WHERE O.consUsername = NEW.consUsername AND O.status=1) = 0 THEN
-            UPDATE  Consumer C SET C.status = 0 WHERE C.username = NEW.consUsername;
+    IF NEW.status = 1 THEN
+        UPDATE `Order` O SET O.status = 1 WHERE O.id = NEW.orderID;
+    ELSE
+        IF NEW.status = 0 THEN
+            UPDATE `Order` O SET O.status = 2 WHERE O.id = NEW.orderID;
         END IF;
     END IF;
 END;
 
 
+CREATE OR REPLACE TRIGGER setUserSolvent
+    AFTER UPDATE -- LAST ONE TO FIRE
+    ON `Order`
+    FOR EACH ROW
+BEGIN
+    IF OLD.status = 1 AND NEW.status = 2 THEN -- order marked as rejected
+        IF (SELECT COUNT(*) FROM `Order` O WHERE O.consUsername = NEW.consUsername AND O.status = 1) = 0 THEN
+            UPDATE Consumer C SET C.status = 0 WHERE C.username = NEW.consUsername;
+        END IF;
+    END IF;
+END;
 

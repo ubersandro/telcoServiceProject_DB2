@@ -23,7 +23,6 @@ public class Consumer extends TelcoUser{
 	
 	@Enumerated(EnumType.ORDINAL)
 	private UserStatus status  = UserStatus.SOLVENT;; 
-	private int counter = 0;  
 	
 
 	public Consumer() {}
@@ -43,14 +42,6 @@ public class Consumer extends TelcoUser{
 
 	public void setStatus(UserStatus status) {
 		this.status = status;
-	}
-
-	public int getCounter() {
-		return counter;
-	}
-
-	public void setCounter(int counter) {
-		this.counter = counter;
 	}
 
 

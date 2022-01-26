@@ -22,15 +22,14 @@ CREATE TABLE Consumer
 (
     username VARCHAR(45) NOT NULL,
     status   TINYINT     NOT NULL DEFAULT '0',
-    counter  INT         NOT NULL DEFAULT '0',
     PRIMARY KEY (`username`),
-    CONSTRAINT fKeyCons FOREIGN KEY (username) REFERENCES TelcoUser (username) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT nonNegCounter CHECK (counter >= 0)
+    CONSTRAINT fKeyCons FOREIGN KEY (username) REFERENCES TelcoUser (username) ON DELETE CASCADE ON UPDATE CASCADE
     -- we assume that Insolvent == 0 IFF FALSE and Insolvent > 0 IFF TRUE
 );
 
+
 CREATE TABLE Auditing
-( -- @TODO sign constraints
+(
     username VARCHAR(45)   NOT NULL PRIMARY KEY,
     time     TIME(0)       NOT NULL,
     date     DATE          NOT NULL,
@@ -182,7 +181,19 @@ CREATE TABLE ServiceActivationSchedule
     CONSTRAINT PRIMARY KEY (orderID),
     CONSTRAINT FOREIGN KEY (orderID) REFERENCES `Order` (ID) ON DELETE CASCADE ON UPDATE CASCADE
 );
+CREATE TABLE Payment
+(
+    paymentId       INT AUTO_INCREMENT PRIMARY KEY ,
+    user VARCHAR(45) NOT NULL ,
+    orderID  INT NOT NULL ,
+    date DATE NOT NULL ,
+    time TIME NOT NULL ,
+    totalValue DECIMAL (8,3) NOT NULL ,
+    status   INT NOT NULL DEFAULT '0',
+    CONSTRAINT u FOREIGN KEY (user) REFERENCES Consumer (username) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT o FOREIGN KEY (orderID) REFERENCES `Order` (id) ON DELETE CASCADE ON UPDATE CASCADE
 
+);
 -- SALES REPORT INFO
 
 /**
