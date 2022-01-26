@@ -20,7 +20,7 @@ public class FixedPhoneService extends Service{
 
 	@Override
 	public String toString() {
-		return "FixedPhoneService []";
+		return "FixedPhoneService "+ id;
 	}
 	
 }

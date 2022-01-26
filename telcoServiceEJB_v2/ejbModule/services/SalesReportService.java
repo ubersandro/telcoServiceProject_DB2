@@ -39,12 +39,15 @@ public class SalesReportService {
 	
 	public List<Object[]> findAvgOpts(){
 		List<Object[]> salesSP = findSalesAllSP();
-		List<Object[]> ret = new LinkedList<>();  //TODO try to fix named query 
+		List<Object[]> ret = new LinkedList<>();  
 		final int servicePackage = 0, totalSales =1; 
 		for(Object [] couple : salesSP) {
 			int packageID = (Integer) couple[servicePackage]; 
 			long  sales = (Long) couple[totalSales]; 
-			int totalOpSold = (Integer) em.createQuery("SELECT S.totalOptionalProducts FROM SalesSP_OP S WHERE S.packageID = :ID").setParameter("ID", packageID).getSingleResult();  
+			int totalOpSold = (Integer) em.createQuery("SELECT S.totalOptionalProducts"
+													+ " FROM SalesSP_OP S "
+													 + "WHERE S.packageID = :ID").
+														setParameter("ID", packageID).getSingleResult();  
 			Object [] o = new Object[2];
 			o[0] = packageID; 
 			o[1] = (0D + totalOpSold)/sales; 

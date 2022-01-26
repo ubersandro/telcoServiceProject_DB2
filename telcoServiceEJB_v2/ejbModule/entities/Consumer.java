@@ -22,8 +22,8 @@ public class Consumer extends TelcoUser{
 	private static final long serialVersionUID = 1L;
 	
 	@Enumerated(EnumType.ORDINAL)
-	private UserStatus status  = UserStatus.SOLVENT;; // default SOLVENT (0) otherwise INSOLVENT (1)
-	private int counter = 0; // rejected orders TODO CHECK IF IT WORKS 
+	private UserStatus status  = UserStatus.SOLVENT;; 
+	private int counter = 0;  
 	
 
 	public Consumer() {}

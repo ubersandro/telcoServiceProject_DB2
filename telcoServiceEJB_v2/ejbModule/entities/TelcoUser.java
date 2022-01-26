@@ -4,7 +4,10 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
-@NamedQuery(name = "TelcoUser.checkCredentials", query = "SELECT t FROM TelcoUser t  WHERE t.username = :username and t.password = :password")   
+@NamedQuery(name = "TelcoUser.checkCredentials",
+query = "SELECT t "
+		+ "FROM TelcoUser t  "
+		+ "WHERE t.username = :username and t.password = :password")   
 
 @Entity 
 @Table (name ="TelcoUser", schema = "telcoServiceDB")
@@ -20,7 +23,6 @@ public class TelcoUser implements Serializable {
 	public TelcoUser() {}
 
 	public TelcoUser(String username, String email, String password) {
-		super();
 		this.username = username;
 		this.email = email;
 		this.password = password;

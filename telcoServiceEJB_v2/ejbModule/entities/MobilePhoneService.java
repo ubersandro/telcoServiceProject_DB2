@@ -26,7 +26,7 @@ public class MobilePhoneService extends Service{
 
 	@Override
 	public String toString() {
-		return "MobilePhoneService [minutes=" + minutes + ", extraMinutesFee=" + extraMinutesFee + ", SMSs=" + SMSs
+		return "MobilePhoneService " + id + " : [minutes=" + minutes + ", extraMinutesFee=" + extraMinutesFee + ", SMSs=" + SMSs
 				+ ", extraSMSsFee=" + extraSMSsFee + "]";
 	}
 	public void setMinutes(int minutes) {

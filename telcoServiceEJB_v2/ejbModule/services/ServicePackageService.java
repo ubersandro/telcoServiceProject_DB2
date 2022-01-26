@@ -20,11 +20,6 @@ public class ServicePackageService {
 	public ServicePackageService() {
 	}
 
-	/**
-	 * The method allows to list all the service packages in the DB
-	 * 
-	 * @return
-	 */
 	public List<ServicePackage> findAllServicePackages() {
 		List<ServicePackage> l = (List<ServicePackage>) em.createNamedQuery("ServicePackage.findAll",
 				ServicePackage.class).getResultList();
@@ -32,15 +27,6 @@ public class ServicePackageService {
 
 	}
 
-	/**
-	 * The method allows the employee to create a new service package
-	 * 
-	 * @param name
-	 * @param services
-	 * @param optionalProducts
-	 * @param costs
-	 * @return
-	 */
 	public ServicePackage addServicePackage(String name, List<Service> services,
 			List<OptionalProduct> optionalProducts, Map<ValidityPeriod, Double> costs) {
 
@@ -55,9 +41,10 @@ public class ServicePackageService {
 		return sp;
 	}
 
+
 	public Map<ValidityPeriod, Double> findValidityPeriodsAndFees(int id) {
 		ServicePackage sp = em.find(ServicePackage.class, id); 
-		return sp.getCosts();  //TODO change to getFee 
+		return sp.getCosts(); 
 	}
 
 	
@@ -88,11 +75,13 @@ public class ServicePackageService {
 		ServicePackage sp = findServicePackage(packageID);
 		OptionalProduct op = em.find(OptionalProduct.class, productName); 
 		sp.addOptionalProduct(op);
-		em.merge(sp); //TODO check triggers 
+		em.merge(sp);
 	}
 	
 	public ServicePackage refreshServicePackage(ServicePackage sp) {
-		return em.merge(sp); 	
+		ServicePackage x = em.find(ServicePackage.class, sp.getId()); 
+		em.refresh(x);
+		return x ;
 	}
 	
 

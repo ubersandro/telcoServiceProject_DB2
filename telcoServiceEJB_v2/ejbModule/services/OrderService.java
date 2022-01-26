@@ -18,16 +18,7 @@ import exceptions.NoSuchUserException;
 public class OrderService {
 	@PersistenceContext(unitName = "telcoServiceEJB_v2")
 	private EntityManager em ; 
-	
-	/**
-	 * Add a new Order to the DB. 
-	 * @param c 
-	 * @param sp
-	 * @param ops
-	 * @param startingDate
-	 * @param totalValue
-	 * @param vp
-	 */
+
 	public Order addOrder(Consumer c, ServicePackage sp, List<OptionalProduct> ops, Calendar startingDate, 
 			double totalValue, ValidityPeriod vp) {
 		Date now = new Date();
@@ -50,11 +41,7 @@ public class OrderService {
 		return o; 
 	}
 	
-	/**
-	 * Given the ID of an order, it marks it as paid (update) . 
-	 * TRIGGERS !!! 
-	 * @param orderID
-	 */
+
 	public void markAsPaid(int orderID) { //TODO change to order and do MERGE
 		Order o = em.find(Order.class, orderID); //now managed 
 		o.setStatus(OrderStatus.ACCEPTED); 
@@ -68,7 +55,7 @@ public class OrderService {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Order> findAllRejectedOrders(){ //TODO write it 
+	public List<Order> findAllRejectedOrders(){  
 		return ((List<Order>) em.createNamedQuery("Order.findOrdersByStatus")
 				.setParameter("status", OrderStatus.REJECTED).getResultList()); 
 	}
@@ -76,6 +63,15 @@ public class OrderService {
 	public Order findOrderByID (int id) {
 		return em.find(Order.class, id);
 	}
+	
+	
+	public List<Order> findRejectedOrdersByUsername(String consumer){
+		Consumer c = em.find(Consumer.class, consumer);  
+		List<Order> l = (List<Order>) em.createNamedQuery("Order.findOrdersByUserAndStatus", Order.class)
+				.setParameter("consumer", c).setParameter("status", OrderStatus.REJECTED).getResultList(); 
+		return l; 
+	}
+	
 	
 	//DEBUG - DEMO purposes only methods 
 	
@@ -85,12 +81,6 @@ public class OrderService {
 						ServiceActivationSchedule.class).getResultList(); 
 	}
 	
-	public List<Order> findRejectedOrdersByUsername(String consumer){
-		Consumer c = em.find(Consumer.class, consumer);  
-		List<Order> l = (List<Order>) em.createNamedQuery("Order.findOrdersByUserAndStatus", Order.class)
-				.setParameter("consumer", c).setParameter("status", OrderStatus.REJECTED).getResultList(); 
-		return l; 
-	}
 	
 		
 }

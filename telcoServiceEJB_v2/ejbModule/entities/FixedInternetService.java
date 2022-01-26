@@ -21,7 +21,6 @@ public class FixedInternetService extends Service{
 	public FixedInternetService() {} 
 	
 	public FixedInternetService(int id, int gigabytes, double fee) {
-		super();
 		this.gigabytes = gigabytes;
 		this.fee = fee;
 	}
@@ -41,7 +40,7 @@ public class FixedInternetService extends Service{
 
 	@Override
 	public String toString() {
-		return "FixedInternetService [gigabytes=" + gigabytes + ", fee=" + fee + "]";
+		return "FixedInternetService " + super.id +" : [gigabytes=" + gigabytes + ", fee=" + fee + "]";
 	}
 	
 }

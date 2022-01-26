@@ -25,7 +25,7 @@ public class PackageVPKEY implements Serializable{
 	public PackageVPKEY() {}
 	@Override
 	public int hashCode() {
-		return 71*servicePackage+87*validityPeriodMonths;
+		return 71*servicePackage+89*validityPeriodMonths;
 	}
 	
 	@Override

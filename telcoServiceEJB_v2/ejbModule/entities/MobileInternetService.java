@@ -27,7 +27,7 @@ public class MobileInternetService extends Service {
 	
 	@Override
 	public String toString() {
-		return "MobileInternetService [gigabytes=" + gigabytes + ", fee=" + fee + "]";
+		return "MobileInternetService " + id + " : [gigabytes=" + gigabytes + ", fee=" + fee + "]";
 	}
 
 	public int getGigabytes() {

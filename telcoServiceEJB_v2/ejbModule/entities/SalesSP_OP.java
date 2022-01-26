@@ -9,10 +9,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @NamedQueries({
-
-	@NamedQuery (name="SalesSP_OP.avgOpts", 
-			query = "SELECT S.packageID, (S.totalOptionalProducts/sum(P.counter)) FROM SalesSP_OP S, PurchasesPackageValidityPeriod P WHERE S.packageID = P.key.servicePackage GROUP BY P.key.servicePackage, S.packageID"),
-	
 	@NamedQuery (name="SalesSP_OP.purchasesOptionalProducts", 
 	query = "SELECT S.packageID,S.purchasesWithOptionalProducts "
 			+ " FROM SalesSP_OP S ")
@@ -51,8 +47,6 @@ public class SalesSP_OP implements Serializable {
 
 	private int purchasesWithOptionalProducts;
 
-	public SalesSP_OP() {
-		// TODO Auto-generated constructor stub
-	}
+	public SalesSP_OP() {}
 
 }

@@ -26,16 +26,12 @@ public class ServicesUtils {
 	
 	public List<Service> findAllServices(){
 		return (List<Service> ) 
-				em.createNamedQuery("Service.findAll", //@todo check how to retrieve Service entities of the right type. 
+				em.createNamedQuery("Service.findAll", 
 						Service.class).getResultList(); 
 	}
 	
 	public Service findServiceById(int id){
 		return (Service) em.find(Service.class, id); 
-	}
-	//4 different queries ? 	
-	
-	
-	
+	}	
 	
 }

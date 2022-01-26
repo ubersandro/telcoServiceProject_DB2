@@ -145,13 +145,16 @@ public class Order implements Serializable{
 		return includedOptionalProducts;
 	}
 
-	@Override
-	public String toString() {
-		return "Order [id=" + id + ", status=" + status + "]";
-	}
-
+	
 	public void setIncludedOptionalProducts(Collection<OptionalProduct> includedOptionalProducts) {
 		this.includedOptionalProducts = includedOptionalProducts;
+	}
+
+	@Override
+	public String toString() {
+		return "Order [time=" + time + ", date=" + date + ", totalValue=" + totalValue + ", startingDate="
+				+ startingDate + ", status=" + status + ", consumer=" + consumer + ", servicePackage=" + servicePackage
+				+ ", validityPeriod=" + validityPeriod + ", includedOptionalProducts=" + includedOptionalProducts + "]";
 	}
 
 	public Order(Date time, Calendar date, double totalValue, Calendar startingDate,

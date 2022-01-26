@@ -22,9 +22,14 @@ public class UserService {
 				setParameter("username", username).setParameter("password", password).getSingleResult(); //because there can only be one user with the given username   
 		if(user == null) throw new UserNotFoundException();
 		if(!user.getPassword().equals(password)) throw new WrongCredentialsException(); 
-		return user; //detached 
+		return user;  
 	}
 	
+	/**
+	 * PRE : These methods are called only AFTER checkCredentials. 
+	 * @param user
+	 * @return
+	 */
 	public boolean isConsumer(TelcoUser user) {
 		return em.find(Consumer.class, user.getUsername())!=null; 
 	}
@@ -54,16 +59,6 @@ public class UserService {
 		em.flush(); //s	o that changes are written ASAP 
 		return ; 
 	}
-	
-	
-	/**
-	 * This method retrieves all the rejected orders for a given customer. 
-	 * If the user is INSOLVENT, then the result is a NON EMPTY list of REJECTED orders.
-	 * Otherwise it returns NULL. 
-	 * @precondition : such a Consumer has to exist -> checked into the method 
-	 * @param c
-	 * @return
-	 */
 	
 	
 	public List<Consumer> findInsolventUsers(){

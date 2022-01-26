@@ -20,15 +20,10 @@ public class ServicePackage implements Serializable {
 	private int id; 
 	private String name; 
 	
-	//CASCADE 
-	// PERSIST because on creation of a ServicePackage, Services could be created as well and have to be persisted 
-	// DELETE --> NO because of the manyToMany relationship 
-	// MERGE  --> what changes can I make to a ServicePackage? NONE (in the app) , so merging is immaterial 
-	// REFRESH 
-	// DETACH -> no because there could be more ServicePackages in the PC. 
-	@ManyToMany (fetch = FetchType.EAGER ) // ASSUMING THAT in the Home page services have to be displayed immediately
+
+	@ManyToMany (fetch = FetchType.EAGER )
 	@JoinTable (name="SPS", joinColumns = 
-			@JoinColumn(name = "packageID"), //owner (according to this particular choice).  
+			@JoinColumn(name = "packageID"), //owner
 			inverseJoinColumns = @JoinColumn(name = "serviceID"), schema ="telcoServiceDB") //service FATHER entity
 	private List<Service> services ;
 	
@@ -45,15 +40,10 @@ public class ServicePackage implements Serializable {
 	
 	
 	
-	/*in the Home page neither the available validity periods
-	nor do the fee associated with the couple (validityPeriod, ServicePackage) have to be displayed.
-	Since the relationship has one attribute (monthlyFee), an ElementCollection tag has to be used.
-	DIRECTION ServicePackage -> ValidityPeriod   
-	*/
 	@ElementCollection (fetch = FetchType.EAGER) //entity key element collection (no cascading, inverse and orphan removal) 
 	@CollectionTable (name = "HasValidity", 
-			joinColumns = @JoinColumn(name = "packageID"), schema = "telcoServiceDB") //this column holds the PK to the ServicePackage. 
-	@MapKeyJoinColumn (name = "validityMonths") //Specification of the column holding the PK of the ValidityPeriod entity used as an index in the map. 
+			joinColumns = @JoinColumn(name = "packageID"), schema = "telcoServiceDB")  
+	@MapKeyJoinColumn (name = "validityMonths")  
 	@Column (name = "monthlyFee")
 	private Map<ValidityPeriod, Double> costs; 
 	
