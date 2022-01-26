@@ -23,11 +23,11 @@ BEGIN
         END IF;
         -- UPDATE SALES REPORT TABLE
 
-        IF ((SELECT count(*) FROM optionalProduct_sales S WHERE S.productName = currentProduct) != '0') THEN
-            UPDATE optionalProduct_sales X SET sales=sales + 1 WHERE X.productName = currentProduct;
-        ELSE -- THE TUPLE DOES NOT EXIST
+/*        IF ((SELECT count(*) FROM optionalProduct_sales S WHERE S.productName = currentProduct) != '0') THEN
+*/            UPDATE optionalProduct_sales X SET sales=sales + 1 WHERE X.productName = currentProduct;
+        /*ELSE -- THE TUPLE DOES NOT EXIST
             INSERT INTO optionalProduct_sales(productName, sales) VALUES (currentProduct, '1');
-        END IF;
+        END IF;*/
 
 
     END LOOP;
@@ -52,20 +52,20 @@ CREATE OR REPLACE TRIGGER updateSalesSPVP
     FOR EACH ROW
 BEGIN
     IF new.status = '2' THEN -- WHENEVER AN ORDER IS MARKED AS PAID (STATUS = 2)
-        IF ((SELECT COUNT(*)
+        /*IF ((SELECT COUNT(*)
              FROM purchasesPerPackageVP P
              WHERE P.servicePackage = NEW.packageID
                AND P.validityPeriodMonths = NEW.vpMonths) = '0')
         THEN -- THERE NOT EXISTS A TUPLE WITH THE GIVEN PACKAGE (NOR WITH THE CORRESPONDENT VALIDITY PERIODS)
             INSERT INTO purchasesPerPackageVP(servicePackage, validityPeriodMonths, counter)
             VALUES (NEW.packageID, NEW.vpMonths, 1);
-        ELSE -- THERE EXISTS AT LEAST A TUPLE WITH THE GIVEN SERVICE PACKAGE AND THE GIVEN VALIDITY PERIOD
+        ELSE -- THERE EXISTS AT LEAST A TUPLE WITH THE GIVEN SERVICE PACKAGE AND THE GIVEN VALIDITY PERIOD*/
             UPDATE purchasesPerPackageVP
             SET counter=counter + 1
             WHERE servicePackage = NEW.packageID
               AND validityPeriodMonths = NEW.vpMonths;
-        END IF;
-    END IF; -- IF THE ORDER WAS PAID
+/*        END IF;
+*/    END IF; -- IF THE ORDER WAS PAID
 END;
 
 CREATE OR REPLACE TRIGGER updateSalesSPOP
@@ -75,19 +75,23 @@ CREATE OR REPLACE TRIGGER updateSalesSPOP
 BEGIN
     IF new.status = '2' THEN -- WHENEVER AN ORDER IS MARKED AS PAID (STATUS = 2)
         IF ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) > '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
-            IF ((SELECT COUNT(*) FROM salesSP_OP P WHERE P.packageID = NEW.packageID) > '0') -- THE TUPLE EXISTS
-            THEN
+         /*   IF ((SELECT COUNT(*) FROM salesSP_OP P WHERE P.packageID = NEW.packageID) > '0') -- THE TUPLE EXISTS
+            THEN*/
                 UPDATE salesSP_OP
                 SET purchasesWithOptionalProducts = purchasesWithOptionalProducts + '1',
                     totalOptionalProducts         = totalOptionalProducts +
                                                     (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id)
                 WHERE packageID = NEW.packageID;
-            ELSE -- THE TUPLE DOES NOT EXIST
+           /* ELSE -- THE TUPLE DOES NOT EXIST
                 INSERT INTO salesSP_OP(packageID, totalOptionalProducts, purchasesWithOptionalProducts)
                 VALUES (NEW.packageID, (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id), 1);
-            END IF;
+            END IF;*/
             -- product sales statistics update
             CALL updateProductSales(new.id);
+            /* ELSE  -- THE ORDER DOES NOT INCLUDE OPT PRODS
+                 IF (SELECT COUNT(*) FROM salesSP_OP S WHERE S.packageID = NEW.packageID) = 0 THEN -- if the SP is not there add a tuple !
+                     INSERT INTO salesSP_OP(packageID, totalOptionalProducts, purchasesWithOptionalProducts) VALUES (NEW.packageID, 0,0);
+                 END IF ;*/
         END IF; -- purchase with optional products
     END IF; -- ORDER PAID
 END;
@@ -104,7 +108,7 @@ BEGIN
     IF NEW.status = 1 -- REJECTED
     THEN
         UPDATE Consumer C
-        SET C.status  = 1
+        SET C.status = 1
         WHERE C.username = NEW.user;
     END IF;
 END;
@@ -119,8 +123,8 @@ CREATE OR REPLACE TRIGGER createAlertOnThirdFailedPayment
     ON Payment
     FOR EACH ROW
 BEGIN
-    IF NEW.status = 1 AND (SELECT COUNT(*) FROM Payment P WHERE P.user = NEW.user AND P.status=1) = 3 AND
-       NEW.user NOT IN (SELECT A.username FROM Auditing A WHERE A.username = NEW.user) THEN  -- WE COUNT PAYMENTS!
+    IF NEW.status = 1 AND (SELECT COUNT(*) FROM Payment P WHERE P.user = NEW.user AND P.status = 1) = 3 AND
+       NEW.user NOT IN (SELECT A.username FROM Auditing A WHERE A.username = NEW.user) THEN -- WE COUNT PAYMENTS!
         INSERT INTO Auditing(username, time, date, email, value)
         VALUES (NEW.user, NEW.time,
                 NEW.date, -- ASSUMING THIS IS THE VERY LAST REJECTION
@@ -129,7 +133,6 @@ BEGIN
     end if;
 
 END;
-
 
 
 
@@ -160,3 +163,32 @@ BEGIN
     END IF;
 END;
 
+CREATE OR REPLACE TRIGGER onServicePackageInsertion
+    AFTER INSERT
+    ON ServicePackage
+    FOR EACH ROW
+BEGIN
+    INSERT INTO salesSP_OP (packageID, totalOptionalProducts, purchasesWithOptionalProducts) VALUES (NEW.id, 0, 0);
+END;
+
+CREATE OR REPLACE TRIGGER onValidityPeriodInsertion
+    AFTER INSERT
+    ON HasValidity
+    FOR EACH ROW
+BEGIN
+    INSERT INTO purchasesPerPackageVP (servicePackage, validityPeriodMonths)
+    VALUES (NEW.packageID, 12),
+           (NEW.packageID, 24),
+           (NEW.packageID, 36);
+END;
+
+
+
+
+CREATE OR REPLACE TRIGGER onOptionalProductInsertion
+    AFTER INSERT
+    ON OptionalProduct
+    FOR EACH ROW
+BEGIN
+    INSERT INTO optionalProduct_sales(productName, sales) VALUES (NEW.name, 0);
+END;

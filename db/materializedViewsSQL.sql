@@ -60,6 +60,4 @@ SELECT O.packageID AS package, COUNT(O.id) / COUNT(I.productName) AS avgOpts
 FROM `Order` O
          RIGHT JOIN `Includes` I on O.id = I.orderId
 GROUP BY O.packageID, O.id;
-/**
-  @TODO check last query
- */
+

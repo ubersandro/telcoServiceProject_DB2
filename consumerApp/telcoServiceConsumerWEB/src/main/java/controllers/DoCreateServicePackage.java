@@ -91,6 +91,7 @@ public class DoCreateServicePackage extends HttpServlet {
 		sp.setCosts(costs);
 		sp.setOptionalProducts(optionalProducts);
 		sp.setServices(services);
+		
 		try {
 			sps.addServicePackage(sp);
 		} catch (TupleAlreadyExistentException e) {

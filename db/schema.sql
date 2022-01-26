@@ -204,8 +204,8 @@ CREATE TABLE purchasesPerPackageVP
     servicePackage       INT,
     validityPeriodMonths INT,
     CONSTRAINT PRIMARY KEY (servicePackage, validityPeriodMonths),
-    counter              INT DEFAULT '0',
-    CONSTRAINT FOREIGN KEY fk123 (servicePackage, validityPeriodMonths) REFERENCES HasValidity (packageID, validityMonths) ON DELETE CASCADE ON UPDATE CASCADE
+    counter              INT DEFAULT '0'
+    -- CONSTRAINT FOREIGN KEY fk123 (servicePackage, validityPeriodMonths) REFERENCES HasValidity (packageID, validityMonths) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 /**
@@ -224,7 +224,7 @@ CREATE TABLE salesSP_OP
 CREATE TABLE optionalProduct_sales
 (
     productName VARCHAR(45),
-    sales       INT,
+    sales       INT NOT NULL DEFAULT '0',
     CONSTRAINT FOREIGN KEY (productName) REFERENCES OptionalProduct (name) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT PRIMARY KEY (productName)
 );
