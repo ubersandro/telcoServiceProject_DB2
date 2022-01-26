@@ -68,7 +68,7 @@ public class DoBuy extends HttpServlet {
 		if (session.getAttribute("tmpOrder") != null) {
 			//partial order retrieval 
 			Order tmpOrder = (Order) session.getAttribute("tmpOrder"); //ORDER OBJECT MISSING SOME ATTRIBUTES
-			session.removeAttribute("tmpOrder"); // performance
+			session.removeAttribute("tmpOrder"); 
 			//order completion 
 			tmpOrder.setConsumer((Consumer) session.getAttribute("user"));
 			tmpOrder.setDate(Calendar.getInstance()); //DATE 
@@ -99,5 +99,7 @@ public class DoBuy extends HttpServlet {
 		}
 
 	}
+	
+	
 
 }

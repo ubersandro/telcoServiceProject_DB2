@@ -37,7 +37,7 @@
 		
 
 		<br> <label for="startingDate">Starting date :</label> <input
-			type="date" min="2022-02-01" th:min=${tomorrow} id="startingDate" name="startingDate"> <br>
+			type="date" min="2022-02-01" th:attr="min=${#calendars.format(minimumDate,'yyyy-MM-dd')}" id="startingDate" name="startingDate" required> <br>
 
 		<br>
 		<button type="submit" value ="submit">Confirm</button>

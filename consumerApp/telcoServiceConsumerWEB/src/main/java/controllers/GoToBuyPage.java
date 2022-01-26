@@ -53,7 +53,8 @@ public class GoToBuyPage extends HttpServlet {
 		ctx.setVariable("servicePackage", sp); 
 		ctx.setVariable("associableOptionalProducts", opts); 
 		//INJECT tomorrow'S DATE 
-		Calendar tomorrow = Calendar.getInstance(); tomorrow.add(Calendar.DATE, 1); 
+		Calendar tomorrow = Calendar.getInstance(); 
+		tomorrow.add(Calendar.DATE, 1);
 		ctx.setVariable("minimumDate", tomorrow);
 		templateEngine.process(template, ctx, resp.getWriter()); 
 	}
