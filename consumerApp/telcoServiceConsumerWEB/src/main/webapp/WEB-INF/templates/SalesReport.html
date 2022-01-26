@@ -80,9 +80,9 @@
 				<th>Service Package ID</th>
 				<th>Avarage number of sales</th>
 			</tr>
-			<tr th:each="a : ${avgOptsSP}">
-				<td th:text="${a[0]}">4</td>
-				<td th:text="${a[1]}">2</td>
+			<tr th:each="a : ${avgOptsSP.keySet()}">
+				<td th:text="${a}">4</td>
+				<td th:text="${avgOptsSP.get(a)}">2</td>
 			</tr>
 		</table>
 	</div>

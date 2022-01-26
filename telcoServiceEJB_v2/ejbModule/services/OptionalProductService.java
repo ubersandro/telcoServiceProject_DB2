@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import entities.OptionalProduct;
+import exceptions.TupleAlreadyExistentException;
 @Stateless
 public class OptionalProductService {
 	@PersistenceContext(unitName =  "telcoServiceEJB_v2")
@@ -22,9 +23,9 @@ public class OptionalProductService {
 
 	}
 
-	public OptionalProduct createOptionalProduct(String name, double fee) {
+	public OptionalProduct createOptionalProduct(String name, double fee) throws TupleAlreadyExistentException {
+		if(em.find(OptionalProduct.class, name )!=null) throw new TupleAlreadyExistentException("Optional product already existent"); 
 		OptionalProduct op = new OptionalProduct();
-		// TODO name already existent ... 
 		op.setName(name);
 		op.setFee(fee);
 

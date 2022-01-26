@@ -11,6 +11,7 @@ import entities.OptionalProduct;
 import entities.Service;
 import entities.ServicePackage;
 import entities.ValidityPeriod;
+import exceptions.TupleAlreadyExistentException;
 
 @Stateless
 public class ServicePackageService {
@@ -28,8 +29,12 @@ public class ServicePackageService {
 	}
 
 	public ServicePackage addServicePackage(String name, List<Service> services,
-			List<OptionalProduct> optionalProducts, Map<ValidityPeriod, Double> costs) {
-
+			List<OptionalProduct> optionalProducts, Map<ValidityPeriod, Double> costs) throws TupleAlreadyExistentException {
+		// we assume that this method is only called with a name which is not already assigned to a service package
+		// identity checks embedded into the application so that error management and recovery is way simpler and errors 
+		// messages are more precise 
+		if(em.find(ServicePackage.class, "name")!=null)
+			throw new TupleAlreadyExistentException("A service package with the same name already exists!"); 
 		ServicePackage sp = new ServicePackage();
 		
 		sp.setName(name);
@@ -64,12 +69,6 @@ public class ServicePackageService {
 		return sp.getOptionalProducts();  
 	}
 	
-	public ServicePackage addServicePackage(String name) {
-		ServicePackage sp = new ServicePackage(); 
-		sp.setName(name);
-		em.persist(sp);
-		return sp; 
-	}
 	
 	public void associateOptionalProduct (String productName, int packageID) {
 		ServicePackage sp = findServicePackage(packageID);
@@ -78,10 +77,18 @@ public class ServicePackageService {
 		em.merge(sp);
 	}
 	
-	public ServicePackage refreshServicePackage(ServicePackage sp) {
-		ServicePackage x = em.find(ServicePackage.class, sp.getId()); 
-		em.refresh(x);
-		return x ;
+	/**
+	 * ASSUMPTION MADE : apart from being identified by an ID, a ServicePackage is identified by its name (candidate key). 
+	 * @param sp
+	 * @return
+	 * @throws TupleAlreadyExistentException
+	 */
+	public ServicePackage addServicePackage(ServicePackage sp) throws TupleAlreadyExistentException {
+		List<String> l = (List<String>) em.createQuery("Select s.name from ServicePackage s", String.class).getResultList();  
+		if(l.contains(sp.getName())) 
+			throw new TupleAlreadyExistentException("A service package with the same name already exists!"); 
+		em.persist(sp);
+		return sp ;
 	}
 	
 

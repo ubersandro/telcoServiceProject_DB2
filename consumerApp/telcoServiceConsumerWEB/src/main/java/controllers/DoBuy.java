@@ -73,7 +73,7 @@ public class DoBuy extends HttpServlet {
 			tmpOrder.setConsumer((Consumer) session.getAttribute("user"));
 			tmpOrder.setDate(Calendar.getInstance()); //DATE 
 			tmpOrder.setTime(new Date()); //TIME OF CREATION 
-			tmpOrder.setStatus(OrderStatus.NEWLY_CREATED); //TODO maybe it's redundant ....
+			tmpOrder.setStatus(OrderStatus.NEWLY_CREATED); 
 			finalOrder = os.addOrder(tmpOrder); // orderPersisted 
 		} else // preexistent (already persisted) order
 		{

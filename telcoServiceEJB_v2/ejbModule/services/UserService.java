@@ -17,10 +17,10 @@ public class UserService {
 	public UserService () {}; 
 	
 	public TelcoUser checkUserCredentials(String username, String password )
-			throws WrongCredentialsException, UserNotFoundException{	
+			throws WrongCredentialsException, TupleNotFoundException{	
 		TelcoUser user = em.createNamedQuery("TelcoUser.checkCredentials", Consumer.class).
 				setParameter("username", username).setParameter("password", password).getSingleResult(); //because there can only be one user with the given username   
-		if(user == null) throw new UserNotFoundException();
+		if(user == null) throw new TupleNotFoundException();
 		if(!user.getPassword().equals(password)) throw new WrongCredentialsException(); 
 		return user;  
 	}
@@ -51,12 +51,12 @@ public class UserService {
 	 * @param email
 	 * @return
 	 */
-	public void doRegistration(String username, String password, String email ) throws UserAlreadyExistentException {
+	public void doRegistration(String username, String password, String email ) throws TupleAlreadyExistentException {
 		if(em.find(Consumer.class,username)!=null)
-			throw new UserAlreadyExistentException(); 
+			throw new TupleAlreadyExistentException(); 
 		Consumer consumer = new Consumer(username, email, password);
-		em.persist(consumer); //bound to be written to DB 
-		em.flush(); //s	o that changes are written ASAP 
+		em.persist(consumer); 
+		em.flush(); //so that changes are written ASAP 
 		return ; 
 	}
 	

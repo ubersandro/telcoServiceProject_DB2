@@ -46,7 +46,7 @@ public class GoToSalesReportPage extends HttpServlet{
 		List<Object[]> salesSpWithoutOpts = salesReport.findTotalSalesWithoutOPs();
 		List<Consumer> insolventUsers = userService.findInsolventUsers();
 		List<Order> rejectedOrders = orderService.findAllRejectedOrders(); 
-		List<Object []> avgOptsSP = salesReport.findAvgOpts(); 
+		Map<Integer, Double> avgOptsSP = salesReport.findAvgOpts(); 
 		
 		// insert data into the template 
 		String template = "SalesReport"; 

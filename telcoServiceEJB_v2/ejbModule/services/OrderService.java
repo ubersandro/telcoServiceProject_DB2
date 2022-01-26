@@ -12,7 +12,7 @@ import entities.ServiceActivationSchedule;
 import entities.Consumer; 
 import entities.ServicePackage;
 import entities.ValidityPeriod;
-import exceptions.NoSuchUserException;
+import exceptions.NoSuchTupleException;
 
 @Stateless 
 public class OrderService {
@@ -37,21 +37,21 @@ public class OrderService {
 	}
 	
 	public Order addOrder(Order o) {
-		em.persist(o); 
+		em.persist(o); // it has not to be already persisted ... 
 		return o; 
 	}
 	
 
-	public void markAsPaid(int orderID) { //TODO change to order and do MERGE
+	public void markAsPaid(int orderID) {
 		Order o = em.find(Order.class, orderID); //now managed 
 		o.setStatus(OrderStatus.ACCEPTED); 
-		//em.flush(); 
+		em.flush(); 
 	}
 	
 	public void markAsRejected(int orderID) {
 		Order o = em.find(Order.class, orderID); 
 		o.setStatus(OrderStatus.REJECTED);
-		//em.flush();
+		em.flush();
 	}
 	
 	@SuppressWarnings("unchecked")

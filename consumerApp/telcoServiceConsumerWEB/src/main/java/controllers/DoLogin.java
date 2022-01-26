@@ -18,7 +18,7 @@ import org.thymeleaf.context.WebContext;
 import controllers.utils.ServletUtils;
 import entities.Consumer;
 import entities.TelcoUser;
-import exceptions.UserNotFoundException;
+import exceptions.TupleNotFoundException;
 import exceptions.WrongCredentialsException;
 import services.OrderService;
 import services.UserService;
@@ -39,28 +39,26 @@ public class DoLogin extends HttpServlet {
 		templateEngine = ServletUtils.initHelper(this, "/");
 	}
 
-	/**
-	 * TODO implements class UserService with method whatTypeIsIt(username) which
-	 * tells whether a User is an Employee or a Consumer. TODO include employee
-	 * login
-	 */
+
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String username = req.getParameter("loginUsername");
 		String password = req.getParameter("loginPassword");
 		TelcoUser user;
-		String path; //where to redirect the user  
+		String path; 
 		try {
-			user = userService.checkUserCredentials(username, password);//the user exists
+			user = userService.checkUserCredentials(username, password);//check whether or not the user exists
 			
 			if(userService.isConsumer(user)) {
+				//Consumer login 
 				Consumer c = userService.retrieveConsumer(user); 
 				req.getSession().setAttribute("user", c);
-				if(req.getSession().getAttribute("tmpOrder")==null) {
+				
+				if(req.getSession().getAttribute("tmpOrder")==null) { // if the user is not logging after attempting to pay an order 
 					path = getServletContext().getContextPath() + "/HomePage"; 
 					resp.sendRedirect(path);
-				}// ifTmpOrderNull 
-				else { //there is a temporder
+				}
+				else { //there is a temporary order to pay 
 					path = getServletContext().getContextPath() +"/Confirmation";  
 					resp.sendRedirect(path); 
 				}//else tmpOrderNotNull 
@@ -71,7 +69,7 @@ public class DoLogin extends HttpServlet {
 				path = getServletContext().getContextPath() + "/EmployeeHomePage"; 
 				resp.sendRedirect(path);
 			}
-		} catch (WrongCredentialsException | UserNotFoundException e) {
+		} catch (WrongCredentialsException | TupleNotFoundException e) {
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale()); // setting the error
 																								// message in the

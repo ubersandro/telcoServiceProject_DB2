@@ -19,7 +19,7 @@ import entities.Consumer;
 import entities.Order;
 import entities.ServicePackage;
 import entities.UserStatus;
-import exceptions.NoSuchUserException;
+import exceptions.NoSuchTupleException;
 import services.OrderService;
 import services.ServicePackageService;
 import services.UserService;
@@ -40,14 +40,17 @@ public class GoToHomePage extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		// retrieve all the service packages
 		List<ServicePackage> servicePackages = sps.findAllServicePackages();
+		// if user is logged in and is insolvent 
 		List<Order> rejectedOrders = null;
 		if (req.getSession().getAttribute("user") != null) {
 			Consumer c = (Consumer) req.getSession().getAttribute("user");
-			if (userService.consumerIsInsolvent(c.getUsername())) //TODO should I update the session object ?
+			// this method REFRESHES the entity to check whether changes to the DB
+			// occurred (independently from the application) 
+			if (userService.consumerIsInsolvent(c.getUsername()))  
 				rejectedOrders = orderService.findRejectedOrdersByUsername(c.getUsername());
-		}//IF THE USER IS LOGGED IN 
+		} // if user il s
 
-		// insert into template
+		// insertion of paramters into the template
 		String template = "HomePage";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
@@ -62,8 +65,7 @@ public class GoToHomePage extends HttpServlet {
 	}
 
 	@Override
-	public void destroy() {
-	}
+	public void destroy() {}
 
 	@Override
 	public void init() throws ServletException {

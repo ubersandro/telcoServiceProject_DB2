@@ -12,7 +12,7 @@ import org.thymeleaf.*;
 import org.thymeleaf.context.*;
 
 import controllers.utils.ServletUtils;
-import exceptions.UserAlreadyExistentException;
+import exceptions.TupleAlreadyExistentException;
 import services.UserService;
 
 @WebServlet("/Registration")
@@ -36,7 +36,7 @@ public class DoRegistration extends HttpServlet {
 		try { // registration attempt
 			cs.doRegistration(username, password, email); // TODO rename method to addUser
 			ctx.setVariable("regOKMSG", "The registration went fine!");
-		} catch (UserAlreadyExistentException e) { // registration failed
+		} catch (TupleAlreadyExistentException e) { // registration failed
 			ctx.setVariable("regOKMSG", "You were not able to create an account!");
 		} finally { // either ways
 			templateEngine.process(template, ctx, resp.getWriter());
