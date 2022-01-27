@@ -40,33 +40,33 @@ BEGIN
 END;
 
 CREATE OR REPLACE TRIGGER updateSalesSPVP
-    AFTER UPDATE
-    ON `Order`
+    AFTER INSERT
+    ON `Payment`
     FOR EACH ROW
 BEGIN
-    IF new.status = '2' THEN
+    IF new.status = '0' THEN -- on payment approval
             UPDATE purchasesPerPackageVP
             SET counter=counter + 1
-            WHERE servicePackage = NEW.packageID
-              AND validityPeriodMonths = NEW.vpMonths;
+            WHERE servicePackage IN (SELECT O.packageID FROM `Order` O WHERE O.id = NEW.orderID)
+              AND validityPeriodMonths IN (SELECT O.vpMonths FROM `Order` O WHERE O.id = NEW.orderID);
 /*        END IF;
 */    END IF; -- IF THE ORDER WAS PAID
 END;
 
 CREATE OR REPLACE TRIGGER updateSalesSPOP
-    AFTER UPDATE
-    ON `Order`
+    AFTER INSERT
+    ON `Payment`
     FOR EACH ROW
 BEGIN
-    IF new.status = '2'  -- WHENEVER AN ORDER IS MARKED AS PAID (STATUS = 2)
-        AND ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) > '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
+    IF new.status = '0'  -- WHENEVER A SUCCESSFUL PAYMENT GOES THROUGH (STATUS = 1)
+        AND ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.orderID GROUP BY I.orderId) > '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
                 UPDATE salesSP_OP
                 SET purchasesWithOptionalProducts = purchasesWithOptionalProducts + '1',
                     totalOptionalProducts         = totalOptionalProducts +
-                                                    (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id)
-                WHERE packageID = NEW.packageID;
+                                                    (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.orderID GROUP BY I.orderId)
+                WHERE packageID IN (SELECT O.packageID FROM `Order` O WHERE O.id = NEW.orderID);
             -- product sales statistics update
-            CALL updateProductSales(new.id);
+            CALL updateProductSales(new.orderID);
     END IF; -- ORDER PAID
 END;
 
@@ -161,3 +161,12 @@ CREATE OR REPLACE TRIGGER onOptionalProductInsertion
 BEGIN
     INSERT INTO optionalProduct_sales(productName, sales) VALUES (NEW.name, 0); -- CONSTRAINTS WILL FAIL
 END;
+
+-- PAYMENT STATUS
+-- 0 APPROVED
+-- 1 REJECTED
+
+ -- ORDER STATUS
+-- 0 NEWLY_CREATED
+-- 1 REJECTED
+-- 2 PAID
