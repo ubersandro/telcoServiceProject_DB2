@@ -217,16 +217,16 @@ CREATE TABLE salesSP_OP
     packageID                     INT,
     totalOptionalProducts         INT, -- total number of optional products ever sold together with the package (ASSUMPTION: A PRODUCT CAN BE INCLUDED AND COUNTED MORE THAN ONE TIME
     purchasesWithOptionalProducts INT, -- total number of purchases of the ServicePackage with AT LEAST ONE optional prod.
-    CONSTRAINT FOREIGN KEY (packageID) REFERENCES ServicePackage (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT PRIMARY KEY (packageID)
+/*    CONSTRAINT FOREIGN KEY (packageID) REFERENCES ServicePackage (id) ON DELETE CASCADE ON UPDATE CASCADE,
+*/    CONSTRAINT PRIMARY KEY (packageID)
 );
 
 CREATE TABLE optionalProduct_sales
 (
     productName VARCHAR(45),
     sales       INT NOT NULL DEFAULT '0',
-    CONSTRAINT FOREIGN KEY (productName) REFERENCES OptionalProduct (name) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT PRIMARY KEY (productName)
+/*    CONSTRAINT FOREIGN KEY (productName) REFERENCES OptionalProduct (name) ON DELETE CASCADE ON UPDATE CASCADE,
+*/    CONSTRAINT PRIMARY KEY (productName)
 );
 
 

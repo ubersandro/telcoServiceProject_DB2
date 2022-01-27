@@ -22,14 +22,7 @@ BEGIN
             LEAVE salesUpdateLoop;
         END IF;
         -- UPDATE SALES REPORT TABLE
-
-/*        IF ((SELECT count(*) FROM optionalProduct_sales S WHERE S.productName = currentProduct) != '0') THEN
-*/            UPDATE optionalProduct_sales X SET sales=sales + 1 WHERE X.productName = currentProduct;
-        /*ELSE -- THE TUPLE DOES NOT EXIST
-            INSERT INTO optionalProduct_sales(productName, sales) VALUES (currentProduct, '1');
-        END IF;*/
-
-
+        UPDATE optionalProduct_sales X SET sales=sales + 1 WHERE X.productName = currentProduct;
     END LOOP;
     CLOSE curs;
 END;
@@ -51,15 +44,7 @@ CREATE OR REPLACE TRIGGER updateSalesSPVP
     ON `Order`
     FOR EACH ROW
 BEGIN
-    IF new.status = '2' THEN -- WHENEVER AN ORDER IS MARKED AS PAID (STATUS = 2)
-        /*IF ((SELECT COUNT(*)
-             FROM purchasesPerPackageVP P
-             WHERE P.servicePackage = NEW.packageID
-               AND P.validityPeriodMonths = NEW.vpMonths) = '0')
-        THEN -- THERE NOT EXISTS A TUPLE WITH THE GIVEN PACKAGE (NOR WITH THE CORRESPONDENT VALIDITY PERIODS)
-            INSERT INTO purchasesPerPackageVP(servicePackage, validityPeriodMonths, counter)
-            VALUES (NEW.packageID, NEW.vpMonths, 1);
-        ELSE -- THERE EXISTS AT LEAST A TUPLE WITH THE GIVEN SERVICE PACKAGE AND THE GIVEN VALIDITY PERIOD*/
+    IF new.status = '2' THEN
             UPDATE purchasesPerPackageVP
             SET counter=counter + 1
             WHERE servicePackage = NEW.packageID
@@ -73,54 +58,15 @@ CREATE OR REPLACE TRIGGER updateSalesSPOP
     ON `Order`
     FOR EACH ROW
 BEGIN
-    IF new.status = '2' THEN -- WHENEVER AN ORDER IS MARKED AS PAID (STATUS = 2)
-        IF ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) > '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
-         /*   IF ((SELECT COUNT(*) FROM salesSP_OP P WHERE P.packageID = NEW.packageID) > '0') -- THE TUPLE EXISTS
-            THEN*/
+    IF new.status = '2'  -- WHENEVER AN ORDER IS MARKED AS PAID (STATUS = 2)
+        AND ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) > '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
                 UPDATE salesSP_OP
                 SET purchasesWithOptionalProducts = purchasesWithOptionalProducts + '1',
                     totalOptionalProducts         = totalOptionalProducts +
                                                     (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id)
                 WHERE packageID = NEW.packageID;
-           /* ELSE -- THE TUPLE DOES NOT EXIST
-                INSERT INTO salesSP_OP(packageID, totalOptionalProducts, purchasesWithOptionalProducts)
-                VALUES (NEW.packageID, (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id), 1);
-            END IF;*/
             -- product sales statistics update
             CALL updateProductSales(new.id);
-            /* ELSE  -- THE ORDER DOES NOT INCLUDE OPT PRODS
-                 IF (SELECT COUNT(*) FROM salesSP_OP S WHERE S.packageID = NEW.packageID) = 0 THEN -- if the SP is not there add a tuple !
-                     INSERT INTO salesSP_OP(packageID, totalOptionalProducts, purchasesWithOptionalProducts) VALUES (NEW.packageID, 0,0);
-                 END IF ;*/
-        END IF; -- purchase with optional products
-    END IF; -- ORDER PAID
-END;
-
-CREATE OR REPLACE TRIGGER updateSalesSPOP
-    AFTER UPDATE
-    ON `Order`
-    FOR EACH ROW
-BEGIN
-    IF new.status = '2' THEN -- WHENEVER AN ORDER IS MARKED AS PAID (STATUS = 2)
-        IF ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id) > '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
-            IF ((SELECT COUNT(*) FROM salesSP_OP P WHERE P.packageID = NEW.packageID) > '0') -- THE TUPLE EXISTS
-            THEN
-                UPDATE salesSP_OP
-                SET purchasesWithOptionalProducts = purchasesWithOptionalProducts + '1',
-                    totalOptionalProducts         = totalOptionalProducts +
-                                                    (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id)
-                WHERE packageID = NEW.packageID;
-           ELSE --  PURCHASE INCLUDES OPTIONAL PRODUCTS BUT THE TUPLE DOES NOT EXIST
-                INSERT INTO salesSP_OP(packageID, totalOptionalProducts, purchasesWithOptionalProducts)
-                VALUES (NEW.packageID, (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.id), 1);
-            END IF;
-            -- product sales statistics update
-            CALL updateProductSales(new.id);
-             ELSE  -- THE ORDER DOES NOT INCLUDE OPT PRODS BUT YOU PUT A SERVICE PACKAGE IN ANYWAYS
-                 IF (SELECT COUNT(*) FROM salesSP_OP S WHERE S.packageID = NEW.packageID) = 0 THEN -- if the SP is not there add a tuple !
-                     INSERT INTO salesSP_OP(packageID, totalOptionalProducts, purchasesWithOptionalProducts) VALUES (NEW.packageID, 0,0);
-                 END IF ;
-        END IF; -- purchase with optional products
     END IF; -- ORDER PAID
 END;
 
@@ -200,19 +146,11 @@ CREATE OR REPLACE TRIGGER onServicePackageInsertion
     FOR EACH ROW
 BEGIN
     INSERT INTO salesSP_OP (packageID, totalOptionalProducts, purchasesWithOptionalProducts) VALUES (NEW.id, 0, 0);
-END;
-
-CREATE OR REPLACE TRIGGER onValidityPeriodInsertion
-    AFTER INSERT
-    ON HasValidity
-    FOR EACH ROW
-BEGIN
     INSERT INTO purchasesPerPackageVP (servicePackage, validityPeriodMonths)
-    VALUES (NEW.packageID, 12),
-           (NEW.packageID, 24),
-           (NEW.packageID, 36);
+    VALUES (NEW.id, 12),
+           (NEW.id, 24),
+           (NEW.id, 36);
 END;
-
 
 
 
@@ -221,5 +159,5 @@ CREATE OR REPLACE TRIGGER onOptionalProductInsertion
     ON OptionalProduct
     FOR EACH ROW
 BEGIN
-    INSERT INTO optionalProduct_sales(productName, sales) VALUES (NEW.name, 0);
+    INSERT INTO optionalProduct_sales(productName, sales) VALUES (NEW.name, 0); -- CONSTRAINTS WILL FAIL
 END;

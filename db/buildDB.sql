@@ -13,6 +13,8 @@ VALUES ('A'),
 INSERT INTO Employee (username)
 VALUES ('admin');
 
+
+
 INSERT INTO Service(DTYPE)
 VALUES ('MPS'),
        ('FIS'),
@@ -27,6 +29,14 @@ VALUES (3, 10, 1.0);
 INSERT INTO FixedPhoneService(id)
 VALUES (4);
 
+
+INSERT INTO ValidityPeriod(months)
+VALUES (12),
+       (24),
+       (36);
+
+UNLOCK TABLES ;
+-- --------------------------------------------
 INSERT INTO ServicePackage (name)
 VALUES ('SP1'),
        ('SP2'),
@@ -61,10 +71,7 @@ VALUES (3, 4),
 INSERT INTO SPS (packageID, serviceID)
 VALUES (2, 4);
 
-INSERT INTO ValidityPeriod(months)
-VALUES (12),
-       (24),
-       (36);
+
 
 INSERT INTO HasValidity (packageID, validityMonths, monthlyFee)
 VALUES (1, 12, 3.0),
