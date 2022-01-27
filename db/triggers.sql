@@ -112,7 +112,7 @@ BEGIN
             END IF;
             -- product sales statistics update
             CALL updateProductSales(new.id);
-             ELSE  -- THE ORDER DOES NOT INCLUDE OPT PRODS BUT YOU PUT A SERVICE PACKAGE IN ANYWAYS 
+             ELSE  -- THE ORDER DOES NOT INCLUDE OPT PRODS BUT YOU PUT A SERVICE PACKAGE IN ANYWAYS
                  IF (SELECT COUNT(*) FROM salesSP_OP S WHERE S.packageID = NEW.packageID) = 0 THEN -- if the SP is not there add a tuple !
                      INSERT INTO salesSP_OP(packageID, totalOptionalProducts, purchasesWithOptionalProducts) VALUES (NEW.packageID, 0,0);
                  END IF ;
