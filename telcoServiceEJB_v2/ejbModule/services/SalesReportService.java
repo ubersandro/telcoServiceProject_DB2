@@ -49,7 +49,7 @@ public class SalesReportService {
 			int totalOpSold = (Integer) em.createQuery("SELECT S.totalOptionalProducts"
 													+ " FROM SalesSP_OP S "
 													 + "WHERE S.packageID = :ID").
-														setParameter("ID", packageID).getSingleResult(); // there will always be a tuple!
+														setParameter("ID", packageID).getSingleResult(); // there will always be single a tuple!
 			ret.put(packageID , sales!=0?((0D + totalOpSold)/sales):0D); //otherwise -> division by zero!
 		}
 		return ret; 
@@ -65,15 +65,27 @@ public class SalesReportService {
 	
 	
 	public List<Auditing> findAllAuditing (){
-		return (List<Auditing>) em.createNamedQuery("Auditing.findAll", Auditing.class).getResultList(); 
+		return (List<Auditing>) 
+				em.createNamedQuery("Auditing.findAll", Auditing.class).getResultList(); 
 	}
 	
 	public List<Consumer> findInsolventUsers (){ 
-		return (List<Consumer>) em.createNamedQuery("Consumer.findUserByStatus", Consumer.class).getResultList(); 
+		return (List<Consumer>) 
+				em.createNamedQuery("Consumer.findUserByStatus", Consumer.class).getResultList(); 
 	}
 
-	public List<OptionalProduct_sales> findBestSeller () {
-		return (List<OptionalProduct_sales>) em.createNamedQuery("OptionalProduct_sales.findBestSeller", OptionalProduct_sales.class).getResultList(); 
+	
+	/**
+	 * This query returns the first best seller optional products. 
+	 * If more than one product is sold the maximum number of times, it (presumably non-deterministically) 
+	 * returns only one. There always will be a result because for each product in the database there 
+	 * exists a correspondant tuple in the queried table. 
+	 * @return
+	 */
+	public OptionalProduct_sales findBestSeller () {
+		return (OptionalProduct_sales) 
+				em.createNamedQuery("OptionalProduct_sales.findBestSeller", 
+						OptionalProduct_sales.class).getResultList().get(0); 
 	}
 
 	

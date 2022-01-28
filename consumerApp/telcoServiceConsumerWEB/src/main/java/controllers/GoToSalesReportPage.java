@@ -40,7 +40,7 @@ public class GoToSalesReportPage extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		List<Object []> salesPerSP = salesReport.findSalesAllSP(); // total purchases per package 
 		List<Auditing> alerts = salesReport.findAllAuditing();  
-		List<OptionalProduct_sales> bestSellers = salesReport.findBestSeller(); // only select the first one ! 
+		OptionalProduct_sales bestSeller = salesReport.findBestSeller(); // only select the first one ! 
 		List<PurchasesPackageValidityPeriod> salesSpVp = salesReport.findSalesAllSPVP();
 		List<Object []> salesSpWithOpts = salesReport.findTotalSalesWithOPs();
 		List<Object[]> salesSpWithoutOpts = salesReport.findTotalSalesWithoutOPs();
@@ -54,7 +54,7 @@ public class GoToSalesReportPage extends HttpServlet{
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
 		ctx.setVariable("salesPerSP", salesPerSP); 
 		ctx.setVariable("alerts", alerts); 
-		ctx.setVariable("bestSellers", bestSellers); 
+		ctx.setVariable("bestSeller", bestSeller); 
 		ctx.setVariable("salesSpVp", salesSpVp); 
 		ctx.setVariable("salesSpWithOpts", salesSpWithOpts); 
 		ctx.setVariable("salesSpWithoutOpts", salesSpWithoutOpts); 

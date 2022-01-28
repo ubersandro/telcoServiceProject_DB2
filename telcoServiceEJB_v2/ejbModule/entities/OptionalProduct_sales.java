@@ -9,10 +9,10 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @NamedQueries({
-	@NamedQuery (name="OptionalProduct_sales.findBestSeller", // there could be more than one 
+	@NamedQuery (name="OptionalProduct_sales.findBestSeller", // there could be more than one best seller 
 			query = "SELECT S"
 					+ " FROM OptionalProduct_sales S "
-					+ "WHERE S.sales IN (SELECT max(y.sales) FROM OptionalProduct_sales y)")
+					+ "ORDER BY S.sales DESC")
 })
 
 @Entity

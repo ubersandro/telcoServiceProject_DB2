@@ -45,3 +45,11 @@ GROUP BY S.packageID;
 SELECT *
 FROM optionalProduct_sales S
 WHERE S.sales = (SELECT DISTINCT MAX(ops.sales) FROM optionalProduct_sales ops);
+
+SELECT *
+FROM optionalProduct_sales S
+ORDER BY S.sales DESC
+LIMIT 1;
+
+
+
