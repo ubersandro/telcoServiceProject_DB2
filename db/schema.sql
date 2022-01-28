@@ -24,7 +24,6 @@ CREATE TABLE Consumer
     status   TINYINT     NOT NULL DEFAULT '0',
     PRIMARY KEY (`username`),
     CONSTRAINT fKeyCons FOREIGN KEY (username) REFERENCES TelcoUser (username) ON DELETE CASCADE ON UPDATE CASCADE
-    -- we assume that Insolvent == 0 IFF FALSE and Insolvent > 0 IFF TRUE
 );
 
 
@@ -112,7 +111,7 @@ CREATE TABLE ServicePackage
 );
 
 
--- NOTA : order status shouldn't be null. It should belong to {0,1,2].
+-- NOTE : order status shouldn't be null. It should belong to {0,1,2].
 /** MEANING 0 : NEWLY_CREATED
             1 : REJECTED
             2 : ACCEPTED
@@ -124,15 +123,14 @@ CREATE TABLE `Order`
     time         TIME(3)       NOT NULL,
     totalValue   DECIMAL(8, 3) NOT NULL,
     startingDate DATE          NOT NULL,
-    status       TINYINT(1) DEFAULT '0',          -- NULL @creation, TRUE (FALSE) AFTER APPROVAL (REJECTION)
+    status       TINYINT(1) DEFAULT '0',
     consUsername VARCHAR(45)   NOT NULL,
     packageID    INT           NOT NULL,
     vpMonths     INT           NOT NULL,
     CONSTRAINT FOREIGN KEY (consUsername) REFERENCES Consumer (username),
     CONSTRAINT FOREIGN KEY (packageID) REFERENCES ServicePackage (id),
     CONSTRAINT FOREIGN KEY (vpMonths) REFERENCES ValidityPeriod (months),
-    CONSTRAINT posValues CHECK (totalValue >= 0 ) -- OPTIONAL ?
-    /*NO PROPAGATION of modifications --> an order isn't deleted even after the user who placed it is deleted @TODO check*/
+    CONSTRAINT posValues CHECK (totalValue >= 0 )
 );
 
 -- SERVICE PACKAGE -<> - VALIDITYPERIOD
@@ -145,6 +143,7 @@ CREATE TABLE HasValidity
     CONSTRAINT FOREIGN KEY (packageID) REFERENCES ServicePackage (id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT FOREIGN KEY (validityMonths) REFERENCES ValidityPeriod (months) ON DELETE CASCADE ON UPDATE CASCADE
 );
+
 -- order -<>- optionalproduct
 CREATE TABLE Includes
 (
@@ -152,7 +151,7 @@ CREATE TABLE Includes
     productName VARCHAR(45) NOT NULL,
     CONSTRAINT PRIMARY KEY (orderId, productName),
     CONSTRAINT FOREIGN KEY (orderId) REFERENCES `Order` (id) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT FOREIGN KEY (productName) REFERENCES OptionalProduct (name) ON DELETE CASCADE ON UPDATE CASCADE -- CAN AN OPTIONAL PRODUCT BE DELETED ?
+    CONSTRAINT FOREIGN KEY (productName) REFERENCES OptionalProduct (name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ServicePackage -<>- optionalProduct
@@ -161,7 +160,7 @@ CREATE TABLE Offers
     productName VARCHAR(45) NOT NULL,
     packageID   INT         NOT NULL,
     CONSTRAINT PRIMARY KEY (productName, packageID),
-    CONSTRAINT FOREIGN KEY (packageID) REFERENCES `ServicePackage` (id) ON DELETE CASCADE ON UPDATE CASCADE, -- PROPAGATION ???
+    CONSTRAINT FOREIGN KEY (packageID) REFERENCES `ServicePackage` (id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT FOREIGN KEY (productName) REFERENCES OptionalProduct (name) ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- ServicePackage -<>- Service
@@ -197,7 +196,7 @@ CREATE TABLE Payment
 -- SALES REPORT INFO
 
 /**
-  The table contains the number of times a ServicePackage has been purchased with a given validity period.
+  The table associates a given ServicePackage and validity period.
  */
 CREATE TABLE purchasesPerPackageVP
 ( -- MATERIALIZED VIEW TABLE
@@ -205,7 +204,8 @@ CREATE TABLE purchasesPerPackageVP
     validityPeriodMonths INT,
     CONSTRAINT PRIMARY KEY (servicePackage, validityPeriodMonths),
     counter              INT DEFAULT '0'
-    -- CONSTRAINT FOREIGN KEY fk123 (servicePackage, validityPeriodMonths) REFERENCES HasValidity (packageID, validityMonths) ON DELETE CASCADE ON UPDATE CASCADE
+    -- CONSTRAINT FOREIGN KEY fk123 (servicePackage, validityPeriodMonths)
+    --    REFERENCES HasValidity (packageID, validityMonths) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 /**
@@ -215,7 +215,8 @@ CREATE TABLE purchasesPerPackageVP
 CREATE TABLE salesSP_OP
 (
     packageID                     INT,
-    totalOptionalProducts         INT, -- total number of optional products ever sold together with the package (ASSUMPTION: A PRODUCT CAN BE INCLUDED AND COUNTED MORE THAN ONE TIME
+    totalOptionalProducts         INT, -- total number of optional products ever sold together with the package
+                                        -- (ASSUMPTION: A PRODUCT CAN BE INCLUDED AND COUNTED MORE THAN ONE TIME)
     purchasesWithOptionalProducts INT, -- total number of purchases of the ServicePackage with AT LEAST ONE optional prod.
 /*    CONSTRAINT FOREIGN KEY (packageID) REFERENCES ServicePackage (id) ON DELETE CASCADE ON UPDATE CASCADE,
 */    CONSTRAINT PRIMARY KEY (packageID)

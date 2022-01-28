@@ -101,7 +101,7 @@ CREATE OR REPLACE TRIGGER createAlertOnThirdFailedPayment
     FOR EACH ROW
 BEGIN
     IF NEW.status = 1 AND (SELECT COUNT(*) FROM Payment P WHERE P.user = NEW.user AND P.status = 1) = 3 AND
-       NEW.user NOT IN (SELECT A.username FROM Auditing A WHERE A.username = NEW.user) THEN -- WE COUNT PAYMENTS!
+       NEW.user NOT IN (SELECT A.username FROM Auditing A WHERE A.username = NEW.user) THEN
         INSERT INTO Auditing(username, time, date, email, value)
         VALUES (NEW.user, NEW.time,
                 NEW.date, -- ASSUMING THIS IS THE VERY LAST REJECTION
@@ -114,14 +114,14 @@ END;
 
 
 CREATE OR REPLACE TRIGGER updateOrderOnPayment -- ON PAYMENT
-    AFTER INSERT -- FIRST TRIGGER TO FIRE
+    AFTER INSERT
     ON `Payment`
     FOR EACH ROW
 BEGIN
-    IF NEW.status = 1 THEN
+    IF NEW.status = 1 THEN -- REJECTED
         UPDATE `Order` O SET O.status = 1 WHERE O.id = NEW.orderID;
     ELSE
-        IF NEW.status = 0 THEN
+        IF NEW.status = 0 THEN -- ACCEPTED
             UPDATE `Order` O SET O.status = 2 WHERE O.id = NEW.orderID;
         END IF;
     END IF;
@@ -129,7 +129,7 @@ END;
 
 
 CREATE OR REPLACE TRIGGER setUserSolvent
-    AFTER UPDATE -- LAST ONE TO FIRE
+    AFTER UPDATE
     ON `Order`
     FOR EACH ROW
 BEGIN
