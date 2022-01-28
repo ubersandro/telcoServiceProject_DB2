@@ -49,8 +49,8 @@ public class SalesReportService {
 			int totalOpSold = (Integer) em.createQuery("SELECT S.totalOptionalProducts"
 													+ " FROM SalesSP_OP S "
 													 + "WHERE S.packageID = :ID").
-														setParameter("ID", packageID).getSingleResult();  
-			ret.put(packageID , ((0D + totalOpSold)/sales)); 
+														setParameter("ID", packageID).getSingleResult(); // there will always be a tuple!
+			ret.put(packageID , sales!=0?((0D + totalOpSold)/sales):0D); //otherwise -> division by zero!
 		}
 		return ret; 
 	}
