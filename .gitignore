@@ -2,4 +2,7 @@ consumerApp/telcoServiceConsumerEJB/build
 consumerApp/telcoServiceConsumerWEB/build
 
 ./telcoServiceEJB_v2/ejbModule/META-INF/persistence.*
-telcoServiceEJB_v2/build
+telcoServiceEJB_v2/build/classes/entities 
+
+telcoServiceEJB_v2/build/classes/services 
+telcoServiceEJB_v2/build/classes/exceptions 
