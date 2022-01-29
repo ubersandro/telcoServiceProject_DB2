@@ -11,26 +11,34 @@ import java.util.*;
  */
 
 @Entity
+/**
+ * It is very frequent that all service packages have to be fetched, so a named query could help speed up the operation. 
+ * @author ubersandro
+ *
+ */
 @NamedQueries({ @NamedQuery (name = "ServicePackage.findAll", 
-		query = "SELECT s FROM ServicePackage s")}) 
+							query = "SELECT s FROM ServicePackage s")}) 
 @Table (name = "ServicePackage", schema = "telcoServiceDB")
 public class ServicePackage implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id @GeneratedValue (strategy = GenerationType.IDENTITY)
 	private int id; 
 	private String name; 
-	
 
+	/**	
+ * Services have to be fetched eagerly because whenever a Service Package is needed, the corresponding 
+ * services should be retrieved as well. 
+	*/
 	@ManyToMany (fetch = FetchType.EAGER )
 	@JoinTable (name="SPS", joinColumns = 
 			@JoinColumn(name = "packageID"), //owner
-			inverseJoinColumns = @JoinColumn(name = "serviceID"), schema ="telcoServiceDB") //service FATHER entity
+			inverseJoinColumns = @JoinColumn(name = "serviceID"), schema ="telcoServiceDB") 
 	private List<Service> services ;
 	
 	
 	/*
 	 * Fetch type is LAZY because optional products that could be associated with a given product 
-	 * are retrieved only when the user explicitly asks.    
+	 * are retrieved only when the user explicitly asks for them.    
 	 */
 	@ManyToMany (fetch = FetchType.LAZY)  
 	@JoinTable (name="Offers", joinColumns = 
@@ -40,7 +48,7 @@ public class ServicePackage implements Serializable {
 	
 	
 	
-	@ElementCollection (fetch = FetchType.EAGER) //entity key element collection (no cascading, inverse and orphan removal) 
+	@ElementCollection (fetch = FetchType.EAGER) //entity key element collection (default cascading) 
 	@CollectionTable (name = "HasValidity", 
 			joinColumns = @JoinColumn(name = "packageID"), schema = "telcoServiceDB")  
 	@MapKeyJoinColumn (name = "validityMonths")  

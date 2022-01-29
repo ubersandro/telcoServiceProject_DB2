@@ -24,7 +24,8 @@ public class OptionalProductService {
 	}
 
 	public OptionalProduct createOptionalProduct(String name, double fee) throws TupleAlreadyExistentException {
-		if(em.find(OptionalProduct.class, name )!=null) throw new TupleAlreadyExistentException("Optional product already existent"); 
+		if(em.find(OptionalProduct.class, name )!=null)
+			throw new TupleAlreadyExistentException("Optional product already existent"); 
 		OptionalProduct op = new OptionalProduct();
 		op.setName(name);
 		op.setFee(fee);

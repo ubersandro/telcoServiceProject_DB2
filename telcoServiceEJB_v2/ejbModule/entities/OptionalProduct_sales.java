@@ -8,6 +8,14 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+/**
+ * Given that retrieving the best seller optional product could be done quite frequently, 
+ * this named query makes it a little bit more efficient to retrieve the (list of) bestseller(s).  
+ * Products are sorted in descending order with respect to their sales and the very first result 
+ * is the best seller (or, at least, one of the best sellers). 
+ * @author ubersandro
+ *
+ */
 @NamedQueries({
 	@NamedQuery (name="OptionalProduct_sales.findBestSeller", // there could be more than one best seller 
 			query = "SELECT S"

@@ -4,6 +4,8 @@ import java.util.*;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -12,7 +14,7 @@ import javax.persistence.Table;
 @Entity 
 @Table (name ="Payment", schema = "telcoServiceDB")
 public class Payment {
-	@Id 
+	@Id @GeneratedValue (strategy = GenerationType.IDENTITY)
 	private int paymentId; 
 	@OneToOne @JoinColumn (name = "user")
 	private Consumer user; 

@@ -1,4 +1,5 @@
 package entities;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collection;
@@ -7,59 +8,72 @@ import java.util.Date;
 import javax.persistence.*;
 
 /**
- * Persistent class for the Order table in the database. 
- * @author ubersandro 
- * TODO automatic date and time management and @payment set new date and time 
+ * Persistent class for the Order table in the database.
+ * 
+ * @author ubersandro
  */
 
-@NamedQueries (
-		{@NamedQuery (name = "Order.findOrdersByUserAndStatus",
-		query = "SELECT o FROM Order o WHERE o.consumer = :consumer and o.status = :status"), 
-			@NamedQuery (name= "Order.findOrdersByStatus", query = "SELECT o FROM Order o WHERE o.status=:status")})  
-@Entity 
-@Table (name = "Order", schema = "telcoServiceDB")
-public class Order implements Serializable{
+@NamedQueries(
+
+{
+		/**
+		 * 
+		 * @author ubersandro
+		 *
+		 */
+		@NamedQuery(name = "Order.findOrdersByUserAndStatus", query = "SELECT o FROM Order o WHERE o.consumer = :consumer and o.status = :status"),
+		/**
+		 * 
+		 * @author ubersandro
+		 *
+		 */
+		@NamedQuery(name = "Order.findOrdersByStatus", query = "SELECT o FROM Order o WHERE o.status=:status") })
+@Entity
+@Table(name = "Order", schema = "telcoServiceDB")
+public class Order implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@Id 
-	@GeneratedValue(strategy= GenerationType.IDENTITY)
-	private int id; 
-	
-	@Temporal (TemporalType.TIME)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
+
+	@Temporal(TemporalType.TIME)
 	private Date time;
-	
+
 	@Temporal(TemporalType.DATE)
-	private Calendar date; 
-	
+	private Calendar date;
+
 	private double totalValue;
-	
-	@Temporal (TemporalType.DATE)
+
+	@Temporal(TemporalType.DATE)
 	private Calendar startingDate;
-	
+
 	@Enumerated(EnumType.ORDINAL)
-	private OrderStatus status = OrderStatus.NEWLY_CREATED; //DEFAULT NEWLY-CREATED -> SPECIFY ? 
-	
-	//Order is the owner of the MANY-TO-ONE relation between Order and Consumer 
-	@ManyToOne @JoinColumn (name="consUsername") 
-	private Consumer consumer;  
-	
-	@ManyToOne (fetch=FetchType.LAZY) //because whenever a package is fetched its associated services are fetched as well 
-	@JoinColumn(name="packageID")
-	private ServicePackage servicePackage; 
-	
-	@ManyToOne (fetch = FetchType.EAGER) @JoinColumn(name="vpMonths")
+	private OrderStatus status = OrderStatus.NEWLY_CREATED;
+
+	// Order is the owner of the MANY-TO-ONE relation between Order and Consumer
+	@ManyToOne // and no operation is cascaded. 
+	@JoinColumn(name = "consUsername")
+	private Consumer consumer;
+
+	@ManyToOne(fetch = FetchType.LAZY) // because whenever a package is fetched its associated services are fetched as
+										// well, so it is not advisable to have services fetched with the order as well
+	@JoinColumn(name = "packageID")
+	private ServicePackage servicePackage;
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "vpMonths")
 	private ValidityPeriod validityPeriod;
-	
-	@OneToOne (mappedBy = "order") 
-	private ServiceActivationSchedule serviceActivationSchedule ;
-	
-	@ManyToMany (fetch = FetchType.LAZY) //check
-	@JoinTable (name="Includes", joinColumns = 
-			@JoinColumn(name = "orderID"), 
-			inverseJoinColumns = @JoinColumn(name = "productName"), schema ="telcoServiceDB")
-	private Collection<OptionalProduct> includedOptionalProducts; // TODO default to empty list 
-	
-	public Order(){}
+
+	@OneToOne(mappedBy = "order", fetch = FetchType.LAZY) // being fetched eagerly by default, given that there is no need to fetch it, fetch type is overridden
+	private ServiceActivationSchedule serviceActivationSchedule;
+
+	@ManyToMany(fetch = FetchType.LAZY) //craving for efficiency, optional products are lazily fetched. 
+	@JoinTable(name = "Includes", joinColumns = @JoinColumn(name = "orderID"), inverseJoinColumns = @JoinColumn(name = "productName"), schema = "telcoServiceDB")
+	private Collection<OptionalProduct> includedOptionalProducts;
+
+	public Order() {
+	}
 
 	public int getId() {
 		return id;
@@ -145,7 +159,6 @@ public class Order implements Serializable{
 		return includedOptionalProducts;
 	}
 
-	
 	public void setIncludedOptionalProducts(Collection<OptionalProduct> includedOptionalProducts) {
 		this.includedOptionalProducts = includedOptionalProducts;
 	}
@@ -157,8 +170,8 @@ public class Order implements Serializable{
 				+ ", validityPeriod=" + validityPeriod + ", includedOptionalProducts=" + includedOptionalProducts + "]";
 	}
 
-	public Order(Date time, Calendar date, double totalValue, Calendar startingDate,
-			Consumer consumer, ServicePackage servicePackage, ValidityPeriod validityPeriod,
+	public Order(Date time, Calendar date, double totalValue, Calendar startingDate, Consumer consumer,
+			ServicePackage servicePackage, ValidityPeriod validityPeriod,
 			Collection<OptionalProduct> includedOptionalProducts) {
 		this.time = time;
 		this.date = date;
@@ -169,8 +182,6 @@ public class Order implements Serializable{
 		this.servicePackage = servicePackage;
 		this.validityPeriod = validityPeriod;
 		this.includedOptionalProducts = includedOptionalProducts;
-	} 
-	
+	}
 
-	
 }

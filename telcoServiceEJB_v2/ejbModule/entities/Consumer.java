@@ -11,8 +11,18 @@ import javax.persistence.Table;
 
 
 @NamedQueries({
-@NamedQuery(name = "Consumer.checkCredentials", query = "SELECT c FROM Consumer c  WHERE c.username = :username and c.password = :password"),   
-@NamedQuery(name = "Consumer.findUserByStatus", query = "SELECT c FROM Consumer c WHERE c.status = :status") 
+/**
+ * Every time a user logs in the DB is queried to check his credential so for efficiency reasons 
+ * defining the named query Consumer.checkCredentials is convenient. 
+ *  
+ * @author ubersandro
+ *
+ */
+	@NamedQuery(name = "Consumer.checkCredentials", 
+query = "SELECT c FROM Consumer c  WHERE c.username = :username and c.password = :password"),   
+
+//	@NamedQuery(name = "Consumer.findUserByStatus", TODO remove from documentation
+//query = "SELECT c FROM Consumer c WHERE c.status = :status") 
 }) 
 @Entity 
 @Table (name = "Consumer", schema = "telcoServiceDB")
@@ -24,6 +34,9 @@ public class Consumer extends TelcoUser{
 	@Enumerated(EnumType.ORDINAL)
 	private UserStatus status  = UserStatus.SOLVENT;
 	
+	//@OneToOne with Auditing not implemented because not needed BUT OPRHAN REMOVAL COULD BE APPROPRIATE
+	//@ManyToOne with Order not implemented because not needed 
+	//
 
 	public Consumer() {}
 	

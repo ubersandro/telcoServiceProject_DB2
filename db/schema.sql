@@ -14,7 +14,8 @@ CREATE TABLE TelcoUser
 CREATE TABLE Employee
 (
     username VARCHAR(45) NOT NULL,
-    CONSTRAINT fKeyEmp FOREIGN KEY (username) REFERENCES TelcoUser (username) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fKeyEmp FOREIGN KEY (username) REFERENCES TelcoUser (username)
+        ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (username)
 );
 
@@ -23,7 +24,8 @@ CREATE TABLE Consumer
     username VARCHAR(45) NOT NULL,
     status   TINYINT     NOT NULL DEFAULT '0',
     PRIMARY KEY (`username`),
-    CONSTRAINT fKeyCons FOREIGN KEY (username) REFERENCES TelcoUser (username) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT fKeyCons FOREIGN KEY (username) REFERENCES TelcoUser (username)
+        ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -127,9 +129,12 @@ CREATE TABLE `Order`
     consUsername VARCHAR(45)   NOT NULL,
     packageID    INT           NOT NULL,
     vpMonths     INT           NOT NULL,
-    CONSTRAINT FOREIGN KEY (consUsername) REFERENCES Consumer (username),
-    CONSTRAINT FOREIGN KEY (packageID) REFERENCES ServicePackage (id),
-    CONSTRAINT FOREIGN KEY (vpMonths) REFERENCES ValidityPeriod (months),
+    CONSTRAINT FOREIGN KEY (consUsername) REFERENCES Consumer (username)
+            ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT FOREIGN KEY (packageID) REFERENCES ServicePackage (id)
+            ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT FOREIGN KEY (vpMonths) REFERENCES ValidityPeriod (months)
+            ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT posValues CHECK (totalValue >= 0 )
 );
 
@@ -205,7 +210,7 @@ CREATE TABLE purchasesPerPackageVP
     CONSTRAINT PRIMARY KEY (servicePackage, validityPeriodMonths),
     counter              INT DEFAULT '0'
     -- CONSTRAINT FOREIGN KEY fk123 (servicePackage, validityPeriodMonths)
-    --    REFERENCES HasValidity (packageID, validityMonths) ON DELETE CASCADE ON UPDATE CASCADE
+    -- REFERENCES HasValidity (packageID, validityMonths) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 /**
