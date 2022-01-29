@@ -65,7 +65,7 @@ public class Order implements Serializable {
 	@JoinColumn(name = "vpMonths")
 	private ValidityPeriod validityPeriod;
 
-	@OneToOne(mappedBy = "order", fetch = FetchType.LAZY) // being fetched eagerly by default, given that there is no need to fetch it, fetch type is overridden
+	@OneToOne(mappedBy = "order", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL) // being fetched eagerly by default, given that there is no need to fetch it, fetch type is overridden
 	private ServiceActivationSchedule serviceActivationSchedule;
 
 	@ManyToMany(fetch = FetchType.LAZY) //craving for efficiency, optional products are lazily fetched. 
