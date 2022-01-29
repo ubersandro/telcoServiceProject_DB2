@@ -45,12 +45,11 @@ CREATE OR REPLACE TRIGGER updateSalesSPVP
     FOR EACH ROW
 BEGIN
     IF new.status = '0' THEN -- on payment approval
-            UPDATE purchasesPerPackageVP
-            SET counter=counter + 1
-            WHERE servicePackage IN (SELECT O.packageID FROM `Order` O WHERE O.id = NEW.orderID)
-              AND validityPeriodMonths IN (SELECT O.vpMonths FROM `Order` O WHERE O.id = NEW.orderID);
-/*        END IF;
-*/    END IF; -- IF THE ORDER WAS PAID
+        UPDATE purchasesPerPackageVP
+        SET counter=counter + 1
+        WHERE servicePackage IN (SELECT O.packageID FROM `Order` O WHERE O.id = NEW.orderID)
+          AND validityPeriodMonths IN (SELECT O.vpMonths FROM `Order` O WHERE O.id = NEW.orderID);
+    END IF; -- IF THE ORDER WAS PAID
 END;
 
 CREATE OR REPLACE TRIGGER updateSalesSPOP
@@ -58,18 +57,21 @@ CREATE OR REPLACE TRIGGER updateSalesSPOP
     ON `Payment`
     FOR EACH ROW
 BEGIN
-    IF new.status = '0'  -- WHENEVER A SUCCESSFUL PAYMENT GOES THROUGH (STATUS = 1)
-        AND ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.orderID GROUP BY I.orderId) > '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
-                UPDATE salesSP_OP
-                SET purchasesWithOptionalProducts = purchasesWithOptionalProducts + '1',
-                    totalOptionalProducts         = totalOptionalProducts +
-                                                    (SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.orderID GROUP BY I.orderId)
-                WHERE packageID IN (SELECT O.packageID FROM `Order` O WHERE O.id = NEW.orderID);
-            -- product sales statistics update
-            CALL updateProductSales(new.orderID);
+    IF new.status = '0' -- WHENEVER A SUCCESSFUL PAYMENT GOES THROUGH (STATUS = 1)
+        AND ((SELECT COUNT(*) FROM Includes I WHERE I.orderId = NEW.orderID GROUP BY I.orderId) >
+             '0') THEN -- THE PURCHASE INCLUDES OPTIONAL PRODUCTS
+        UPDATE salesSP_OP
+        SET purchasesWithOptionalProducts = purchasesWithOptionalProducts + '1',
+            totalOptionalProducts         = totalOptionalProducts +
+                                            (SELECT COUNT(*)
+                                             FROM Includes I
+                                             WHERE I.orderId = NEW.orderID
+                                             GROUP BY I.orderId)
+        WHERE packageID IN (SELECT O.packageID FROM `Order` O WHERE O.id = NEW.orderID);
+        -- product sales statistics update
+        CALL updateProductSales(new.orderID);
     END IF; -- ORDER PAID
 END;
-
 
 
 
@@ -166,7 +168,7 @@ END;
 -- 0 APPROVED
 -- 1 REJECTED
 
- -- ORDER STATUS
+-- ORDER STATUS
 -- 0 NEWLY_CREATED
 -- 1 REJECTED
 -- 2 PAID

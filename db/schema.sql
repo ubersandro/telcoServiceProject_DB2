@@ -108,7 +108,7 @@ CREATE TABLE FixedPhoneService
 CREATE TABLE ServicePackage
 (
     id   INT         NOT NULL AUTO_INCREMENT,
-    name VARCHAR(45) NOT NULL,
+    name VARCHAR(45) NOT NULL  UNIQUE ,
     PRIMARY KEY (id)
 );
 
@@ -209,7 +209,7 @@ CREATE TABLE purchasesPerPackageVP
     validityPeriodMonths INT,
     CONSTRAINT PRIMARY KEY (servicePackage, validityPeriodMonths),
     counter              INT DEFAULT '0'
-    -- CONSTRAINT FOREIGN KEY fk123 (servicePackage, validityPeriodMonths)
+    -- CONSTRAINT FOREIGN KEY fkToHV (servicePackage, validityPeriodMonths)
     -- REFERENCES HasValidity (packageID, validityMonths) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
