@@ -25,7 +25,7 @@ public class Auditing {
 	@Temporal (value = TemporalType.TIME)
 	private Date time; 
 	@OneToOne @PrimaryKeyJoinColumn (name = "username")
-	private Consumer insolventConsumer;
+	private Consumer insolventConsumer; // no cascading because an Auditing tuple exists in function of a Consumer tuple
 	
 	public Auditing() {	}
 	

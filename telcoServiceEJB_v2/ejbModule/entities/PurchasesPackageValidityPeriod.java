@@ -17,11 +17,21 @@ import entities.embeddable.PackageVPKEY;
  */
 
 @NamedQueries({
+	/**
+	 * The query PurchasesPackageValidityPeriod.purchasesSP returns all the purchases of a given ServicePackage.  
+	 * @author ubersandro
+	 *
+	 */
 	@NamedQuery (name="PurchasesPackageValidityPeriod.findAll", query = "SELECT p FROM PurchasesPackageValidityPeriod p"),
 	
 	@NamedQuery (name="PurchasesPackageValidityPeriod.purchasesSP", 
 	query = "SELECT p.key.servicePackage, sum(p.counter) FROM PurchasesPackageValidityPeriod p GROUP BY p.key.servicePackage"),
-	
+	/**
+	 * The query PurchasesPackageValidityPeriod.purchasesNoOptionalProducts computes the number of sales 
+	 * with no optional products included of each service package. 
+	 * @author ubersandro
+	 *
+	 */
 	@NamedQuery (name = "PurchasesPackageValidityPeriod.purchasesNoOptionalProducts", 
 	query = "SELECT p.key.servicePackage, sum(p.counter)- (S.purchasesWithOptionalProducts)  "
 			+ "FROM PurchasesPackageValidityPeriod p, SalesSP_OP S "

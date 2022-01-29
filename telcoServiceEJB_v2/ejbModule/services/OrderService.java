@@ -38,7 +38,7 @@ public class OrderService {
 	}
 	
 	public Order addOrder(Order o) {
-		em.persist(o); // it has not to be already persisted ... 
+		em.persist(o);  
 		return o; 
 	}
 	
@@ -95,9 +95,16 @@ public class OrderService {
 				em.createNamedQuery("ServiceActivationSchedule.findAll", 
 						ServiceActivationSchedule.class).getResultList(); 
 	}
+	/**
+	 * The following methods are introduced because Order ServicePackage and OptionalProducts associated 
+	 * to a given Order are lazily fetched. So, the code of the methods being transactional, navigating 
+	 * after finding the Order by id using the Entity Manager allows requested objects to retrieved. 
+	 * @param orderID
+	 * @return
+	 */
 	
 	public ServicePackage retrieveServicePackageFromOrderId(int orderID){
-		return em.find(Order.class, orderID).getServicePackage(); //navigation
+		return em.find(Order.class, orderID).getServicePackage(); //navigation -> done this way because service package is lazily fetched
 	}
 		
 	public List<OptionalProduct> retrieveIncludedOptionalProductsFromOrderId (int orderID){

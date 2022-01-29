@@ -29,7 +29,7 @@ public class PackageVPKEY implements Serializable{
 	}
 	
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj) { 
 		if(obj==null) return false; 
 		if(!(obj instanceof PackageVPKEY)) return false; 
 		PackageVPKEY x = (PackageVPKEY) obj; 
