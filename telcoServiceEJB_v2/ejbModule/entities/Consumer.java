@@ -21,8 +21,8 @@ import javax.persistence.Table;
 	@NamedQuery(name = "Consumer.checkCredentials", 
 query = "SELECT c FROM Consumer c  WHERE c.username = :username and c.password = :password"),   
 
-//	@NamedQuery(name = "Consumer.findUserByStatus", TODO remove from documentation
-//query = "SELECT c FROM Consumer c WHERE c.status = :status") 
+	@NamedQuery(name = "Consumer.findUserByStatus", //TODO include 
+query = "SELECT c FROM Consumer c WHERE c.status = :status") 
 }) 
 @Entity 
 @Table (name = "Consumer", schema = "telcoServiceDB")

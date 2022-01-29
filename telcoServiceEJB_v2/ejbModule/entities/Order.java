@@ -61,7 +61,7 @@ public class Order implements Serializable {
 	@JoinColumn(name = "packageID")
 	private ServicePackage servicePackage;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY) // TODO ADD TO DOCUMENTATION
 	@JoinColumn(name = "vpMonths")
 	private ValidityPeriod validityPeriod;
 

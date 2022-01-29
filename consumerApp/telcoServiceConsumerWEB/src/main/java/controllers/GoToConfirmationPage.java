@@ -120,24 +120,27 @@ public class GoToConfirmationPage extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		Order tmp; 
 		ServicePackage servicePackage; 
+		ValidityPeriod vp; 
 		List<OptionalProduct> chosenOptionalProducts = null;  
 		if(req.getParameter("rejectedOrderID")!=null) { 
 			tmp = orderService.findOrderByID(Integer.parseInt(req.getParameter("rejectedOrderID"))); //it already exists, it will have an associate customer and a date/time
 			servicePackage = orderService.retrieveServicePackageFromOrderId(tmp.getId()); 
 			chosenOptionalProducts = orderService.retrieveIncludedOptionalProductsFromOrderId(tmp.getId()) ;
+			vp = orderService.findValidityPeriod(tmp.getId()); 
 		}else {//tmp order not yet written to the DB 
 			tmp = (Order) req.getSession().getAttribute("tmpOrder"); 
 			servicePackage = tmp.getServicePackage(); 
 			chosenOptionalProducts = //optional products in the tmpOrder can't be null 
 					tmp.getIncludedOptionalProducts()!=null ?
 							new LinkedList<>(tmp.getIncludedOptionalProducts()): null; 
+			vp = tmp.getValidityPeriod(); 
 		}
 		
 		ServletContext servletContext = this.getServletContext();
 		final WebContext ctx = new WebContext(req, resp, servletContext, req.getLocale());
 		ctx.setVariable("servicePackage", servicePackage);
 		ctx.setVariable("chosenOptionalProducts", chosenOptionalProducts);
-		ctx.setVariable("chosenValidityPeriod", tmp.getValidityPeriod()); 
+		ctx.setVariable("chosenValidityPeriod", vp); 
 		ctx.setVariable("chosenStartingDate", tmp.getStartingDate());
 		ctx.setVariable("totalValue", tmp.getTotalValue()); 
 		if(req.getParameter("rejectedOrderID")!=null) 

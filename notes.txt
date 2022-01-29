@@ -1,2 +1,2 @@
-1) EXPLAIN why there is no FK constraint on sales report tables ... IN LOGICAL 
-2 )manage service package key2 )manage service package key --> PUT KEY NAME
+1) put named queries of Consumer in the documentation ---> CHECK
+3) write down lazy fetching policy for order 

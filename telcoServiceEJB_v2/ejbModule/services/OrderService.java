@@ -110,4 +110,8 @@ public class OrderService {
 	public List<OptionalProduct> retrieveIncludedOptionalProductsFromOrderId (int orderID){
 		return new LinkedList<>(em.find(Order.class, orderID).getIncludedOptionalProducts()); //navigation
 	}
+	
+	public ValidityPeriod findValidityPeriod (int orderID) {
+		return em.find(Order.class, orderID).getValidityPeriod(); 
+	}
 }
