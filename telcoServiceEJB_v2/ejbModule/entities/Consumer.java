@@ -22,7 +22,7 @@ public class Consumer extends TelcoUser{
 	private static final long serialVersionUID = 1L;
 	
 	@Enumerated(EnumType.ORDINAL)
-	private UserStatus status  = UserStatus.SOLVENT;; 
+	private UserStatus status  = UserStatus.SOLVENT;
 	
 
 	public Consumer() {}
