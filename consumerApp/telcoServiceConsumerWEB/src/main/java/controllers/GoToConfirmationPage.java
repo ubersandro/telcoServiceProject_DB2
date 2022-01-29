@@ -125,10 +125,10 @@ public class GoToConfirmationPage extends HttpServlet {
 			tmp = orderService.findOrderByID(Integer.parseInt(req.getParameter("rejectedOrderID"))); //it already exists, it will have an associate customer and a date/time
 			servicePackage = orderService.retrieveServicePackageFromOrderId(tmp.getId()); 
 			chosenOptionalProducts = orderService.retrieveIncludedOptionalProductsFromOrderId(tmp.getId()) ;
-		}else {
+		}else {//tmp order not yet written to the DB 
 			tmp = (Order) req.getSession().getAttribute("tmpOrder"); 
 			servicePackage = tmp.getServicePackage(); 
-			chosenOptionalProducts = //optional products in the tmpOrder can't be null TODO test without this code...
+			chosenOptionalProducts = //optional products in the tmpOrder can't be null 
 					tmp.getIncludedOptionalProducts()!=null ?
 							new LinkedList<>(tmp.getIncludedOptionalProducts()): null; 
 		}

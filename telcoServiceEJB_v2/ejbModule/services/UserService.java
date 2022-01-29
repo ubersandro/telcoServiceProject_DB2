@@ -6,8 +6,13 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import exceptions.*;	
-import entities.*;
+import entities.Consumer;
+import entities.Employee;
+import entities.TelcoUser;
+import entities.UserStatus;
+import exceptions.TupleAlreadyExistentException;
+import exceptions.TupleNotFoundException;
+import exceptions.WrongCredentialsException;
 
 @Stateless 
 public class UserService { 

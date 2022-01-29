@@ -17,15 +17,7 @@ import org.thymeleaf.context.WebContext;
 import controllers.utils.ServletUtils;
 import entities.*;
 import services.*;
-/**
- * IN THE TEMPLATE 
- * - LIST OF OPTS
- * - FORM FOR CREATION 
- * - MSG FOR CORRECT CREATION 
- * - LIST OF ASSOCIABLE SERVICE PACKAGES
- * @author ubersandro
- *
- */
+
 @WebServlet("/OptionalProductCreationPage")
 public class GoToOptionalProductCreationPage extends HttpServlet{
 	private static final long serialVersionUID = 1L;

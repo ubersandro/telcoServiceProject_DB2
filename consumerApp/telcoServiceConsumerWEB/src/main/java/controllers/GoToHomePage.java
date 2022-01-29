@@ -48,7 +48,7 @@ public class GoToHomePage extends HttpServlet {
 			// occurred (independently from the application) 
 			if (userService.consumerIsInsolvent(c.getUsername()))  
 				rejectedOrders = orderService.findRejectedOrdersByUsername(c.getUsername());
-		} // if user il s
+		} 
 
 		// insertion of paramters into the template
 		String template = "HomePage";

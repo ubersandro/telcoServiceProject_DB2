@@ -2,7 +2,6 @@ package services;
 
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,19 +9,27 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import entities.*; 
+import entities.Auditing;
+import entities.Consumer;
+import entities.OptionalProduct_sales;
+import entities.PurchasesPackageValidityPeriod; 
+
 /**
- * This class supports the retrieval of sales report information. TODO create entities 
+ * This class supports the retrieval of statistics for the sales report page. 
+ * It is a Java Bean and it is stateless because there is no need to store status between method invocations.  	
  * @author ubersandro
  *
  */
-
 @Stateless
 public class SalesReportService {
 	@PersistenceContext (unitName = "telcoServiceEJB_v2")
 	private EntityManager em; 
 	public SalesReportService() {}
 	
+	/**
+	 * Retrieves all the sales 
+	 * @return
+	 */
 	public List<PurchasesPackageValidityPeriod> findSalesAllSPVP (){
 		return (List<PurchasesPackageValidityPeriod>) 
 				em.createNamedQuery("PurchasesPackageValidityPeriod.findAll",PurchasesPackageValidityPeriod.class).getResultList(); 

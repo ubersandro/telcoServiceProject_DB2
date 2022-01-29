@@ -1,13 +1,18 @@
 package services;
 
 import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import entities.OptionalProduct;
 import exceptions.TupleAlreadyExistentException;
+/**
+ * The class is and Enterprise Java Bean which supports the management of the Optional Products entities. It is stateless because no state needs to be preserved in between user interactions with the application. 
+ *  
+ * @author ubersandro
+ *
+ */
 @Stateless
 public class OptionalProductService {
 	@PersistenceContext(unitName =  "telcoServiceEJB_v2")
@@ -16,6 +21,10 @@ public class OptionalProductService {
 	public OptionalProductService() {}
 
 
+	/**
+	 * By means of a named query @see  Optional product
+	 * @return
+	 */
 	public List<OptionalProduct> findAllOptionalProducts() {
 		List<OptionalProduct> ops = (List<OptionalProduct>) em.createNamedQuery("OptionalProduct.findAll",
 				OptionalProduct.class).getResultList();

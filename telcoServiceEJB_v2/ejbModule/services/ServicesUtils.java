@@ -1,19 +1,12 @@
 package services;
 
-import java.util.*; 
+import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-import entities.OptionalProduct ;
-import entities.Order;
-import entities.OrderStatus;
 import entities.Service;
-import entities.ServiceActivationSchedule;
-import entities.Consumer; 
-import entities.ServicePackage;
-import entities.ValidityPeriod;
-import io.opentracing.tag.IntTag;
 /**
  * Stateless EJB which carries out maintenance and utility tasks on the Service entities. 
  * @author ubersandro

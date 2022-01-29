@@ -1,0 +1,9 @@
+BuyPage.html
+ConfirmationPage.html
+EmployeeHomePage.html
+HomePage.html
+OptionalProductCreationPage.html
+OrderRejected.html
+SalesReport.html
+ServicePackageCreationPage.html
+index.html
