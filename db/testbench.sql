@@ -39,3 +39,29 @@ SELECT *
 FROM salesSP_OP;
 SELECT *
 FROM optionalProduct_sales;
+
+
+SELECT HV.packageID AS PACKAGE, HV.validityMonths AS VALIDITYPERIOD, O.id/*, COUNT (O.id) AS SALES*/
+FROM HasValidity HV LEFT OUTER JOIN `Order` O ON O.packageID AND O.vpMonths = HV.validityMonths
+WHERE   O.status = 2;
+/*GROUP BY HV.packageID, HV.validityMonths;*/
+
+SELECT SP.id AS PACKAGE,
+       (SELECT count(DISTINCT(O.id))
+       FROM `Order` O INNER JOIN Includes I ON O.id = I.orderId
+       WHERE O.packageID = SP.id AND O.status = 2) AS SALESWOPT
+FROM ServicePackage SP;
+
+SELECT SP.packageID, totalOptionalProducts/SP.purchasesWithOptionalProducts
+FROM salesSP_OP SP;
+
+SELECT SP.id, avg(TMP.products)
+FROM ServicePackage SP, TMP
+WHERE SP.id = TMP.package
+GROUP BY  SP.id;
+
+CREATE VIEW TMP(ord, package, products) AS
+SELECT O.id, O.packageID, COUNT(I.productName)
+FROM `Order` O LEFT OUTER JOIN Includes I ON O.id = I.orderId
+WHERE O.status = 2
+GROUP BY O.id;

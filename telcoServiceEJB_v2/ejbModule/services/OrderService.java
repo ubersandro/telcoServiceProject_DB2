@@ -105,6 +105,7 @@ public class OrderService {
 	
 	public ServicePackage retrieveServicePackageFromOrderId(int orderID){
 		return em.find(Order.class, orderID).getServicePackage(); //navigation -> done this way because service package is lazily fetched
+		//and it is only needed whenever a rejected order payment is attempted 
 	}
 		
 	public List<OptionalProduct> retrieveIncludedOptionalProductsFromOrderId (int orderID){
