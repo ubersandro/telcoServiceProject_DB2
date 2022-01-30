@@ -1,8 +1,14 @@
 /**
+    title :
   VIEW TABLES corresponding to the materialized views used for sales
   report statistics.
  */
 
+-- NUMBER OF SALES PER SERVICE PACKAGE AND VALIDITY PERIOD
+/**
+  This view is made up of a query that counts the number of paid orders in the DB
+  associated to a given couple <ServicePackage, ValidityPeriod> for each such couple.
+ */
 CREATE OR REPLACE VIEW totalSalesSPVP (PACKAGE, VALIDITYPERIOD, SALES) AS
 SELECT HV.packageID AS PACKAGE, HV.validityMonths AS VALIDITYPERIOD,
        (SELECT COUNT(O.id)
@@ -11,12 +17,21 @@ SELECT HV.packageID AS PACKAGE, HV.validityMonths AS VALIDITYPERIOD,
         AS SALES
 FROM HasValidity HV ;
 
--- number of total purchases per package
+
+-- TOTAL SALES PER SERVICE PACKAGE
+/**
+  This view consists of a query which sums the sales per validity period grouping by the associated ServicePackage for each ServicePackage.
+ */
 CREATE OR REPLACE VIEW totalSalesSP(PACKAGE, SALES) AS
 SELECT S.PACKAGE AS PACKAGE, SUM(S.SALES) AS SALES
 FROM totalSalesSPVP S
 GROUP BY S.PACKAGE;
 
+-- TOTAL PURCHASES OF EACH SERVICE PACKAGE WITH AT LEAST ONE OPTIONAL PRODUCT
+/**
+  This view is based on a query which, for each ServicePackage, computes the total number of PAID orders of that package
+  which include with AT LEAST ONE Optional Product.
+ */
 CREATE OR REPLACE VIEW totalPurchasesSPwithOptionalProducts(PACKAGE, PURCHASES) AS -- V2
 SELECT SP.id AS PACKAGE,
        (SELECT count(DISTINCT(O.id))
@@ -25,10 +40,11 @@ SELECT SP.id AS PACKAGE,
 FROM ServicePackage SP;
 
 
-
+-- TOTAL PURCHASES OF EACH SERVICE PACKAGE WITHOUT OPTIONAL PRODUCTS
 /**
-    The query counts the number of order with no optional product associated grouping by the package ID of the ServicePackage associated with the orders.
- */
+    Given the results computed by the views "totalPurchasesSPwithOptionalProducts" and totalSalesSP,
+  this view returns the difference between total sales (with or without optional products) and sales with optional products.
+  */
 CREATE OR REPLACE VIEW totalPurchasesSPwithoutOptionalProducts (PACKAGE, PURCHASES) AS
 SELECT T.PACKAGE PACKAGE, T.SALES - TOPT.PURCHASES
 FROM totalSalesSP T, totalPurchasesSPwithOptionalProducts TOPT
@@ -49,12 +65,12 @@ SELECT *
 FROM `Order` O
 WHERE O.status = 1;
 
--- average optional products with each service package
+-- AVERAGE NUMBER OF OPTIONAL PRODUCTS EVER SOLD INCLUDED IN A SERVICE PACKAGE
 /**
-  The query computes the average number of optional products ever sold with a given service package for every service package.
-  To do so it just divides total number of optional products ever sold by the number of purchases of the given SP (with or without Optional Products).
-  NB: Division by zero does not occur because, taking any (PAID) order it is always related to a ServicePackage, whose sales cannot be 0 according
-  to the way the content of the totalSalesSPVP view is computed.
+  The query computes the average number of optional products ever sold with a given service package for each service package.
+  To do so, it uses an additional view which counts the number of optional products included in each PAID order.
+  Given the secondary view, this query computes the average optional products ever sold with a ServicePackage simply
+  calculating the average value of sales grouping by ServicePackage.
  */
 
 
@@ -71,7 +87,7 @@ WHERE SP.id = T.package
 GROUP BY  SP.id;
 
 
--- best seller optional product
+-- BEST SELLER OPTIONAL PRODUCT
 /**
   This view computes a top-1 query. The strategy used to perform such a task
   consists in computing total sales of a given optional product joining Order table
