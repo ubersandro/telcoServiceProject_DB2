@@ -57,23 +57,27 @@ public class Order implements Serializable {
 	private Consumer consumer;
 
 	@ManyToOne(fetch = FetchType.LAZY) // because whenever a package is fetched its associated services are fetched as
-										// well, so it is not advisable to have services fetched with the order as well
+										// well, so it is not advisable to have services fetched with the order 
 	@JoinColumn(name = "packageID")
 	private ServicePackage servicePackage;
 
-	@ManyToOne(fetch = FetchType.LAZY) // TODO ADD TO DOCUMENTATION
+	@ManyToOne(fetch = FetchType.LAZY) 
 	@JoinColumn(name = "vpMonths")
 	private ValidityPeriod validityPeriod;
 
-	@OneToOne(mappedBy = "order", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL) // being fetched eagerly by default, given that there is no need to fetch it, fetch type is overridden
+	@OneToOne(mappedBy = "order", fetch = FetchType.LAZY, 
+			orphanRemoval = true, cascade = {CascadeType.REMOVE,CascadeType.DETACH, 
+			CascadeType.MERGE, CascadeType.REFRESH})
+	// being fetched eagerly by default, given that there is no need to fetch it, fetch type is overridden
+	// not persisted because it is created by the DB whenever it is needed 
 	private ServiceActivationSchedule serviceActivationSchedule;
 
 	@ManyToMany(fetch = FetchType.LAZY) //craving for efficiency, optional products are lazily fetched. 
-	@JoinTable(name = "Includes", joinColumns = @JoinColumn(name = "orderID"), inverseJoinColumns = @JoinColumn(name = "productName"), schema = "telcoServiceDB")
+	@JoinTable(name = "Includes", joinColumns = @JoinColumn(name = "orderID"),
+	inverseJoinColumns = @JoinColumn(name = "productName"), schema = "telcoServiceDB")
 	private Collection<OptionalProduct> includedOptionalProducts;
 
-	public Order() {
-	}
+	public Order() {}
 
 	public int getId() {
 		return id;

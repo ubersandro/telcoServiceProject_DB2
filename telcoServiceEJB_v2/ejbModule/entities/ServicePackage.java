@@ -38,7 +38,7 @@ public class ServicePackage implements Serializable {
 	
 	/*
 	 * Fetch type is LAZY because optional products that could be associated with a given product 
-	 * are retrieved only when the user explicitly asks for them.    
+	 * are retrieved only when the user explicitly asks for them (in the BUY PAGE).    
 	 */
 	@ManyToMany (fetch = FetchType.LAZY)  
 	@JoinTable (name="Offers", joinColumns = 
@@ -48,7 +48,7 @@ public class ServicePackage implements Serializable {
 	
 	
 	
-	@ElementCollection (fetch = FetchType.EAGER) //entity key element collection (default cascading) 
+	@ElementCollection (fetch = FetchType.EAGER) 
 	@CollectionTable (name = "HasValidity", 
 			joinColumns = @JoinColumn(name = "packageID"), schema = "telcoServiceDB")  
 	@MapKeyJoinColumn (name = "validityMonths")  

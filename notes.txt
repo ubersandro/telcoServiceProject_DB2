@@ -1,6 +1,5 @@
-1) put named queries of Consumer in the documentation ---> CHECK
 3) write down lazy fetching policy for order 
-4) include services in the view of the buy page
 5) view with purchases optional products
-6) sales report purchases SP VP 
 7) view with AVG
+- SET HINTS IN JPQL QUERIES
+- SET FETCH POLICY LAZY TO HASVALIDITY IN SERVICEPACKAGE 

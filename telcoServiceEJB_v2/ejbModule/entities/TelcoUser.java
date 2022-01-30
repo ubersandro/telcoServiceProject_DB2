@@ -12,7 +12,7 @@ query = "SELECT t "
 @Entity 
 @Table (name ="TelcoUser", schema = "telcoServiceDB")
 @Inheritance (strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "DTYPE") //defaults to a String 
+@DiscriminatorColumn(name = "DTYPE") 
 public class TelcoUser implements Serializable {
 	private static final long serialVersionUID = 1L;
 	@Id

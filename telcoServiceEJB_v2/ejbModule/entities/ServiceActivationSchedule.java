@@ -9,7 +9,8 @@ import javax.persistence.*;
  * @author ubersandro
  */
 @NamedQueries( 
-		{@NamedQuery(name = "ServiceActivationSchedule.findAll", //utility
+		{
+			@NamedQuery(name = "ServiceActivationSchedule.findAll",
 					query = "Select s from ServiceActivationSchedule s")}
 		) 
 @Entity 
@@ -23,7 +24,7 @@ public class ServiceActivationSchedule implements Serializable{
 	private int orderID; 
 	@Temporal(value = TemporalType.DATE)
 	private Calendar endDate; 
-	@OneToOne @PrimaryKeyJoinColumn(name="orderID") //ORPHAN REMOVAL ON THE ORDER SIDE COULD BE APPROPRIATE
+	@OneToOne @PrimaryKeyJoinColumn(name="orderID")
 	private Order order ; 
 	
 	public Calendar getEndDate() {

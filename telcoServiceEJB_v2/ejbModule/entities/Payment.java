@@ -16,10 +16,13 @@ import javax.persistence.Table;
 public class Payment {
 	@Id @GeneratedValue (strategy = GenerationType.IDENTITY)
 	private int paymentId; 
+	
 	@OneToOne @JoinColumn (name = "user")
 	private Consumer user; 
+	
 	@OneToOne @JoinColumn (name = "orderID") 
 	private Order order; 
+	
 	@Enumerated(EnumType.ORDINAL)
 	private PaymentStatus status ; 
 	

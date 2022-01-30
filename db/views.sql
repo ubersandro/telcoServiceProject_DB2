@@ -38,17 +38,21 @@ WHERE O.status = 2 -- PAID ORDERS ONLY
 GROUP BY O.packageID;
 
 
--- number of total purchases per package WITHOUT optional products
+
 /**
-    The value is computed starting from the total sales of a given Service Package and subtracting to this quantity the sales that include
-  at least one optional product. Preexistent views can be used for convenience of notation.
+    The query counts the number of order with no optional product associated grouping by the package ID of the ServicePackage associated with the orders.
  */
 CREATE OR REPLACE VIEW totalPurchasesSPwithoutOptionalProducts (PACKAGE, PURCHASES) AS
-SELECT T.PACKAGE AS PACKAGE, (T.Sales - W.PURCHASES) AS PURCHASES
-FROM totalSalesSP T,
-     totalPurchasesSPwithOptionalProducts W
+SELECT O.packageID AS PACKAGE, count(O.id) AS PURCHASES
+FROM `Order` O
+WHERE
+    O.id NOT IN (SELECT X.id FROM `Order` X INNER JOIN Includes I on X.id = I.orderId)
+    AND O.status = 2 -- PAID orders only
+GROUP BY O.packageID
+;
 
-WHERE T.PACKAGE = W.package;
+
+
 
 -- INSOLVENT USERS
 CREATE OR REPLACE VIEW insolventUsers AS
