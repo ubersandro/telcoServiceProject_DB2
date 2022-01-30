@@ -32,18 +32,18 @@ public class SalesReportService {
 	 */
 	public List<PurchasesPackageValidityPeriod> findSalesAllSPVP (){
 		return (List<PurchasesPackageValidityPeriod>) 
-				em.createNamedQuery("PurchasesPackageValidityPeriod.findAll",PurchasesPackageValidityPeriod.class).getResultList(); 
+				em.createNamedQuery("PurchasesPackageValidityPeriod.findAll",PurchasesPackageValidityPeriod.class).setHint("javax.persistence.cache.storeMode", "REFRESH").getResultList(); 
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Object[]> findSalesAllSP () { 
-		return (List<Object[]>) em.createNamedQuery("PurchasesPackageValidityPeriod.purchasesSP").getResultList();  		
+		return (List<Object[]>) em.createNamedQuery("PurchasesPackageValidityPeriod.purchasesSP").setHint("javax.persistence.cache.storeMode", "REFRESH").getResultList();  		
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Object[]> findTotalSalesWithoutOPs(){
 		return (List<Object[]>) em.createNamedQuery("PurchasesPackageValidityPeriod.purchasesNoOptionalProducts")
-				.getResultList(); 
+				.setHint("javax.persistence.cache.storeMode", "REFRESH").getResultList(); 
 	}
 	
 	public Map<Integer, Double> findAvgOpts(){
@@ -56,7 +56,7 @@ public class SalesReportService {
 			int totalOpSold = (Integer) em.createQuery("SELECT S.totalOptionalProducts"
 													+ " FROM SalesSP_OP S "
 													 + "WHERE S.packageID = :ID").
-														setParameter("ID", packageID).getSingleResult(); // there will always be single a tuple!
+														setParameter("ID", packageID).setHint("javax.persistence.cache.storeMode", "REFRESH").getSingleResult(); // there will always be single a tuple!
 			ret.put(packageID , sales!=0?((0D + totalOpSold)/sales):0D); //otherwise -> division by zero!
 		}
 		return ret; 
@@ -66,19 +66,19 @@ public class SalesReportService {
 	@SuppressWarnings("unchecked")
 	public List<Object[]> findTotalSalesWithOPs(){
 		return (List<Object[]>) em.createNamedQuery("SalesSP_OP.purchasesOptionalProducts")
-				.getResultList(); 
+				.setHint("javax.persistence.cache.storeMode", "REFRESH").getResultList(); 
 	}
 	
 	
 	
 	public List<Auditing> findAllAuditing (){
 		return (List<Auditing>) 
-				em.createNamedQuery("Auditing.findAll", Auditing.class).getResultList(); 
+				em.createNamedQuery("Auditing.findAll", Auditing.class).setHint("javax.persistence.cache.storeMode", "REFRESH").getResultList(); 
 	}
 	
 	public List<Consumer> findInsolventUsers (){ 
 		return (List<Consumer>) 
-				em.createNamedQuery("Consumer.findUserByStatus", Consumer.class).getResultList(); 
+				em.createNamedQuery("Consumer.findUserByStatus", Consumer.class).setHint("javax.persistence.cache.storeMode", "REFRESH").getResultList(); 
 	}
 
 	
@@ -90,9 +90,11 @@ public class SalesReportService {
 	 * @return
 	 */
 	public OptionalProduct_sales findBestSeller () {
-		return (OptionalProduct_sales) 
+		List<OptionalProduct_sales> l = (List<OptionalProduct_sales>) 
 				em.createNamedQuery("OptionalProduct_sales.findBestSeller", 
-						OptionalProduct_sales.class).getResultList().get(0); 
+						OptionalProduct_sales.class).setHint("javax.persistence.cache.storeMode", "REFRESH").getResultList() ;
+		
+		return l.size()>0? l.get(0) : null; 
 	}
 
 	

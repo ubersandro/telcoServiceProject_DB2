@@ -127,7 +127,7 @@
 	</div>
 	<br>
 	<br>
-	<p>
+	<p th:if="${bestSeller!=null}">
 		Best seller Optional Product: <span
 			th:text="${bestSeller.getProductName()}">op1</span>
 	</p>
