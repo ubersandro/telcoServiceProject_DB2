@@ -41,6 +41,7 @@ public class GoToBuyPage extends HttpServlet {
 		// retrieve the package from the request
 		Integer packageID = Integer.parseInt(req.getParameter("pid"));
 		ServicePackage sp = sps.findServicePackage(packageID);
+		List<Service> services = sp.getServices(); //eagerly fetched 
 		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID);   
 		//set the date 
 		Calendar tomorrow = Calendar.getInstance(); 
@@ -52,6 +53,8 @@ public class GoToBuyPage extends HttpServlet {
 		ctx.setVariable("servicePackage", sp); 
 		ctx.setVariable("associableOptionalProducts", opts); 
 		ctx.setVariable("minimumDate", tomorrow);
+		ctx.setVariable("services", services);
+		
 		templateEngine.process(template, ctx, resp.getWriter()); 
 	}
 

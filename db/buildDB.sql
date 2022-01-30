@@ -86,7 +86,7 @@ VALUES (3, 12, 33.0),
        (3, 24, 22.0),
        (3, 36, 11.0);
 
-SET @orderID=1 ;
+/*SET @orderID=1 ;
 INSERT INTO `Order`(id, date, time, totalValue, startingDate, consUsername, packageID, vpMonths) VALUES
 (@orderID, '2022-11-01', '12:00:00', '2000.31','2022-12-12','A','2', '24');
 
@@ -99,6 +99,6 @@ INSERT INTO Payment( user, orderID, date, time, totalValue, status)
 
 INSERT INTO Payment( user, orderID, date, time, totalValue, status)
  VALUES ('A', @orderID, '2023-02-01', '123456', '200.0', 0);
-
+*/
 
 UNLOCK TABLES;

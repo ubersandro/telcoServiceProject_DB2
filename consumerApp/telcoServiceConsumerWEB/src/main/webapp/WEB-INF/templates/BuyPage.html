@@ -12,6 +12,15 @@
 	<p
 		th:text="|Service Package name and ID: ${servicePackage.getName()}, ${servicePackage.getId()}|">Service
 		Package: name, id</p>
+		
+		<table>
+			<tr>
+				<th>Services</th>
+			</tr>
+			<tr th:each="s : ${services}">
+				<td th:text="${s}">service</td>
+			</tr>
+		</table>
 
 	<form action="Confirmation" method="POST">
 		<input type="hidden" value="1"
