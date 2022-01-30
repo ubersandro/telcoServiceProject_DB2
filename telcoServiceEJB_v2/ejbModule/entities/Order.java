@@ -16,17 +16,9 @@ import javax.persistence.*;
 @NamedQueries(
 
 {
-		/**
-		 * 
-		 * @author ubersandro
-		 *
-		 */
+
 		@NamedQuery(name = "Order.findOrdersByUserAndStatus", query = "SELECT o FROM Order o WHERE o.consumer = :consumer and o.status = :status"),
-		/**
-		 * 
-		 * @author ubersandro
-		 *
-		 */
+
 		@NamedQuery(name = "Order.findOrdersByStatus", query = "SELECT o FROM Order o WHERE o.status=:status") })
 @Entity
 @Table(name = "Order", schema = "telcoServiceDB")
@@ -52,7 +44,7 @@ public class Order implements Serializable {
 	private OrderStatus status = OrderStatus.NEWLY_CREATED;
 
 	// Order is the owner of the MANY-TO-ONE relation between Order and Consumer
-	@ManyToOne // and no operation is cascaded. 
+	@ManyToOne (fetch = FetchType.LAZY)// and no operation is cascaded. 
 	@JoinColumn(name = "consUsername")
 	private Consumer consumer;
 

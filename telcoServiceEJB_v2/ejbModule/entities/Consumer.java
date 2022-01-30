@@ -1,12 +1,15 @@
 package entities;
 
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 
@@ -34,9 +37,9 @@ public class Consumer extends TelcoUser{
 	@Enumerated(EnumType.ORDINAL)
 	private UserStatus status  = UserStatus.SOLVENT;
 	
-	//@OneToOne with Auditing not implemented because not needed BUT OPRHAN REMOVAL COULD BE APPROPRIATE
-	//@ManyToOne with Order not implemented because not needed 
-	//
+	@OneToOne (fetch = FetchType.LAZY, mappedBy = "insolventConsumer",
+			orphanRemoval = true, cascade = { CascadeType.REMOVE, CascadeType.MERGE, CascadeType.REFRESH})
+	private Auditing alert; 
 
 	public Consumer() {}
 	

@@ -3,6 +3,7 @@ package entities;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -24,7 +25,7 @@ public class Auditing {
 	private double value ;
 	@Temporal (value = TemporalType.TIME)
 	private Date time; 
-	@OneToOne @PrimaryKeyJoinColumn (name = "username")
+	@OneToOne (fetch=FetchType.LAZY )@PrimaryKeyJoinColumn (name = "username")
 	private Consumer insolventConsumer; // no cascading because an Auditing tuple exists in function of a Consumer tuple
 	
 	public Auditing() {	}
