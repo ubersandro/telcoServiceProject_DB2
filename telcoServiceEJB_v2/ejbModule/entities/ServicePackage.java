@@ -48,7 +48,7 @@ public class ServicePackage implements Serializable {
 	
 	
 	
-	@ElementCollection (fetch = FetchType.EAGER) 
+	@ElementCollection (fetch = FetchType.LAZY) 
 	@CollectionTable (name = "HasValidity", 
 			joinColumns = @JoinColumn(name = "packageID"), schema = "telcoServiceDB")  
 	@MapKeyJoinColumn (name = "validityMonths")  

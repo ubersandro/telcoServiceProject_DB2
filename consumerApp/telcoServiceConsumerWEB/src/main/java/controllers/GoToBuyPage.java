@@ -43,6 +43,7 @@ public class GoToBuyPage extends HttpServlet {
 		ServicePackage sp = sps.findServicePackage(packageID);
 		List<Service> services = sp.getServices(); //eagerly fetched 
 		List<OptionalProduct> opts = sps.findAssociableOptionalProducts(packageID);   
+		Map<ValidityPeriod, Double> vps = sps.findValidityPeriodsAndFees(packageID); 
 		//set the date 
 		Calendar tomorrow = Calendar.getInstance(); 
 		tomorrow.add(Calendar.DATE, 1);
@@ -54,7 +55,7 @@ public class GoToBuyPage extends HttpServlet {
 		ctx.setVariable("associableOptionalProducts", opts); 
 		ctx.setVariable("minimumDate", tomorrow);
 		ctx.setVariable("services", services);
-		
+		ctx.setVariable("vps", vps);
 		templateEngine.process(template, ctx, resp.getWriter()); 
 	}
 

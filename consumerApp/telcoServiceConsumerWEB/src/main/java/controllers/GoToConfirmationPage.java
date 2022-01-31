@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
 
 import javax.ejb.EJB;
 import javax.servlet.ServletContext;
@@ -83,7 +85,8 @@ public class GoToConfirmationPage extends HttpServlet {
 		int monthsOfSubscription = validityPeriodKEY; 
 		
 		// total value computation
-		double servicePackageMonthlyFee = servicePackage.getCosts().get(chosenVP);
+		Map<ValidityPeriod, Double> costs = sps.findValidityPeriodsAndFees(packageID);
+		double servicePackageMonthlyFee = costs.get(chosenVP);
 		double totalFeeOptionalProducts = 0D;
 		for (OptionalProduct op : chosenOptionalProducts)
 			totalFeeOptionalProducts += op.getFee();

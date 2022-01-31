@@ -42,9 +42,9 @@
 		<br> <br> Validity Period : <select th:field="vp"
 			name="validityPeriod">
 			<option disabled>Select a validity period for the package</option>
-			<option th:each="vp : ${servicePackage.costs.keySet()}"
+			<option th:each="vp : ${vps.keySet()}"
 				th:value="${vp.months}"
-				th:text="|${vp.months} months -> ${servicePackage.costs.get(vp)} $/month|">12
+				th:text="|${vp.months} months -> ${vps.get(vp)} $/month|">12
 				months -> 10.43 $/month</option>
 		</select> <br> <br> <label for="startingDate">Starting date :</label>
 		<input type="date" min="2022-02-01"
